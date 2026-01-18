@@ -168,6 +168,7 @@ function HomeContent() {
               <Button className="btn-primary" onClick={() => window.location.href = '/auth'}>{t_obj.nav.getStarted}</Button>
             </div>
           </div>
+        </div>
       </nav>
 
       {/* Hero Section */}
