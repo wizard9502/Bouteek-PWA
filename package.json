@@ -6,6 +6,7 @@
   ],
   "scripts": {
     "build": "turbo run build",
+    "vercel-build": "cd apps/web && npx next build",
     "start": "cd apps/web && npm start",
     "dev": "turbo run dev",
     "test": "turbo run test",
