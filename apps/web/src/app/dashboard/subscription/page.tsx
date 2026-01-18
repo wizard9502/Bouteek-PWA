@@ -13,11 +13,12 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 
 // MVP Prices (Monthly)
+// MVP Prices (Monthly)
 const PRICES = {
-    starter: 5000,
-    launch: 15000,
-    growth: 30000,
-    pro: 60000
+    starter: 2000,
+    launch: 5000,
+    growth: 12500,
+    pro: 20000
 };
 
 export default function SubscriptionPage() {

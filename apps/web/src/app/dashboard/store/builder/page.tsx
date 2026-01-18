@@ -73,28 +73,33 @@ function StoreBuilderContent() {
     }, []);
 
     const loadStoreData = async () => {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+        try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return; // Wait for auth middleware or use separate loading state
 
-        const { data: merchant } = await supabase.from('merchants').select('id').eq('user_id', user.id).single();
-        if (!merchant) return;
+            const { data: merchant } = await supabase.from('merchants').select('id').eq('user_id', user.id).single();
+            if (!merchant) return;
 
-        const { data: storefront } = await supabase.from('storefronts').select('*').eq('merchant_id', merchant.id).single();
+            const { data: storefront } = await supabase.from('storefronts').select('*').eq('merchant_id', merchant.id).single();
 
-        if (storefront) {
-            setModules({
-                sales: storefront.enable_sales ?? true,
-                rentals: storefront.enable_rentals ?? false,
-                services: storefront.enable_services ?? false,
-                testimonials: storefront.enable_testimonials ?? false,
-                blog: storefront.enable_blog ?? false
-            });
+            if (storefront) {
+                setModules({
+                    sales: storefront.enable_sales ?? true,
+                    rentals: storefront.enable_rentals ?? false,
+                    services: storefront.enable_services ?? false,
+                    testimonials: storefront.enable_testimonials ?? false,
+                    blog: storefront.enable_blog ?? false
+                });
 
-            if (storefront.template_id) setSelectedTemplate(storefront.template_id);
-            if (storefront.theme_config) setStoreConfig(prev => ({ ...prev, ...storefront.theme_config }));
-            if (storefront.custom_domain) setCustomDomain(storefront.custom_domain);
+                if (storefront.template_id) setSelectedTemplate(storefront.template_id);
+                if (storefront.theme_config) setStoreConfig(prev => ({ ...prev, ...storefront.theme_config }));
+                if (storefront.custom_domain) setCustomDomain(storefront.custom_domain);
+            }
+        } catch (error) {
+            console.error("Error loading store data:", error);
+        } finally {
+            setIsLoading(false);
         }
-        setIsLoading(false);
     };
 
     const handleSave = async () => {

@@ -38,8 +38,8 @@ export async function POST(req: NextRequest) {
                 action: 'topup'
             },
             actions: {
-                cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/finance?status=cancelled`,
-                return_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/finance?status=success`
+                cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://bouteek-pwa.vercel.app'}/dashboard/finance?status=cancelled`,
+                return_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://bouteek-pwa.vercel.app'}/dashboard/finance?status=success`
             }
         };
 

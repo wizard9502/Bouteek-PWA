@@ -10,7 +10,7 @@ export default function FAQ() {
     fr: [
       {
         question: "Quels sont les frais de Bouteek?",
-        answer: "Bouteek propose quatre plans tarifaires: Starter (1,500 XOF/mois), Launch (5,000 XOF/mois), Growth (12,500 XOF/mois) et Pro (20,000 XOF/mois). Chaque plan inclut une commission par transaction. Il n'y a pas de frais cachés et vous pouvez changer de plan ou annuler à tout moment."
+        answer: "Bouteek propose quatre plans tarifaires: Starter (2,000 XOF/mois), Launch (5,000 XOF/mois), Growth (12,500 XOF/mois) et Pro (20,000 XOF/mois). Chaque plan inclut une commission par transaction. Il n'y a pas de frais cachés et vous pouvez changer de plan ou annuler à tout moment."
       },
       {
         question: "Combien de temps faut-il pour mettre en place ma boutique?",
@@ -52,7 +52,7 @@ export default function FAQ() {
     en: [
       {
         question: "What are Bouteek's fees?",
-        answer: "Bouteek offers four pricing plans: Starter (1,500 XOF/month), Launch (5,000 XOF/month), Growth (12,500 XOF/month), and Pro (20,000 XOF/month). Each plan includes a per-transaction commission. There are no hidden fees, and you can change plans or cancel anytime."
+        answer: "Bouteek offers four pricing plans: Starter (2,000 XOF/month), Launch (5,000 XOF/month), Growth (12,500 XOF/month), and Pro (20,000 XOF/month). Each plan includes a per-transaction commission. There are no hidden fees, and you can change plans or cancel anytime."
       },
       {
         question: "How long does it take to set up my store?",
@@ -128,9 +128,8 @@ export default function FAQ() {
                 <h3 className="text-lg font-bold text-black text-left">{item.question}</h3>
                 <ChevronDown
                   size={24}
-                  className={`text-[#00D632] flex-shrink-0 transition-transform ${
-                    openIndex === index ? "rotate-180" : ""
-                  }`}
+                  className={`text-[#00D632] flex-shrink-0 transition-transform ${openIndex === index ? "rotate-180" : ""
+                    }`}
                 />
               </button>
 
