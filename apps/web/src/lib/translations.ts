@@ -54,110 +54,109 @@ export const translations = {
       plans: "Abonnements",
       current_plan: "Plan Actuel"
     },
-  },
-  nav: {
-    features: "Fonctionnalités",
-    payments: "Paiements",
-    pricing: "Tarifs",
-    getStarted: "Commencer"
-  },
-  hero: {
-    title: "Vendez plus avec Bouteek",
-    subtitle: "La plateforme tout-en-un pour gérer votre commerce en ligne et hors ligne. Paiements mobiles intégrés (Wave, Orange Money) et gestion simplifiée.",
-    cta1: "Créer ma boutique",
-    cta2: "Voir démo",
-    benefit1: "Configuration en 2 minutes",
-    benefit2: "Paiements Wave & OM",
-    benefit3: "0 frais cachés"
-  },
-  features: {
-    title: "Tout ce dont vous avez besoin",
-    subtitle: "Des outils puissants pour gérer votre activité de A à Z.",
-    feature1: { title: "Site E-commerce", desc: "Votre propre site web professionnel généré automatiquement." },
-    feature2: { title: "Analytique", desc: "Suivez vos ventes et clients en temps réel." },
-    feature3: { title: "Rapide", desc: "Optimisé pour la vitesse et le mobile." },
-    feature4: { title: "Sécurisé", desc: "Vos données et paiements sont protégés." },
-    feature5: { title: "Facile", desc: "Aucune compétence technique requise." },
-    feature6: { title: "Support 24/7", desc: "Une équipe dédiée pour vous aider." }
-  },
-  testimonials: {
-    title: "Ils nous font confiance",
-    subtitle: "Découvrez ce que les marchands disent de nous.",
-    name1: "Fatou Diop",
-    role1: "Vendeuse de Mode",
-    testimonial1: "Bouteek a transformé mon business. Je peux accepter Wave directement !",
-    name2: "Amadou Sow",
-    role2: "Restaurateur",
-    testimonial2: "La gestion des commandes est super simple. Je recommande.",
-    name3: "Aissa Thiam",
-    role3: "Cosmétique Bio",
-    testimonial3: "Mes clientes adorent mon nouveau site. Merci Bouteek !"
-  },
-  pricing: {
-    title: "Des tarifs transparents",
-    subtitle: "Choisissez le plan qui correspond à votre croissance.",
-    starter: "Démarrage",
-    starterDesc: "Pour commencer tranquillement.",
-    launch: "Lancement",
-    launchDesc: "Pour les boutiques en croissance.",
-    growth: "Croissance",
-    growthDesc: "Pour les business établis.",
-    pro: "Pro",
-    proDesc: "Pour les grands volumes.",
-    perMonth: "/mois",
-    getStartedBtn: "Choisir ce plan",
+    nav: {
+      features: "Fonctionnalités",
+      payments: "Paiements",
+      pricing: "Tarifs",
+      getStarted: "Commencer"
+    },
+    hero: {
+      title: "Vendez plus avec Bouteek",
+      subtitle: "La plateforme tout-en-un pour gérer votre commerce en ligne et hors ligne. Paiements mobiles intégrés (Wave, Orange Money) et gestion simplifiée.",
+      cta1: "Créer ma boutique",
+      cta2: "Voir démo",
+      benefit1: "Configuration en 2 minutes",
+      benefit2: "Paiements Wave & OM",
+      benefit3: "0 frais cachés"
+    },
     features: {
-      starter: ["Jusqu'à 10 produits", "Site web basique", "Paiements mobiles"],
-      launch: ["Jusqu'à 50 produits", "Personnalisation avancée", "Analytique basique", "Support email"],
-      growth: ["Produits illimités", "Nom de domaine offert", "Analytique avancée", "Support prioritaire"],
-      pro: ["Tout illimité", "API access", "Gestionnaire dédié", "Support 24/7"]
+      title: "Tout ce dont vous avez besoin",
+      subtitle: "Des outils puissants pour gérer votre activité de A à Z.",
+      feature1: { title: "Site E-commerce", desc: "Votre propre site web professionnel généré automatiquement." },
+      feature2: { title: "Analytique", desc: "Suivez vos ventes et clients en temps réel." },
+      feature3: { title: "Rapide", desc: "Optimisé pour la vitesse et le mobile." },
+      feature4: { title: "Sécurisé", desc: "Vos données et paiements sont protégés." },
+      feature5: { title: "Facile", desc: "Aucune compétence technique requise." },
+      feature6: { title: "Support 24/7", desc: "Une équipe dédiée pour vous aider." }
+    },
+    testimonials: {
+      title: "Ils nous font confiance",
+      subtitle: "Découvrez ce que les marchands disent de nous.",
+      name1: "Fatou Diop",
+      role1: "Vendeuse de Mode",
+      testimonial1: "Bouteek a transformé mon business. Je peux accepter Wave directement !",
+      name2: "Amadou Sow",
+      role2: "Restaurateur",
+      testimonial2: "La gestion des commandes est super simple. Je recommande.",
+      name3: "Aissa Thiam",
+      role3: "Cosmétique Bio",
+      testimonial3: "Mes clientes adorent mon nouveau site. Merci Bouteek !"
+    },
+    pricing: {
+      title: "Des tarifs transparents",
+      subtitle: "Choisissez le plan qui correspond à votre croissance.",
+      starter: "Démarrage",
+      starterDesc: "Pour commencer tranquillement.",
+      launch: "Lancement",
+      launchDesc: "Pour les boutiques en croissance.",
+      growth: "Croissance",
+      growthDesc: "Pour les business établis.",
+      pro: "Pro",
+      proDesc: "Pour les grands volumes.",
+      perMonth: "/mois",
+      getStartedBtn: "Choisir ce plan",
+      features: {
+        starter: ["Jusqu'à 10 produits", "Site web basique", "Paiements mobiles"],
+        launch: ["Jusqu'à 50 produits", "Personnalisation avancée", "Analytique basique", "Support email"],
+        growth: ["Produits illimités", "Nom de domaine offert", "Analytique avancée", "Support prioritaire"],
+        pro: ["Tout illimité", "API access", "Gestionnaire dédié", "Support 24/7"]
+      }
+    },
+    payments: {
+      title: "Paiements Simplifiés",
+      subtitle: "Acceptez tous les paiements locaux sans friction.",
+      wave: "Wave",
+      waveDesc: "Intégration native pour des paiements instantanés.",
+      orange: "Orange Money",
+      orangeDesc: "Acceptez OM facilement sur votre boutique.",
+      flowTitle: "Comment ça marche ?",
+      flow1: "Le client commande",
+      flow2: "Il choisit Wave ou OM",
+      flow3: "Vous recevez les fonds",
+      flow4: "Vous livrez le produit"
+    },
+    cta: {
+      title: "Prêt à vous lancer ?",
+      subtitle: "Rejoignez des milliers de marchands qui vendent mieux avec Bouteek.",
+      button: "Créer mon compte gratuit",
+      note: "Pas de carte bancaire requise"
+    },
+    referral: {
+      title: "Programme de Parrainage",
+      subtitle: "Gagnez de l'argent en invitant d'autres marchands.",
+      benefit1: "Commissions récurrentes",
+      benefit2: "Paiements mensuels",
+      benefit3: "Tableau de bord dédié",
+      cta: "Devenir Partenaire",
+      description: "Invitez des marchands et gagnez 20% de leur abonnement à vie."
+    },
+    appStore: {
+      comingSoon: "Bientôt disponible"
+    },
+    footer: {
+      tagline: "La solution commerce pour l'Afrique.",
+      product: "Produit",
+      company: "Entreprise",
+      legal: "Légal",
+      about: "À propos",
+      blog: "Blog",
+      contact: "Contact",
+      privacy: "Confidentialité",
+      terms: "Conditions",
+      cookies: "Cookies",
+      copyright: "Tous droits réservés."
     }
   },
-  payments: {
-    title: "Paiements Simplifiés",
-    subtitle: "Acceptez tous les paiements locaux sans friction.",
-    wave: "Wave",
-    waveDesc: "Intégration native pour des paiements instantanés.",
-    orange: "Orange Money",
-    orangeDesc: "Acceptez OM facilement sur votre boutique.",
-    flowTitle: "Comment ça marche ?",
-    flow1: "Le client commande",
-    flow2: "Il choisit Wave ou OM",
-    flow3: "Vous recevez les fonds",
-    flow4: "Vous livrez le produit"
-  },
-  cta: {
-    title: "Prêt à vous lancer ?",
-    subtitle: "Rejoignez des milliers de marchands qui vendent mieux avec Bouteek.",
-    button: "Créer mon compte gratuit",
-    note: "Pas de carte bancaire requise"
-  },
-  referral: {
-    title: "Programme de Parrainage",
-    subtitle: "Gagnez de l'argent en invitant d'autres marchands.",
-    benefit1: "Commissions récurrentes",
-    benefit2: "Paiements mensuels",
-    benefit3: "Tableau de bord dédié",
-    cta: "Devenir Partenaire",
-    description: "Invitez des marchands et gagnez 20% de leur abonnement à vie."
-  },
-  appStore: {
-    comingSoon: "Bientôt disponible"
-  },
-  footer: {
-    tagline: "La solution commerce pour l'Afrique.",
-    product: "Produit",
-    company: "Entreprise",
-    legal: "Légal",
-    about: "À propos",
-    blog: "Blog",
-    contact: "Contact",
-    privacy: "Confidentialité",
-    terms: "Conditions",
-    cookies: "Cookies",
-    copyright: "Tous droits réservés."
-  }
-},
   en: {
     dashboard: {
       title: "Dashboard",
