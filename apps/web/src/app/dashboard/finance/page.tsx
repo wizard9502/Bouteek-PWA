@@ -20,7 +20,7 @@ import { toast } from "sonner";
 
 
 export default function FinancePage() {
-    const { t } = useTranslation();
+    const { t, language } = useTranslation();
     const [amount, setAmount] = useState("");
     const [showTopUp, setShowTopUp] = useState(false);
     const [balance, setBalance] = useState(0);
