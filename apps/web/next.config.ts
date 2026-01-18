@@ -66,9 +66,6 @@ const withPWA = require("next-pwa")({
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  eslint: {
-    ignoreDuringBuilds: true, // For now to pass build
-  },
   typescript: {
     ignoreBuildErrors: true, // For now
   },
