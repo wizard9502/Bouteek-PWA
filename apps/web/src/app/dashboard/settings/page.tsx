@@ -109,10 +109,24 @@ export default function SettingsPage() {
             if (!user) throw new Error("Not authenticated");
 
             // 1. Upsert Merchant
+            const reservedSlugs = [
+                "admin", "dashboard", "api", "auth", "login", "register", "signup", "settings",
+                "team", "accounting", "support", "help", "contact", "legal", "terms", "privacy",
+                "www", "bouteek", "shop"
+            ];
+
+            const cleanSlug = slug.toLowerCase().trim();
+
+            if (reservedSlugs.includes(cleanSlug)) {
+                toast.error("This store URL is reserved. Please choose another one.");
+                setSaving(false);
+                return;
+            }
+
             const merchantData = {
                 user_id: user.id,
                 business_name: businessName,
-                slug: slug, // TODO: Check uniqueness
+                slug: cleanSlug,
             };
 
             // If merchantId exists, update, else insert.
