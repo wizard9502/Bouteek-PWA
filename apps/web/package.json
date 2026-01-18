@@ -66,8 +66,5 @@
     "tailwindcss": "^4.0.0",
     "typescript": "^5"
   },
-  "optionalDependencies": {
-    "lightningcss-darwin-arm64": "^1.29.1",
-    "lightningcss-linux-x64-gnu": "^1.29.1"
-  }
+}
 }
