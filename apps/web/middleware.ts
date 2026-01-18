@@ -24,8 +24,7 @@ export default async function middleware(req: NextRequest) {
 
     const searchParams = req.nextUrl.searchParams.toString();
     // Get the pathname of the request (e.g. /, /about, /blog/first-post)
-    const path = `${url.pathname}${searchParams.length > 0 ? `?${searchParams}` : ""
-        }`;
+    const path = `${url.pathname}${searchParams.length > 0 ? `?${searchParams}` : ""}`;
 
     // specialized domain for App (if we separate later)
     // const appDomain = `app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
@@ -46,9 +45,17 @@ export default async function middleware(req: NextRequest) {
 
     if (isSubdomain) {
         // e.g. merchant.bouteek.shop -> merchant
-        const subdomain = hostname.replace(`.${rootDomain}`, ""); // Be careful if rootDomain part exists elsewhere in string? 
+        // const subdomain = hostname.replace(`.${rootDomain}`, ""); 
         // Safer: 
         const subdomainSafe = hostname.slice(0, -1 * (rootDomain.length + 1));
+
+        // SPECIAL CASE: Dashboard
+        if (subdomainSafe === "dashboard") {
+            // Rewrite dashboard.bouteek.shop to /dashboard
+            const dashboardPath = path === "/" ? "" : path;
+            console.log(`Rewriting dashboard subdomain to /dashboard${path}`);
+            return NextResponse.rewrite(new URL(`/dashboard${dashboardPath}`, req.url));
+        }
 
         console.log(`Rewriting subdomain ${hostname} to /store/${subdomainSafe}${path}`);
         return NextResponse.rewrite(new URL(`/store/${subdomainSafe}${path}`, req.url));
