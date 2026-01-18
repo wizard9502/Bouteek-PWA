@@ -178,6 +178,14 @@ function StoreBuilderContent() {
             image: "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?q=80&w=2000&auto=format&fit=crop"
         },
         {
+            id: "blush_blossom",
+            name: "Blush Blossom",
+            description: "Soft, elegant pink theme with floral accents and serif typography.",
+            defaultColors: { primary: "#f472b6", accent: "#fb7185" },
+            image: "https://images.unsplash.com/photo-1496062031456-07b8f162a322?q=80&w=2000&auto=format&fit=crop"
+        },
+
+        {
             id: "urban_street",
             name: "Urban Streetwear",
             description: "Bold, gritty, and high-contrast dark theme.",

@@ -48,15 +48,15 @@ export function TawkToChat({ user }: TawkToChatProps) {
         // Show/Hide Logic based on Pathname
         const checkTawk = setInterval(() => {
             const api = (window as any).Tawk_API;
-            // Always hide the default widget bubble
-            api.hideWidget();
-            clearInterval(checkTawk);
-        }
-
+            if (api && typeof api.hideWidget === 'function') {
+                api.hideWidget();
+                clearInterval(checkTawk);
+            }
         }, 300);
 
-    return () => clearInterval(checkTawk);
-}, [pathname]);
 
-return null;
+        return () => clearInterval(checkTawk);
+    }, [pathname]);
+
+    return null;
 }
