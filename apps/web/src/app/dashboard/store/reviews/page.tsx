@@ -19,6 +19,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "@/contexts/TranslationContext";
@@ -178,7 +179,7 @@ export default function ReviewsPage() {
                                                         </Badge>
                                                     )}
                                                     <Badge className={`rounded-xl px-2 py-0.5 text-[8px] font-black uppercase ${review.status === 'approved' ? 'bg-bouteek-green text-black' :
-                                                            review.status === 'rejected' ? 'bg-red-500 text-white' : 'bg-amber-500 text-black'
+                                                        review.status === 'rejected' ? 'bg-red-500 text-white' : 'bg-amber-500 text-black'
                                                         }`}>
                                                         {review.status}
                                                     </Badge>
