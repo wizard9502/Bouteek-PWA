@@ -7,13 +7,13 @@
   ],
   "scripts": {
     "build": "turbo run build",
+    "vercel-build": "cd apps/web && npx next build",
     "dev": "turbo run dev",
     "test": "turbo run test",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
-    "@netlify/plugin-nextjs": "^5.15.5",
     "prettier": "latest",
     "turbo": "latest"
   },
