@@ -7,7 +7,6 @@
   ],
   "scripts": {
     "build": "turbo run build",
-    "vercel-build": "cd apps/web && npx next build > build.log 2>&1 || { cat build.log; exit 1; }",
     "dev": "turbo run dev",
     "test": "turbo run test",
     "lint": "turbo run lint",
