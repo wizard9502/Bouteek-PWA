@@ -289,7 +289,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
                                     "p-2 rounded-2xl transition-all duration-200",
                                     isActive ? "bg-bouteek-green/20" : "bg-transparent"
                                 )}>
-                                    <Icon size={24} weight={isActive ? "fill" : "regular"} />
+                                    <Icon size={24} />
                                 </div>
                                 <span className="text-[10px] font-bold uppercase tracking-tighter">
                                     {item.label}

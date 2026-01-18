@@ -40,7 +40,7 @@ export default async function middleware(req: NextRequest) {
     }
 
     // 2. Handle Subdomains (e.g. merchant.bouteek.shop)
-    const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN;
+    const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN!;
     const isSubdomain = hostname.endsWith(`.${rootDomain}`) && hostname !== `www.${rootDomain}`;
 
     if (isSubdomain) {
