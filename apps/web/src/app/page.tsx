@@ -148,22 +148,26 @@ function HomeContent() {
             <a href="#payments" className="text-black hover:text-[#00D632] transition-colors">{t_obj.nav.payments}</a>
             <a href="#pricing" className="text-black hover:text-[#00D632] transition-colors">{t_obj.nav.pricing}</a>
             <div className="flex gap-2 ml-4 border-l border-gray-300 pl-4">
-              <button
-                onClick={() => setLanguage("fr")}
-                className={`px-3 py-1 rounded font-bold transition-colors ${language === "fr" ? "bg-[#00D632] text-black" : "text-gray-600 hover:text-black"}`}
-              >
-                FR
-              </button>
-              <button
-                onClick={() => setLanguage("en")}
-                className={`px-3 py-1 rounded font-bold transition-colors ${language === "en" ? "bg-[#00D632] text-black" : "text-gray-600 hover:text-black"}`}
-              >
-                EN
-              </button>
+              <div className="flex gap-2 ml-4 border-l border-gray-300 pl-4">
+                <button
+                  onClick={() => setLanguage("fr")}
+                  className={`px-3 py-1 rounded font-bold transition-colors ${language === "fr" ? "bg-[#00D632] text-black" : "text-gray-600 hover:text-black"}`}
+                >
+                  FR
+                </button>
+                <button
+                  onClick={() => setLanguage("en")}
+                  className={`px-3 py-1 rounded font-bold transition-colors ${language === "en" ? "bg-[#00D632] text-black" : "text-gray-600 hover:text-black"}`}
+                >
+                  EN
+                </button>
+              </div>
+              <a href="/auth" className="text-black font-medium hover:text-[#00D632] transition-colors">
+                {language === "fr" ? "Se connecter" : "Log In"}
+              </a>
+              <Button className="btn-primary" onClick={() => window.location.href = '/auth'}>{t_obj.nav.getStarted}</Button>
             </div>
-            <Button className="btn-primary">{t_obj.nav.getStarted}</Button>
           </div>
-        </div>
       </nav>
 
       {/* Hero Section */}
