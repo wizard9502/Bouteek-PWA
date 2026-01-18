@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { ShoppingCart, Phone, Check, Loader2, Minus, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 
 import { supabase } from "@/lib/supabaseClient";
 
-export default function StorePage({ params }: { params: { domain: string } }) {
+export default function StorePage({ params }: { params: Promise<{ domain: string }> }) {
+    const { domain } = use(params);
     const [store, setStore] = useState<any>(null);
     const [products, setProducts] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -31,12 +32,12 @@ export default function StorePage({ params }: { params: { domain: string } }) {
     const [placingOrder, setPlacingOrder] = useState(false);
 
     useEffect(() => {
-        fetchStore();
-    }, [params.domain]);
+        fetchStore(domain);
+    }, [domain]);
 
-    const fetchStore = async () => {
+    const fetchStore = async (encodedDomain: string) => {
         try {
-            const identifier = decodeURIComponent(params.domain);
+            const identifier = decodeURIComponent(encodedDomain);
 
             // Look up merchant by slug first
             let { data: merchant, error } = await supabase
