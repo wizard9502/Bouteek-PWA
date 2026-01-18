@@ -33,7 +33,8 @@ export default async function middleware(req: NextRequest) {
     if (
         hostname === "localhost:3000" ||
         hostname === process.env.NEXT_PUBLIC_ROOT_DOMAIN ||
-        hostname === `www.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`
+        hostname === `www.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}` ||
+        hostname.endsWith(".vercel.app") // Treat Vercel deployments as root (landing page)
     ) {
         // Just serve the app normally
         return NextResponse.next();
