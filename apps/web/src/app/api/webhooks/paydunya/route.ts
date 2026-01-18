@@ -3,14 +3,19 @@ import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 
 // Initialize Supabase Admin Client
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
-const PAYDUNYA_MASTER_KEY = process.env.PAYDUNYA_MASTER_KEY!;
+const PAYDUNYA_MASTER_KEY = process.env.PAYDUNYA_MASTER_KEY;
 
 export async function POST(req: NextRequest) {
+    // Lazy init to prevent build failure if envs are missing
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !supabaseKey || !PAYDUNYA_MASTER_KEY) {
+        console.error("Missing Env Vars");
+        return NextResponse.json({ message: "Configuration Error" }, { status: 500 });
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseKey);
     try {
         const rawBody = await req.text();
         const data = JSON.parse(rawBody);
