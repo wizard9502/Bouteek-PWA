@@ -61,6 +61,71 @@ function StoreBuilderContent() {
         heroImage: "https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=2070&auto=format&fit=crop"
     });
 
+    const [isLoading, setIsLoading] = useState(true);
+    const [customDomain, setCustomDomain] = useState("");
+
+    useEffect(() => {
+        loadStoreData();
+    }, []);
+
+    const loadStoreData = async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const { data: merchant } = await supabase.from('merchants').select('id').eq('user_id', user.id).single();
+        if (!merchant) return;
+
+        const { data: storefront } = await supabase.from('storefronts').select('*').eq('merchant_id', merchant.id).single();
+
+        if (storefront) {
+            setModules({
+                sales: storefront.enable_sales ?? true,
+                rentals: storefront.enable_rentals ?? false,
+                services: storefront.enable_services ?? false,
+                testimonials: storefront.enable_testimonials ?? false
+            });
+            if (storefront.template_id) setSelectedTemplate(storefront.template_id);
+            if (storefront.theme_config) setStoreConfig(prev => ({ ...prev, ...storefront.theme_config }));
+            if (storefront.custom_domain) setCustomDomain(storefront.custom_domain);
+        }
+        setIsLoading(false);
+    };
+
+    const handleSave = async () => {
+        setIsLoading(true);
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const { data: merchant } = await supabase.from('merchants').select('id').eq('user_id', user.id).single();
+        if (!merchant) {
+            setIsLoading(false);
+            return;
+        }
+
+        const { error } = await supabase.from('storefronts').upsert({
+            merchant_id: merchant.id,
+            template_id: selectedTemplate,
+            theme_config: storeConfig,
+            enable_sales: modules.sales,
+            enable_rentals: modules.rentals,
+            enable_services: modules.services,
+            enable_testimonials: modules.testimonials,
+            custom_domain: customDomain,
+            updated_at: new Date().toISOString()
+        }, { onConflict: 'merchant_id' });
+
+        if (error) {
+            console.error(error);
+            alert("Failed to save changes.");
+        } else {
+            alert("Storefront saved successfully!");
+        }
+        setIsLoading(false);
+    };
+
+    if (isLoading) return <div className="h-screen flex items-center justify-center">Loading Store Builder...</div>;
+
+
     const templates = [
         {
             id: "modern_minimal",
@@ -298,84 +363,7 @@ function StoreBuilderContent() {
         );
     };
 
-    return (
-    const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        loadStoreData();
-    }, []);
-
-    const loadStoreData = async () => {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-
-        // 1. Get Merchant
-        const { data: merchant } = await supabase
-            .from('merchants')
-            .select('id')
-            .eq('user_id', user.id)
-            .single();
-
-        if (!merchant) return;
-
-        // 2. Get Storefront
-        const { data: storefront } = await supabase
-            .from('storefronts')
-            .select('*')
-            .eq('merchant_id', merchant.id)
-            .single();
-
-        if (storefront) {
-            setModules({
-                sales: storefront.enable_sales ?? true,
-                rentals: storefront.enable_rentals ?? false,
-                services: storefront.enable_services ?? false,
-                testimonials: storefront.enable_testimonials ?? false
-            });
-            if (storefront.template_id) setSelectedTemplate(storefront.template_id);
-            if (storefront.theme_config) setStoreConfig(prev => ({ ...prev, ...storefront.theme_config }));
-        }
-        setIsLoading(false);
-    };
-
-    const handleSave = async () => {
-        setIsLoading(true);
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-
-        // 1. Get Merchant ID
-        const { data: merchant } = await supabase.from('merchants').select('id').eq('user_id', user.id).single();
-        if (!merchant) {
-            alert("Merchant account not found.");
-            setIsLoading(false);
-            return;
-        }
-
-        // 2. Upsert Storefront
-        const { error } = await supabase
-            .from('storefronts')
-            .upsert({
-                merchant_id: merchant.id,
-                template_id: selectedTemplate,
-                theme_config: storeConfig,
-                enable_sales: modules.sales,
-                enable_rentals: modules.rentals,
-                enable_services: modules.services,
-                enable_testimonials: modules.testimonials,
-                custom_domain: customDomain,
-                updated_at: new Date().toISOString()
-            }, { onConflict: 'merchant_id' });
-
-        if (error) {
-            console.error(error);
-            alert("Failed to save changes.");
-        } else {
-            alert("Storefront saved successfully!");
-        }
-        setIsLoading(false);
-    };
-
-    if (isLoading) return <div className="h-screen flex items-center justify-center">Loading Store Builder...</div>;
 
     return (
         <div className="h-[calc(100vh-100px)] flex flex-col lg:flex-row gap-6">
