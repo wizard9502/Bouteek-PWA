@@ -125,6 +125,20 @@ function ProfilePageContent() {
         router.push("/auth");
     };
 
+    const handleThemeChange = async (newTheme: string) => {
+        setTheme(newTheme);
+        if (merchant) {
+            try {
+                await supabase
+                    .from('merchants')
+                    .update({ preferred_theme: newTheme })
+                    .eq('id', merchant.id);
+            } catch (error) {
+                console.error("Error saving theme preference:", error);
+            }
+        }
+    };
+
     if (loading) return <div className="p-8 flex justify-center"><div className="animate-spin w-6 h-6 border-2 border-black rounded-full border-t-transparent" /></div>;
 
     return (
@@ -251,7 +265,7 @@ function ProfilePageContent() {
                                 ].map((t) => (
                                     <button
                                         key={t.id}
-                                        onClick={() => setTheme(t.id)}
+                                        onClick={() => handleThemeChange(t.id)}
                                         className={cn(
                                             "flex flex-col items-center gap-2 p-3 rounded-2xl border-2 transition-all duration-200",
                                             theme === t.id ? "border-primary bg-primary/5 scale-105 shadow-sm" : "border-transparent hover:bg-muted/50"

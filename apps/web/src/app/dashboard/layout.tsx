@@ -58,11 +58,20 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
         const fetchUser = async () => {
             const { data: { user } } = await supabase.auth.getUser();
             if (user) {
-                const { data: merchant } = await supabase.from('merchants').select('business_name').eq('user_id', user.id).single();
-                setUser({
-                    name: merchant?.business_name || user.email?.split('@')[0],
-                    email: user.email
-                });
+                const { data: merchant } = await supabase.from('merchants')
+                    .select('id, business_name, preferred_theme')
+                    .eq('user_id', user.id).single();
+
+                if (merchant) {
+                    setUser({
+                        id: merchant.id,
+                        name: merchant.business_name || user.email?.split('@')[0],
+                        email: user.email
+                    });
+                    if (merchant.preferred_theme) {
+                        setTheme(merchant.preferred_theme);
+                    }
+                }
             }
         };
         fetchUser();
@@ -149,7 +158,12 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
                         ].map((t) => (
                             <button
                                 key={t.id}
-                                onClick={() => setTheme(t.id)}
+                                onClick={async () => {
+                                    setTheme(t.id);
+                                    if (user?.id) {
+                                        await supabase.from('merchants').update({ preferred_theme: t.id }).eq('id', user.id);
+                                    }
+                                }}
                                 className={cn(
                                     "w-6 h-6 rounded-full border transition-all hover:scale-125",
                                     t.color,
@@ -194,16 +208,13 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
                         <span className="text-xs font-black uppercase tracking-wider">{t("sidebar.logout")}</span>
                     </Button>
                 </div>
-        </div>
-            </aside >
+            </aside>
 
-        {/* Mobile Header */ }
-        < header className = {
-            cn(
+            {/* Mobile Header */}
+            <header className={cn(
                 "md:hidden fixed top-0 w-full z-50 transition-all duration-300 px-6 py-4 flex items-center justify-between",
-                scrolled? "glass-dark py-3" : "bg-transparent"
-            )
-        } >
+                scrolled ? "glass-dark py-3" : "bg-transparent"
+            )}>
                 <div className="flex items-center gap-3">
                     <div className="w-12 h-12 flex items-center justify-center">
                         <img src="/bouteek-logo.jpg" alt="Logo" className="w-10 h-10 rounded-xl object-contain" />
@@ -224,10 +235,13 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
                         variant="ghost"
                         size="icon"
                         className="rounded-full bg-muted/50 transition-colors"
-                        onClick={() => {
+                        onClick={async () => {
                             const modes = ['light', 'dark', 'pink', 'purple', 'ocean', 'luxury', 'sunset'];
                             const next = modes[(modes.indexOf(theme || 'light') + 1) % modes.length];
                             setTheme(next);
+                            if (user?.id) {
+                                await supabase.from('merchants').update({ preferred_theme: next }).eq('id', user.id);
+                            }
                         }}
                     >
                         {theme === "dark" || theme === "luxury" ? <Sun size={20} /> : <Moon size={20} />}
@@ -238,61 +252,61 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
                 </div>
             </header >
 
-        {/* Main Content Area */ }
-        < main className = "flex-1 flex flex-col min-h-screen relative pb-24 md:pb-0" >
-            <div className="flex-1 p-6 md:p-12 mt-16 md:mt-0">
-                <AnimatePresence mode="wait">
-                    <motion.div
-                        key={pathname}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.3 }}
-                    >
-                        {children}
-                    </motion.div>
-                </AnimatePresence>
-            </div>
+            {/* Main Content Area */}
+            < main className="flex-1 flex flex-col min-h-screen relative pb-24 md:pb-0" >
+                <div className="flex-1 p-6 md:p-12 mt-16 md:mt-0">
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={pathname}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            {children}
+                        </motion.div>
+                    </AnimatePresence>
+                </div>
             </main >
 
-        {/* Mobile Bottom Navigation */ }
-        < nav className = "md:hidden fixed bottom-0 left-0 right-0 h-20 bg-background border-t border-border px-6 flex items-center justify-between z-50 pb-safe" >
+            {/* Mobile Bottom Navigation */}
+            < nav className="md:hidden fixed bottom-0 left-0 right-0 h-20 bg-background border-t border-border px-6 flex items-center justify-between z-50 pb-safe" >
 
-        {
-            navItems.map((item) => {
-                const Icon = item.icon;
-                const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname?.startsWith(item.href));
-                return (
-                    <Link
-                        key={item.href}
-                        href={item.href}
-                        className={cn(
-                            "flex flex-col items-center gap-1 transition-all duration-200",
-                            isActive ? "text-bouteek-green scale-110" : "text-muted-foreground hover:text-foreground"
-                        )}
-                    >
-                        <div className={cn(
-                            "p-2 rounded-2xl transition-all duration-200",
-                            isActive ? "bg-bouteek-green/20" : "bg-transparent"
-                        )}>
-                            <Icon size={24} weight={isActive ? "fill" : "regular"} />
-                        </div>
-                        <span className="text-[10px] font-bold uppercase tracking-tighter">
-                            {item.label}
-                        </span>
-                    </Link>
-                );
-            })
-        }
+                {
+                    navItems.map((item) => {
+                        const Icon = item.icon;
+                        const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname?.startsWith(item.href));
+                        return (
+                            <Link
+                                key={item.href}
+                                href={item.href}
+                                className={cn(
+                                    "flex flex-col items-center gap-1 transition-all duration-200",
+                                    isActive ? "text-bouteek-green scale-110" : "text-muted-foreground hover:text-foreground"
+                                )}
+                            >
+                                <div className={cn(
+                                    "p-2 rounded-2xl transition-all duration-200",
+                                    isActive ? "bg-bouteek-green/20" : "bg-transparent"
+                                )}>
+                                    <Icon size={24} weight={isActive ? "fill" : "regular"} />
+                                </div>
+                                <span className="text-[10px] font-bold uppercase tracking-tighter">
+                                    {item.label}
+                                </span>
+                            </Link>
+                        );
+                    })
+                }
             </nav >
 
-        {/* Global FAB (Mobile) */ }
-        < Button
-    className = "md:hidden fixed bottom-24 right-6 w-14 h-14 rounded-full bg-bouteek-green shadow-xl shadow-bouteek-green/40 flex items-center justify-center text-white z-40 transition-transform active:scale-95"
-    onClick = {() => router.push("/dashboard/store/new")
-}
+            {/* Global FAB (Mobile) */}
+            < Button
+                className="md:hidden fixed bottom-24 right-6 w-14 h-14 rounded-full bg-bouteek-green shadow-xl shadow-bouteek-green/40 flex items-center justify-center text-white z-40 transition-transform active:scale-95"
+                onClick={() => router.push("/dashboard/store/new")
+                }
             >
-    <Plus size={28} />
+                <Plus size={28} />
             </Button >
         </div >
     );
