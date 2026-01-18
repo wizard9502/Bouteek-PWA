@@ -4,11 +4,11 @@ export default async function StorePage({
 }: {
     params: { domain: string };
 }) {
-    const domain = decodeURIComponent(params.domain);
+    const identifier = decodeURIComponent(params.domain);
     return (
         <div className="p-8">
-            <h1 className="text-3xl font-bold">Store: {domain}</h1>
-            <p>This is a custom storefront for {domain}</p>
+            <h1 className="text-3xl font-bold">Store: {identifier}</h1>
+            <p>Looking up merchant where <code>slug</code> OR <code>custom_domain</code> equals: <strong>{identifier}</strong></p>
         </div>
     );
 }

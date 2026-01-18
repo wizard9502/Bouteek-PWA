@@ -40,18 +40,22 @@ export default async function middleware(req: NextRequest) {
         return NextResponse.next();
     }
 
-    // 2. Handle Subdomains (e.g. app.bouteek.shop or admin.bouteek.shop)
-    // Logic: if subdomain is 'app', rewrite to /app (if we had a separate app folder)
-    // For this monorepo, everything is in app, so we might not need this if we rely on paths.
-    // But if the user wants custom domains for stores:
+    // 2. Handle Subdomains (e.g. merchant.bouteek.shop)
+    const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN;
+    const isSubdomain = hostname.endsWith(`.${rootDomain}`) && hostname !== `www.${rootDomain}`;
 
-    // 3. Handle Custom Domains (Vendor Stores)
-    // Assuming any other hostname is a vendor store
-    // Rewrite to /store/[domain]/[path]
+    if (isSubdomain) {
+        // e.g. merchant.bouteek.shop -> merchant
+        const subdomain = hostname.replace(`.${rootDomain}`, ""); // Be careful if rootDomain part exists elsewhere in string? 
+        // Safer: 
+        const subdomainSafe = hostname.slice(0, -1 * (rootDomain.length + 1));
 
-    // NOTE: We need a way to distinguish between "app" subdomains and "store" subdomains if they share the same root.
-    // For now, assuming all unknown domains map to a store.
+        console.log(`Rewriting subdomain ${hostname} to /store/${subdomainSafe}${path}`);
+        return NextResponse.rewrite(new URL(`/store/${subdomainSafe}${path}`, req.url));
+    }
 
-    console.log(`Rewriting ${hostname}${path} to /store/${hostname}${path}`);
+    // 3. Handle Custom Domains (e.g. mariam-fashion.com)
+    // For external domains, we pass the full domain.
+    console.log(`Rewriting custom domain ${hostname} to /store/${hostname}${path}`);
     return NextResponse.rewrite(new URL(`/store/${hostname}${path}`, req.url));
 }
