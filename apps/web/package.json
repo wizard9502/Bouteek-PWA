@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build --webpack",
-    "postbuild": "mkdir -p node_modules/next && mkdir -p node_modules/styled-jsx && cp -r ../../node_modules/next/dist node_modules/next/ && cp ../../node_modules/next/package.json node_modules/next/ && cp -r ../../node_modules/styled-jsx/* node_modules/styled-jsx/",
+    "postbuild": "mkdir -p node_modules && rm -rf node_modules/next node_modules/styled-jsx && cp -r ../../node_modules/next node_modules/ && cp -r ../../node_modules/styled-jsx node_modules/",
     "start": "next start",
     "lint": "eslint"
   },
