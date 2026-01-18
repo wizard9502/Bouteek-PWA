@@ -574,11 +574,11 @@ function HomeContent() {
               <a href="https://instagram.com/bouteek.shop" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity" title="Instagram">
                 <Instagram size={24} className="text-gray-400 hover:text-[#00D632]" />
               </a>
-              <a href="https://snapchat.com/add/bouteek.shop" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity" title="Snapchat">
-                <img src="/snapchat-icon.png" alt="Snapchat" className="w-6 h-6" />
+              <a href="https://snapchat.com/add/bouteek.shop" target="_blank" rel="noopener noreferrer" className="hover:text-[#00D632] transition-colors text-gray-400 font-bold text-sm" title="Snapchat">
+                Snapchat
               </a>
-              <a href="https://tiktok.com/@bouteek.shop" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity" title="TikTok">
-                <img src="/tiktok-icon.png" alt="TikTok" className="w-6 h-6" />
+              <a href="https://tiktok.com/@bouteek.shop" target="_blank" rel="noopener noreferrer" className="hover:text-[#00D632] transition-colors text-gray-400 font-bold text-sm" title="TikTok">
+                TikTok
               </a>
             </div>
           </div>
