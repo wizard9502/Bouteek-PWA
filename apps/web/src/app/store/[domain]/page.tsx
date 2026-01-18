@@ -98,7 +98,7 @@ export default function StorePage({ params }: { params: { domain: string } }) {
         setCart(prev => prev.filter(p => p.product.id !== productId));
     };
 
-    const totalAmount = cart.reduce((sum, item) => sum + (item.product.base_price * item.quantity), 0);
+    const totalAmount = cart.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
 
     const handlePlaceOrder = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -113,45 +113,28 @@ export default function StorePage({ params }: { params: { domain: string } }) {
             const { data: order, error: orderError } = await supabase
                 .from('orders')
                 .insert({
-                    merchant_id: store.id, // merchant.id
-                    customer_name: customerName, // Schema might need these columns or we dump in metadata/jsonb?
-                    // Checking schema: The schema probably has user_id (if logged in) or guest details?
-                    // Migration had: customer_email, customer_phone... 
-                    // Let's assume standard fields or add if missing.
-                    // Assuming schema has: total_amount, status, payment_method, payment_details (jsonb)
-                    total_amount: totalAmount,
+                    merchant_id: store.id,
+                    order_number: `BTK-${Math.random().toString(36).substring(2, 7).toUpperCase()}-${Date.now().toString().slice(-4)}`,
+                    customer_name: customerName,
+                    customer_phone: customerPhone,
+                    delivery_address: customerAddress,
+                    items: cart.map(item => ({
+                        id: item.product.id,
+                        name: item.product.name,
+                        quantity: item.quantity,
+                        price: item.product.price
+                    })),
+                    subtotal: totalAmount,
+                    total: totalAmount,
                     status: 'pending',
-                    // metadata for guest details if columns don't exist
-                    metadata: {
-                        customer_name: customerName,
-                        customer_phone: customerPhone,
-                        address: customerAddress,
-                        transaction_id: transactionId,
-                        payment_provider: selectedMethod
-                    }
+                    payment_method: selectedMethod,
+                    notes: `Trans ID: ${transactionId}`
                 })
                 .select()
                 .single();
 
             if (orderError) throw orderError;
 
-            // 2. Create Order Items
-            const items = cart.map(item => ({
-                order_id: order.id,
-                product_id: item.product.id,
-                quantity: item.quantity,
-                unit_price: item.product.base_price
-            }));
-
-            // Need a table for order items. Was it in migration? 
-            // Migration SQL check: `order_items` table? If missed, we store in metadata or create.
-            // Assuming `order_items` exists from standard patterns. If not, I'll assume metadata for MVP.
-            // Let's try inserting traversing metadata first to be safe if table missing, 
-            // but better to check if table exists. 
-            // IF "orders" has "items" jsonb column? or relation.
-            // Let's assume relation for now. If error, I'll catch.
-
-            await supabase.from('order_items').insert(items);
 
             toast.success("Order placed successfully! The merchant will verify your payment.");
             setCart([]);
@@ -196,11 +179,13 @@ export default function StorePage({ params }: { params: { domain: string } }) {
                 {products.map(product => (
                     <div key={product.id} className="bg-white rounded-xl overflow-hidden shadow-sm flex flex-col">
                         <div className="aspect-square bg-gray-200 relative">
-                            {product.image_url && <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />}
+                            {product.images && product.images.length > 0 && (
+                                <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
+                            )}
                         </div>
                         <div className="p-3 flex-1">
                             <h3 className="font-bold text-sm line-clamp-2">{product.name}</h3>
-                            <p className="text-gray-500 text-xs mt-1">{product.base_price} XOF</p>
+                            <p className="text-gray-500 text-xs mt-1">{product.price} XOF</p>
                         </div>
                         <div className="p-3 pt-0">
                             <Button size="sm" className="w-full bg-black text-white hover:bg-gray-800" onClick={() => addToCart(product)}>Add</Button>
@@ -223,10 +208,10 @@ export default function StorePage({ params }: { params: { domain: string } }) {
                                 <div key={item.product.id} className="flex justify-between items-center border-b border-gray-100 pb-2">
                                     <div>
                                         <p className="font-bold">{item.product.name}</p>
-                                        <p className="text-sm text-gray-500">{item.quantity} x {item.product.base_price}</p>
+                                        <p className="text-sm text-gray-500">{item.quantity} x {item.product.price}</p>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <span className="font-bold">{item.quantity * item.product.base_price}</span>
+                                        <span className="font-bold">{item.quantity * item.product.price}</span>
                                         <Button variant="ghost" size="icon" className="h-6 w-6 text-red-500" onClick={() => removeFromCart(item.product.id)}>
                                             <X size={16} />
                                         </Button>

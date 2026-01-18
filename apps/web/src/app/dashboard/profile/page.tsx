@@ -231,17 +231,41 @@ function ProfilePageContent() {
                             </div>
                         </div>
 
-                        <div className="flex items-center justify-between p-4 hover:bg-muted/50 rounded-2xl transition-colors">
-                            <div className="flex items-center gap-4">
+                        <div className="p-4 space-y-4">
+                            <div className="flex items-center gap-4 px-4 pt-2">
                                 <div className="p-3 rounded-2xl bg-muted text-muted-foreground">
-                                    {theme === 'dark' ? <Moon size={20} /> : <Sun size={20} />}
+                                    <Settings size={20} />
                                 </div>
-                                <span className="font-bold text-sm">{t("profile.dark_mode")}</span>
+                                <span className="font-black text-sm uppercase tracking-wider">{t("profile.appearance") || "Appearance"}</span>
                             </div>
-                            <Switch
-                                checked={theme === 'dark'}
-                                onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
-                            />
+
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 px-2">
+                                {[
+                                    { id: 'light', name: t('profile.themes.light'), color: 'bg-white', border: 'border-border' },
+                                    { id: 'dark', name: t('profile.themes.dark'), color: 'bg-zinc-900', border: 'border-zinc-800' },
+                                    { id: 'pink', name: t('profile.themes.pink'), color: 'bg-pink-500', border: 'border-pink-200' },
+                                    { id: 'purple', name: t('profile.themes.purple'), color: 'bg-purple-600', border: 'border-purple-200' },
+                                    { id: 'ocean', name: t('profile.themes.ocean'), color: 'bg-blue-500', border: 'border-blue-200' },
+                                    { id: 'luxury', name: t('profile.themes.luxury'), color: 'bg-zinc-950', border: 'border-amber-500', dot: 'bg-amber-500' },
+                                    { id: 'sunset', name: t('profile.themes.sunset'), color: 'bg-orange-500', border: 'border-orange-200' },
+                                ].map((t) => (
+                                    <button
+                                        key={t.id}
+                                        onClick={() => setTheme(t.id)}
+                                        className={cn(
+                                            "flex flex-col items-center gap-2 p-3 rounded-2xl border-2 transition-all duration-200",
+                                            theme === t.id ? "border-primary bg-primary/5 scale-105 shadow-sm" : "border-transparent hover:bg-muted/50"
+                                        )}
+                                    >
+                                        <div className={cn("w-10 h-10 rounded-full border shadow-inner flex items-center justify-center relative", t.color, t.border)}>
+                                            {theme === t.id && (
+                                                <div className="w-2 h-2 rounded-full bg-white shadow-[0_0_5px_rgba(255,255,255,0.8)]" />
+                                            )}
+                                        </div>
+                                        <span className="text-[10px] font-black uppercase tracking-widest">{t.name}</span>
+                                    </button>
+                                ))}
+                            </div>
                         </div>
 
                         <div className="flex items-center justify-between p-4 hover:bg-muted/50 rounded-2xl transition-colors cursor-pointer group">

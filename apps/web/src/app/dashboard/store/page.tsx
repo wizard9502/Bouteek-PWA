@@ -37,6 +37,7 @@ export default function StorePage() {
     const [searchQuery, setSearchQuery] = useState("");
     const [products, setProducts] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [merchantSlug, setMerchantSlug] = useState("");
 
     useEffect(() => {
         fetchProducts();
@@ -46,8 +47,10 @@ export default function StorePage() {
         setLoading(true);
         try {
             const { data: { user } } = await supabase.auth.getUser();
-            const { data: merchant } = await supabase.from('merchants').select('id').eq('user_id', user?.id).single();
+            const { data: merchant } = await supabase.from('merchants').select('id, slug').eq('user_id', user?.id).single();
             if (!merchant) return;
+
+            setMerchantSlug(merchant.slug);
 
             const { data } = await supabase
                 .from('products')
@@ -157,9 +160,9 @@ export default function StorePage() {
                             className="bouteek-card overflow-hidden group"
                         >
                             <div className="aspect-square relative overflow-hidden bg-muted">
-                                {product.image_url ? (
+                                {product.images && product.images.length > 0 ? (
                                     <img
-                                        src={product.image_url}
+                                        src={product.images[0]}
                                         alt={product.name}
                                         className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500"
                                     />
@@ -186,7 +189,10 @@ export default function StorePage() {
 
                                 <div className="grid grid-cols-2 gap-3 mt-8">
                                     <Button variant="outline" className="rounded-2xl border-border/50 font-bold text-xs h-11">Edit</Button>
-                                    <Button className="rounded-2xl bg-muted text-foreground font-bold text-xs h-11 hover:bg-bouteek-green hover:text-white transition-colors">
+                                    <Button
+                                        className="rounded-2xl bg-muted text-foreground font-bold text-xs h-11 hover:bg-bouteek-green hover:text-white transition-colors"
+                                        onClick={() => window.open(`/store/${merchantSlug}`, '_blank')}
+                                    >
                                         View Site
                                         <ExternalLink size={14} className="ml-2" />
                                     </Button>

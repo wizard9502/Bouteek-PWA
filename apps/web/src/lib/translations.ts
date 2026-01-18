@@ -66,6 +66,16 @@ export const translations = {
       language: "Langue",
       support: "Support & Aide",
       notifications: "Notifications App",
+      appearance: "Apparence",
+      themes: {
+        light: "Clair",
+        dark: "Sombre",
+        pink: "Rose Bouteek",
+        purple: "Royal",
+        ocean: "Océan",
+        luxury: "Luxe Midnight",
+        sunset: "Sunset"
+      },
       referral_title: "Programme de Parrainage",
       referral_desc: "Définissez votre code unique pour inviter d'autres personnes.",
       redeem_referral: "Utiliser un Code de Parrainage",
@@ -289,6 +299,16 @@ export const translations = {
       language: "Language",
       support: "Support & Help",
       notifications: "App Notifications",
+      appearance: "Appearance",
+      themes: {
+        light: "Light",
+        dark: "Dark",
+        pink: "Bouteek Pink",
+        purple: "Royal",
+        ocean: "Ocean",
+        luxury: "Midnight Luxury",
+        sunset: "Sunset"
+      },
       referral_title: "Referral Program",
       referral_desc: "Set your unique code to invite others.",
       redeem_referral: "Redeem Referral Code",

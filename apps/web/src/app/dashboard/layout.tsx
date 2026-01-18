@@ -137,56 +137,73 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
 
                 <div className="p-6 mt-auto space-y-4">
                     {/* Theme & Language Switcher Desktop */}
-                    <div className="flex bg-muted/50 p-1 rounded-2xl gap-1">
-                        <button
-                            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                            className="p-2 rounded-xl bg-white dark:bg-zinc-800 shadow-sm text-foreground flex-1 flex items-center justify-center hover:bg-muted transition-all"
-                        >
-                            {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
-                        </button>
-                        <div className="flex bg-zinc-200 dark:bg-zinc-800 p-1 rounded-xl flex-[2]">
+                    <div className="flex flex-wrap gap-2 bg-muted/30 p-3 rounded-[2rem] border border-border/40">
+                        {[
+                            { id: 'light', color: 'bg-white' },
+                            { id: 'dark', color: 'bg-zinc-900' },
+                            { id: 'pink', color: 'bg-pink-500' },
+                            { id: 'purple', color: 'bg-purple-600' },
+                            { id: 'ocean', color: 'bg-blue-500' },
+                            { id: 'luxury', color: 'bg-zinc-950', border: 'border-amber-500' },
+                            { id: 'sunset', color: 'bg-orange-500' },
+                        ].map((t) => (
                             <button
-                                onClick={() => setLanguage('fr')}
-                                className={cn("flex-1 py-1 px-2 rounded-lg text-[10px] font-black transition-all", language === 'fr' ? "bg-white dark:bg-zinc-700 shadow-sm text-black dark:text-white" : "text-muted-foreground")}
-                            >
-                                FR
-                            </button>
-                            <button
-                                onClick={() => setLanguage('en')}
-                                className={cn("flex-1 py-1 px-2 rounded-lg text-[10px] font-black transition-all", language === 'en' ? "bg-white dark:bg-zinc-700 shadow-sm text-black dark:text-white" : "text-muted-foreground")}
-                            >
-                                EN
-                            </button>
-                        </div>
+                                key={t.id}
+                                onClick={() => setTheme(t.id)}
+                                className={cn(
+                                    "w-6 h-6 rounded-full border transition-all hover:scale-125",
+                                    t.color,
+                                    t.border || "border-border",
+                                    theme === t.id ? "ring-2 ring-primary ring-offset-2 scale-110" : "opacity-60"
+                                )}
+                            />
+                        ))}
                     </div>
-
-                    <div className="p-5 rounded-[2.5rem] bg-muted/40 border border-border/50 space-y-4">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-bouteek-green/10 flex items-center justify-center text-bouteek-green select-none">
-                                <Wallet size={18} />
-                            </div>
-                            <div>
-                                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Storage</p>
-                                <p className="text-sm font-black">75% Full</p>
-                            </div>
-                        </div>
-                        <Button
-                            variant="outline"
-                            className="w-full rounded-2xl border-border/50 hover:bg-red-500 hover:text-white hover:border-red-500 group transition-all"
-                            onClick={handleLogout}
+                    <div className="flex bg-zinc-200 dark:bg-zinc-800 p-1 rounded-xl flex-[2]">
+                        <button
+                            onClick={() => setLanguage('fr')}
+                            className={cn("flex-1 py-1 px-2 rounded-lg text-[10px] font-black transition-all", language === 'fr' ? "bg-white dark:bg-zinc-700 shadow-sm text-black dark:text-white" : "text-muted-foreground")}
                         >
-                            <LogOut size={16} className="mr-2 group-hover:translate-x-1 transition-transform" />
-                            <span className="text-xs font-black uppercase tracking-wider">{t("sidebar.logout")}</span>
-                        </Button>
+                            FR
+                        </button>
+                        <button
+                            onClick={() => setLanguage('en')}
+                            className={cn("flex-1 py-1 px-2 rounded-lg text-[10px] font-black transition-all", language === 'en' ? "bg-white dark:bg-zinc-700 shadow-sm text-black dark:text-white" : "text-muted-foreground")}
+                        >
+                            EN
+                        </button>
                     </div>
                 </div>
-            </aside>
 
-            {/* Mobile Header */}
-            <header className={cn(
+                <div className="p-5 rounded-[2.5rem] bg-muted/40 border border-border/50 space-y-4">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-bouteek-green/10 flex items-center justify-center text-bouteek-green select-none">
+                            <Wallet size={18} />
+                        </div>
+                        <div>
+                            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Storage</p>
+                            <p className="text-sm font-black">75% Full</p>
+                        </div>
+                    </div>
+                    <Button
+                        variant="outline"
+                        className="w-full rounded-2xl border-border/50 hover:bg-red-500 hover:text-white hover:border-red-500 group transition-all"
+                        onClick={handleLogout}
+                    >
+                        <LogOut size={16} className="mr-2 group-hover:translate-x-1 transition-transform" />
+                        <span className="text-xs font-black uppercase tracking-wider">{t("sidebar.logout")}</span>
+                    </Button>
+                </div>
+        </div>
+            </aside >
+
+        {/* Mobile Header */ }
+        < header className = {
+            cn(
                 "md:hidden fixed top-0 w-full z-50 transition-all duration-300 px-6 py-4 flex items-center justify-between",
-                scrolled ? "glass-dark py-3" : "bg-transparent"
-            )}>
+                scrolled? "glass-dark py-3" : "bg-transparent"
+            )
+        } >
                 <div className="flex items-center gap-3">
                     <div className="w-12 h-12 flex items-center justify-center">
                         <img src="/bouteek-logo.jpg" alt="Logo" className="w-10 h-10 rounded-xl object-contain" />
@@ -206,71 +223,78 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="rounded-full bg-muted/50"
-                        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                        className="rounded-full bg-muted/50 transition-colors"
+                        onClick={() => {
+                            const modes = ['light', 'dark', 'pink', 'purple', 'ocean', 'luxury', 'sunset'];
+                            const next = modes[(modes.indexOf(theme || 'light') + 1) % modes.length];
+                            setTheme(next);
+                        }}
                     >
-                        {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
+                        {theme === "dark" || theme === "luxury" ? <Sun size={20} /> : <Moon size={20} />}
                     </Button>
                     <Button variant="ghost" size="icon" className="rounded-full bg-muted/50">
                         <Bell size={20} />
                     </Button>
                 </div>
-            </header>
+            </header >
 
-            {/* Main Content Area */}
-            <main className="flex-1 flex flex-col min-h-screen relative pb-24 md:pb-0">
-                <div className="flex-1 p-6 md:p-12 mt-16 md:mt-0">
-                    <AnimatePresence mode="wait">
-                        <motion.div
-                            key={pathname}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                            transition={{ duration: 0.3 }}
-                        >
-                            {children}
-                        </motion.div>
-                    </AnimatePresence>
-                </div>
-            </main>
+        {/* Main Content Area */ }
+        < main className = "flex-1 flex flex-col min-h-screen relative pb-24 md:pb-0" >
+            <div className="flex-1 p-6 md:p-12 mt-16 md:mt-0">
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={pathname}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.3 }}
+                    >
+                        {children}
+                    </motion.div>
+                </AnimatePresence>
+            </div>
+            </main >
 
-            {/* Mobile Bottom Navigation */}
-            <nav className="md:hidden fixed bottom-0 left-0 right-0 h-20 bg-background border-t border-border px-6 flex items-center justify-between z-50 pb-safe">
+        {/* Mobile Bottom Navigation */ }
+        < nav className = "md:hidden fixed bottom-0 left-0 right-0 h-20 bg-background border-t border-border px-6 flex items-center justify-between z-50 pb-safe" >
 
-                {navItems.map((item) => {
-                    const Icon = item.icon;
-                    const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname?.startsWith(item.href));
-                    return (
-                        <Link
-                            key={item.href}
-                            href={item.href}
-                            className={cn(
-                                "flex flex-col items-center gap-1 transition-all duration-200",
-                                isActive ? "text-bouteek-green scale-110" : "text-muted-foreground hover:text-foreground"
-                            )}
-                        >
-                            <div className={cn(
-                                "p-2 rounded-2xl transition-all duration-200",
-                                isActive ? "bg-bouteek-green/20" : "bg-transparent"
-                            )}>
-                                <Icon size={24} weight={isActive ? "fill" : "regular"} />
-                            </div>
-                            <span className="text-[10px] font-bold uppercase tracking-tighter">
-                                {item.label}
-                            </span>
-                        </Link>
-                    );
-                })}
-            </nav>
+        {
+            navItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname?.startsWith(item.href));
+                return (
+                    <Link
+                        key={item.href}
+                        href={item.href}
+                        className={cn(
+                            "flex flex-col items-center gap-1 transition-all duration-200",
+                            isActive ? "text-bouteek-green scale-110" : "text-muted-foreground hover:text-foreground"
+                        )}
+                    >
+                        <div className={cn(
+                            "p-2 rounded-2xl transition-all duration-200",
+                            isActive ? "bg-bouteek-green/20" : "bg-transparent"
+                        )}>
+                            <Icon size={24} weight={isActive ? "fill" : "regular"} />
+                        </div>
+                        <span className="text-[10px] font-bold uppercase tracking-tighter">
+                            {item.label}
+                        </span>
+                    </Link>
+                );
+            })
+        }
+            </nav >
 
-            {/* Global FAB (Mobile) */}
-            <Button
-                className="md:hidden fixed bottom-24 right-6 w-14 h-14 rounded-full bg-bouteek-green shadow-xl shadow-bouteek-green/40 flex items-center justify-center text-white z-40 transition-transform active:scale-95"
-                onClick={() => router.push("/dashboard/store/new")}
+        {/* Global FAB (Mobile) */ }
+        < Button
+    className = "md:hidden fixed bottom-24 right-6 w-14 h-14 rounded-full bg-bouteek-green shadow-xl shadow-bouteek-green/40 flex items-center justify-center text-white z-40 transition-transform active:scale-95"
+    onClick = {() => router.push("/dashboard/store/new")
+}
             >
-                <Plus size={28} />
-            </Button>
-        </div>
+    <Plus size={28} />
+            </Button >
+        </div >
     );
 }
 

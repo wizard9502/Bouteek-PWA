@@ -86,7 +86,7 @@ export default function AddProductPage() {
                 stock_quantity: Number(formData.stock),
                 category: formData.category,
                 sku: formData.sku,
-                image_url: images[0] || null
+                images: images
             });
 
             if (error) throw error;
