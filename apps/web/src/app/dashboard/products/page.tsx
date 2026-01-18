@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { Plus, Loader2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { compressImage } from "@/lib/utils";
 
 export default function ProductsPage() {
     const [products, setProducts] = useState<any[]>([]);
@@ -68,7 +69,7 @@ export default function ProductsPage() {
             const { data: merchant } = await supabase.from('merchants').select('id').eq('user_id', user.id).single();
             if (!merchant) throw new Error("Merchant profile not found");
 
-            import { compressImage } from "@/lib/utils";
+
 
             // ... inside component ...
 
