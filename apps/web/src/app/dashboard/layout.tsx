@@ -1,23 +1,70 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
     LayoutDashboard,
-    Package,
+    Store,
     ShoppingCart,
-    Settings,
+    Wallet,
+    UserCircle,
     Menu,
-    LogOut
+    LogOut,
+    Plus,
+    Bell,
+    Moon,
+    Sun,
+    Search
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabaseClient";
+import { useTheme } from "next-themes";
+import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
+import { TranslationProvider, useTranslation } from "@/contexts/TranslationContext";
+
+import { TawkToChat } from "@/components/TawkToChat";
+
+import { NotificationsManager } from "@/components/NotificationsManager";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+    return (
+        <TranslationProvider>
+            <NotificationsManager />
+            <DashboardLayoutContent>{children}</DashboardLayoutContent>
+        </TranslationProvider>
+    );
+}
+
+function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
     const router = useRouter();
     const pathname = usePathname();
+    const { theme, setTheme } = useTheme();
+    const { t, language, setLanguage } = useTranslation();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
+    const [user, setUser] = useState<any>(null);
+
+    useEffect(() => {
+        const handleScroll = () => setScrolled(window.scrollY > 20);
+        window.addEventListener("scroll", handleScroll);
+
+        // Fetch User for Chat
+        const fetchUser = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                const { data: merchant } = await supabase.from('merchants').select('business_name').eq('user_id', user.id).single();
+                setUser({
+                    name: merchant?.business_name || user.email?.split('@')[0],
+                    email: user.email
+                });
+            }
+        };
+        fetchUser();
+
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
 
     const handleLogout = async () => {
         await supabase.auth.signOut();
@@ -25,79 +72,183 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     };
 
     const navItems = [
-        { href: "/dashboard", label: "Overview", icon: <LayoutDashboard size={20} /> },
-        { href: "/dashboard/products", label: "Products", icon: <Package size={20} /> },
-        { href: "/dashboard/orders", label: "Orders", icon: <ShoppingCart size={20} /> },
-        { href: "/dashboard/settings", label: "Settings", icon: <Settings size={20} /> },
+        { href: "/dashboard", label: t("sidebar.dashboard"), icon: LayoutDashboard },
+        { href: "/dashboard/store", label: t("sidebar.store"), icon: Store },
+        { href: "/dashboard/orders", label: t("sidebar.orders"), icon: ShoppingCart },
+        { href: "/dashboard/finance", label: t("sidebar.finance"), icon: Wallet },
+        { href: "/dashboard/profile", label: t("sidebar.profile"), icon: UserCircle },
     ];
 
     return (
-        <div className="min-h-screen bg-gray-100 flex">
-            {/* Mobile Sidebar Overlay */}
-            {isSidebarOpen && (
-                <div
-                    className="fixed inset-0 bg-black/50 z-40 md:hidden"
-                    onClick={() => setIsSidebarOpen(false)}
-                />
-            )}
-
-            {/* Sidebar */}
-            <aside className={`
-        fixed md:static inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transform transition-transform duration-200 ease-in-out
-        ${isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
-      `}>
-                <div className="p-6 border-b border-gray-200 flex items-center gap-3">
-                    <img src="/bouteek-logo.jpg" alt="Logo" className="w-8 h-8 rounded" />
-                    <h1 className="font-bold text-xl">Merchant</h1>
+        <div className="min-h-screen bg-background flex flex-col md:flex-row overflow-x-hidden">
+            <TawkToChat user={user} />
+            {/* Desktop Sidebar */}
+            <aside className="hidden md:flex flex-col w-72 h-screen sticky top-0 border-r border-border bg-card/50 backdrop-blur-xl transition-all duration-300">
+                <div className="p-8 flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-2xl bg-bouteek-green flex items-center justify-center shadow-lg shadow-bouteek-green/20">
+                        <img src="/bouteek-logo.jpg" alt="Logo" className="w-6 h-6 rounded-lg object-contain" />
+                    </div>
+                    <span className="font-black text-2xl tracking-tighter">Bouteek</span>
                 </div>
 
-                <nav className="p-4 space-y-2">
+                <nav className="flex-1 px-4 py-4 space-y-1.5">
                     {navItems.map((item) => {
-                        const isActive = pathname === item.href;
+                        const Icon = item.icon;
+                        const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname?.startsWith(item.href));
                         return (
                             <Link
                                 key={item.href}
                                 href={item.href}
-                                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive
-                                    ? "bg-[#00D632]/10 text-[#006b19] font-medium"
-                                    : "text-gray-600 hover:bg-gray-50"
-                                    }`}
-                                onClick={() => setIsSidebarOpen(false)}
+                                className={cn(
+                                    "flex items-center gap-4 px-6 py-4 rounded-3xl transition-all duration-200 group relative overflow-hidden",
+                                    isActive
+                                        ? "bg-bouteek-green text-white font-bold shadow-lg shadow-bouteek-green/20"
+                                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                                )}
                             >
-                                {item.icon}
-                                {item.label}
+                                <Icon size={22} className={cn("transition-transform duration-200", isActive ? "scale-110" : "group-hover:scale-110")} />
+                                <span className="text-sm uppercase tracking-widest font-bold">
+                                    {item.label}
+                                </span>
+                                {isActive && (
+                                    <motion.div
+                                        layoutId="active-pill"
+                                        className="absolute inset-0 bg-white/10"
+                                        initial={false}
+                                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                    />
+                                )}
                             </Link>
                         );
                     })}
                 </nav>
 
-                <div className="absolute bottom-0 w-full p-4 border-t border-gray-200">
-                    <Button
-                        variant="ghost"
-                        className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
-                        onClick={handleLogout}
-                    >
-                        <LogOut size={20} className="mr-2" />
-                        Log Out
-                    </Button>
+                <div className="p-6 mt-auto space-y-4">
+                    {/* Language Switcher Desktop */}
+                    <div className="flex bg-muted/50 p-1 rounded-xl">
+                        <button
+                            onClick={() => setLanguage('fr')}
+                            className={cn("flex-1 py-1 rounded-lg text-xs font-bold transition-all", language === 'fr' ? "bg-white shadow-sm text-black" : "text-muted-foreground")}
+                        >
+                            FR
+                        </button>
+                        <button
+                            onClick={() => setLanguage('en')}
+                            className={cn("flex-1 py-1 rounded-lg text-xs font-bold transition-all", language === 'en' ? "bg-white shadow-sm text-black" : "text-muted-foreground")}
+                        >
+                            EN
+                        </button>
+                    </div>
+
+                    <div className="p-6 rounded-4xl bg-muted/30 border border-border/50 space-y-4">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-bouteek-green/10 flex items-center justify-center text-bouteek-green">
+                                <Bell size={20} />
+                            </div>
+                            <div>
+                                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("sidebar.storage")}</p>
+                                <p className="text-sm font-black">75% Full</p>
+                            </div>
+                        </div>
+                        <Button
+                            variant="outline"
+                            className="w-full rounded-2xl border-bouteek-green/20 hover:bg-bouteek-green hover:text-white group"
+                            onClick={handleLogout}
+                        >
+                            <LogOut size={18} className="mr-2 group-hover:translate-x-1 transition-transform" />
+                            {t("sidebar.logout")}
+                        </Button>
+                    </div>
                 </div>
             </aside>
 
-            {/* Main Content */}
-            <div className="flex-1 flex flex-col min-h-screen">
-                <header className="bg-white border-b border-gray-200 p-4 md:hidden flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <img src="/bouteek-logo.jpg" alt="Logo" className="w-8 h-8 rounded" />
-                        <span className="font-bold">Bouteek</span>
+            {/* Mobile Header */}
+            <header className={cn(
+                "md:hidden fixed top-0 w-full z-50 transition-all duration-300 px-6 py-4 flex items-center justify-between",
+                scrolled ? "glass-dark py-3" : "bg-transparent"
+            )}>
+                <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-xl bg-bouteek-green flex items-center justify-center">
+                        <img src="/bouteek-logo.jpg" alt="Logo" className="w-5 h-5 rounded-md" />
                     </div>
-                    <Button variant="ghost" size="icon" onClick={() => setIsSidebarOpen(true)}>
-                        <Menu size={24} />
+                    <span className="font-black text-xl tracking-tighter">Bouteek</span>
+                </div>
+                <div className="flex items-center gap-2">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="rounded-full bg-muted/50"
+                        onClick={() => setLanguage(language === 'fr' ? 'en' : 'fr')}
+                    >
+                        <span className="text-xs font-black">{language.toUpperCase()}</span>
                     </Button>
-                </header>
-                <main className="flex-1 p-4 md:p-8 overflow-y-auto">
-                    {children}
-                </main>
-            </div>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="rounded-full bg-muted/50"
+                        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                    >
+                        {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
+                    </Button>
+                    <Button variant="ghost" size="icon" className="rounded-full bg-muted/50">
+                        <Bell size={20} />
+                    </Button>
+                </div>
+            </header>
+
+            {/* Main Content Area */}
+            <main className="flex-1 flex flex-col min-h-screen relative pb-24 md:pb-0">
+                <div className="flex-1 p-6 md:p-12 mt-16 md:mt-0">
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={pathname}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            {children}
+                        </motion.div>
+                    </AnimatePresence>
+                </div>
+            </main>
+
+            {/* Mobile Bottom Navigation */}
+            <nav className="md:hidden fixed bottom-0 left-0 right-0 h-20 glass-dark border-t border-white/5 px-6 flex items-center justify-between z-50 pb-safe">
+                {navItems.map((item) => {
+                    const Icon = item.icon;
+                    const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname?.startsWith(item.href));
+                    return (
+                        <Link
+                            key={item.href}
+                            href={item.href}
+                            className={cn(
+                                "flex flex-col items-center gap-1 transition-all duration-200",
+                                isActive ? "text-bouteek-green scale-110" : "text-muted-foreground hover:text-foreground"
+                            )}
+                        >
+                            <div className={cn(
+                                "p-2 rounded-2xl transition-all duration-200",
+                                isActive ? "bg-bouteek-green/20" : "bg-transparent"
+                            )}>
+                                <Icon size={24} weight={isActive ? "fill" : "regular"} />
+                            </div>
+                            <span className="text-[10px] font-bold uppercase tracking-tighter">
+                                {item.label}
+                            </span>
+                        </Link>
+                    );
+                })}
+            </nav>
+
+            {/* Global FAB (Mobile) */}
+            <Button
+                className="md:hidden fixed bottom-24 right-6 w-14 h-14 rounded-full bg-bouteek-green shadow-xl shadow-bouteek-green/40 flex items-center justify-center text-white z-40 transition-transform active:scale-95"
+                onClick={() => router.push("/dashboard/store/new")}
+            >
+                <Plus size={28} />
+            </Button>
         </div>
     );
 }
+

@@ -1,0 +1,683 @@
+"use client";
+
+import { useState } from "react";
+import { useTranslation } from "@/contexts/TranslationContext";
+import { Button } from "@/components/ui/button";
+import {
+    LayoutGrid,
+    Palette,
+    Type,
+    Image as ImageIcon,
+    Save,
+    Check,
+    Smartphone,
+    Monitor,
+    MousePointer2,
+    Store,
+    Layers,
+    ToggleLeft,
+    ToggleRight,
+    Calendar,
+    Briefcase,
+    ShoppingBag,
+    MessageSquareQuote,
+    Globe
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
+import { Switch } from "@/components/ui/switch";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+export default function StoreBuilderPage() {
+    return (
+        <StoreBuilderContent />
+    );
+}
+
+function StoreBuilderContent() {
+    const { t } = useTranslation();
+    const [activeTab, setActiveTab] = useState("templates"); // templates, modules, design, content
+    const [selectedTemplate, setSelectedTemplate] = useState("modern_minimal");
+    const [viewMode, setViewMode] = useState("mobile"); // mobile, desktop
+
+    // Module States
+    const [modules, setModules] = useState({
+        sales: true,
+        rentals: false,
+        services: false,
+        testimonials: false
+    });
+
+    // Customization State
+    const [storeConfig, setStoreConfig] = useState({
+        primaryColor: "#050505",
+        secondaryColor: "#ffffff",
+        accentColor: "#00D632",
+        fontFamily: "Inter",
+        heroTitle: "New Arrivals",
+        heroSubtitle: "Discover our latest collection",
+        buttonText: "Shop Now",
+        heroImage: "https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=2070&auto=format&fit=crop"
+    });
+
+    const templates = [
+        {
+            id: "modern_minimal",
+            name: "Modern Ecommerce",
+            description: "Clean lines, whitespace, and focus on product photography.",
+            defaultColors: { primary: "#000000", accent: "#00D632" },
+            image: "/template_ecommerce_modern_1768734107548.png"
+        },
+        {
+            id: "bold_vibrant",
+            name: "Corporate Business",
+            description: "Professional layout with team sections and clear service offerings.",
+            defaultColors: { primary: "#1e3a8a", accent: "#3b82f6" },
+            image: "/template_business_corp_1768734125853.png"
+        },
+        {
+            id: "classic_boutique",
+            name: "Service Booking",
+            description: "Optimized for appointments, salons, and consultancies.",
+            defaultColors: { primary: "#78350f", accent: "#d97706" },
+            image: "/template_service_booking_1768734141246.png"
+        },
+        {
+            id: "dark_mode_pro",
+            name: "Luxury Premium",
+            description: "Sleek, premium dark interface for luxury items.",
+            defaultColors: { primary: "#000000", accent: "#fbbf24" },
+            image: "/template_luxury_premium_1768734171843.png"
+        },
+        {
+            id: "grid_masonry",
+            name: "Minimalist Clean",
+            description: "Sophisticated 'less is more' design for high-end retail.",
+            defaultColors: { primary: "#404040", accent: "#737373" },
+            image: "/template_minimalist_clean_1768734156244.png"
+        },
+        {
+            id: "chic_vogue",
+            name: "Chic Vogue",
+            description: "Playful pink aesthetics perfect for fashion and beauty.",
+            defaultColors: { primary: "#ec4899", accent: "#db2777" },
+            image: "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?q=80&w=2000&auto=format&fit=crop"
+        },
+        {
+            id: "urban_street",
+            name: "Urban Streetwear",
+            description: "Bold, gritty, and high-contrast dark theme.",
+            defaultColors: { primary: "#171717", accent: "#dc2626" },
+            image: "https://images.unsplash.com/photo-1523398002811-999ca8dec234?q=80&w=2000&auto=format&fit=crop"
+        },
+        {
+            id: "eco_nature",
+            name: "Eco Nature",
+            description: "Fresh greens and organic vibes for sustainable brands.",
+            defaultColors: { primary: "#15803d", accent: "#86efac" },
+            image: "https://images.unsplash.com/photo-1542601906990-b4d3fb7d5c73?q=80&w=2000&auto=format&fit=crop"
+        },
+        {
+            id: "tech_gadget",
+            name: "Tech Gadget",
+            description: "Futuristic blues and clean lines for electronics.",
+            defaultColors: { primary: "#2563eb", accent: "#60a5fa" },
+            image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2000&auto=format&fit=crop"
+        },
+        {
+            id: "artisan_craft",
+            name: "Artisan Craft",
+            description: "Warm earth tones for handmade and artisanal products.",
+            defaultColors: { primary: "#92400e", accent: "#fcd34d" },
+            image: "https://images.unsplash.com/photo-1452860606245-08befc0ff44b?q=80&w=2000&auto=format&fit=crop"
+        }
+    ];
+
+    const toggleModule = (key: keyof typeof modules) => {
+        setModules(prev => ({ ...prev, [key]: !prev[key] }));
+    };
+
+    const updateConfig = (key: string, value: string) => {
+        setStoreConfig(prev => ({ ...prev, [key]: value }));
+    };
+
+    // Live Preview Component
+    const PreviewContent = () => {
+        // Dynamic styles based on config
+        const containerStyle = { fontFamily: storeConfig.fontFamily };
+        const heroStyle = {
+            backgroundColor: selectedTemplate === 'dark_mode_pro' ? storeConfig.primaryColor : '#f4f4f5',
+            color: selectedTemplate === 'dark_mode_pro' ? '#fff' : storeConfig.primaryColor,
+            backgroundImage: selectedTemplate === 'bold_vibrant' || selectedTemplate === 'modern_minimal' ? `url(${storeConfig.heroImage})` : 'none',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+        };
+        const buttonStyle = { backgroundColor: storeConfig.accentColor, color: '#fff' };
+
+        return (
+            <div className="w-full min-h-full bg-white text-foreground" style={containerStyle}>
+                {/* Header */}
+                <header className="px-6 py-4 flex items-center justify-between sticky top-0 bg-white/80 backdrop-blur-md z-10 border-b border-border/10">
+                    <div className="font-black text-xl tracking-tighter" style={{ color: storeConfig.primaryColor }}>LOGO</div>
+                    <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                        <ShoppingBag size={14} />
+                    </div>
+                </header>
+
+                {/* Hero Section */}
+                <section className={cn(
+                    "relative mx-4 mt-4 rounded-3xl overflow-hidden flex items-center justify-center text-center p-10 transition-all",
+                    selectedTemplate === 'grid_masonry' ? 'h-[40vh]' : 'h-[50vh]'
+                )} style={heroStyle}>
+
+                    {/* Overlay for bg images */}
+                    {(selectedTemplate === 'bold_vibrant' || selectedTemplate === 'modern_minimal') && (
+                        <div className="absolute inset-0 bg-black/30 z-0" />
+                    )}
+
+                    <div className="relative z-10 space-y-4 max-w-md mx-auto">
+                        <h2 className="text-4xl md:text-5xl font-black leading-tight" style={{ color: (selectedTemplate === 'bold_vibrant' || selectedTemplate === 'modern_minimal') ? '#fff' : 'inherit' }}>
+                            {storeConfig.heroTitle}
+                        </h2>
+                        <p className="text-sm font-medium opacity-90" style={{ color: (selectedTemplate === 'bold_vibrant' || selectedTemplate === 'modern_minimal') ? '#eee' : 'inherit' }}>
+                            {storeConfig.heroSubtitle}
+                        </p>
+                        <button
+                            className="px-8 py-3 rounded-full text-xs font-bold uppercase tracking-widest transition-transform hover:scale-105 active:scale-95 shadow-lg"
+                            style={buttonStyle}
+                        >
+                            {storeConfig.buttonText}
+                        </button>
+                    </div>
+                </section>
+
+                {/* Modules Content */}
+                <div className="p-6 space-y-12">
+                    {modules.sales && (
+                        <section>
+                            <div className="flex items-center justify-between mb-6">
+                                <h3 className="font-black text-xl" style={{ color: storeConfig.primaryColor }}>Featured</h3>
+                                <span className="text-xs font-bold underline cursor-pointer">View All</span>
+                            </div>
+                            <div className={cn(
+                                "grid gap-4",
+                                selectedTemplate === 'grid_masonry' ? "grid-cols-2" : "grid-cols-2 md:grid-cols-4"
+                            )}>
+                                {[1, 2, 3, 4].map(i => (
+                                    <div key={i} className="group cursor-pointer">
+                                        <div className="aspect-[3/4] bg-muted rounded-2xl mb-3 overflow-hidden">
+                                            <div className="w-full h-full bg-gray-100 group-hover:scale-105 transition-transform duration-500" />
+                                        </div>
+                                        <h4 className="font-bold text-sm truncate">Product Name {i}</h4>
+                                        <p className="text-xs opacity-60">15,000 XOF</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    )}
+
+                    {modules.rentals && (
+                        <section className="bg-orange-50/50 p-6 rounded-3xl border border-orange-100">
+                            <div className="flex items-center gap-4 mb-4">
+                                <div className="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center text-orange-500">
+                                    <Calendar size={24} />
+                                </div>
+                                <div>
+                                    <h3 className="font-black text-lg text-orange-950">Rent Equipment</h3>
+                                    <p className="text-xs text-orange-700">Daily rates available</p>
+                                </div>
+                            </div>
+                            <button className="w-full py-3 bg-orange-500 text-white rounded-xl font-bold text-sm hover:bg-orange-600 transition-colors">
+                                Check Availability
+                            </button>
+                        </section>
+                    )}
+
+                    {modules.services && (
+                        <section className="bg-purple-50/50 p-6 rounded-3xl border border-purple-100">
+                            <div className="flex items-center gap-4 mb-4">
+                                <div className="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center text-purple-500">
+                                    <Briefcase size={24} />
+                                </div>
+                                <div>
+                                    <h3 className="font-black text-lg text-purple-950">Book Services</h3>
+                                    <p className="text-xs text-purple-700">1 Hour Sessions</p>
+                                </div>
+                            </div>
+                            <button className="w-full py-3 bg-purple-500 text-white rounded-xl font-bold text-sm hover:bg-purple-600 transition-colors">
+                                Book Appointment
+                            </button>
+                        </section>
+                    )}
+
+                    {modules.testimonials && (
+                        <section className="space-y-6">
+                            <h3 className="font-black text-xl text-center" style={{ color: storeConfig.primaryColor }}>What People Say</h3>
+                            <div className="flex bg-muted/30 p-6 rounded-3xl gap-4 border border-border/10">
+                                <div className="w-10 h-10 bg-muted rounded-full flex-shrink-0" />
+                                <div>
+                                    <div className="flex gap-1 mb-2">
+                                        {[1, 2, 3, 4, 5].map(star => (
+                                            <div key={star} className="w-3 h-3 bg-yellow-400 rounded-full" />
+                                        ))}
+                                    </div>
+                                    <p className="text-sm italic opacity-80 mb-2">"Great products and amazing service. Highly recommended!"</p>
+                                    <p className="text-xs font-bold" style={{ color: storeConfig.accentColor }}>- Happy Customer</p>
+                                </div>
+                            </div>
+                        </section>
+                    )}
+                </div>
+
+                {/* Footer */}
+                <footer className="bg-black text-white p-10 mt-10">
+                    <div className="grid grid-cols-2 gap-8 mb-8">
+                        <div>
+                            <h5 className="font-bold mb-4">Shop</h5>
+                            <div className="space-y-2 text-sm opacity-60">
+                                <p>All Products</p>
+                                <p>New Arrivals</p>
+                                <p>Featured</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 className="font-bold mb-4">Support</h5>
+                            <div className="space-y-2 text-sm opacity-60">
+                                <p>FAQ</p>
+                                <p>Shipping</p>
+                                <p>Returns</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="pt-8 border-t border-white/10 text-center">
+                        <p className="text-xs opacity-40">Powered by Bouteek</p>
+                    </div>
+                </footer>
+            </div>
+        );
+    };
+
+    return (
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        loadStoreData();
+    }, []);
+
+    const loadStoreData = async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        // 1. Get Merchant
+        const { data: merchant } = await supabase
+            .from('merchants')
+            .select('id')
+            .eq('user_id', user.id)
+            .single();
+
+        if (!merchant) return;
+
+        // 2. Get Storefront
+        const { data: storefront } = await supabase
+            .from('storefronts')
+            .select('*')
+            .eq('merchant_id', merchant.id)
+            .single();
+
+        if (storefront) {
+            setModules({
+                sales: storefront.enable_sales ?? true,
+                rentals: storefront.enable_rentals ?? false,
+                services: storefront.enable_services ?? false,
+                testimonials: storefront.enable_testimonials ?? false
+            });
+            if (storefront.template_id) setSelectedTemplate(storefront.template_id);
+            if (storefront.theme_config) setStoreConfig(prev => ({ ...prev, ...storefront.theme_config }));
+        }
+        setIsLoading(false);
+    };
+
+    const handleSave = async () => {
+        setIsLoading(true);
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        // 1. Get Merchant ID
+        const { data: merchant } = await supabase.from('merchants').select('id').eq('user_id', user.id).single();
+        if (!merchant) {
+            alert("Merchant account not found.");
+            setIsLoading(false);
+            return;
+        }
+
+        // 2. Upsert Storefront
+        const { error } = await supabase
+            .from('storefronts')
+            .upsert({
+                merchant_id: merchant.id,
+                template_id: selectedTemplate,
+                theme_config: storeConfig,
+                enable_sales: modules.sales,
+                enable_rentals: modules.rentals,
+                enable_services: modules.services,
+                enable_testimonials: modules.testimonials,
+                custom_domain: customDomain,
+                updated_at: new Date().toISOString()
+            }, { onConflict: 'merchant_id' });
+
+        if (error) {
+            console.error(error);
+            alert("Failed to save changes.");
+        } else {
+            alert("Storefront saved successfully!");
+        }
+        setIsLoading(false);
+    };
+
+    if (isLoading) return <div className="h-screen flex items-center justify-center">Loading Store Builder...</div>;
+
+    return (
+        <div className="h-[calc(100vh-100px)] flex flex-col lg:flex-row gap-6">
+            {/* Left Sidebar: Controls */}
+            <div className="w-full lg:w-[400px] flex flex-col gap-6 h-full overflow-y-auto pb-10">
+                <div>
+                    <h1 className="hero-text !text-3xl">Store Builder</h1>
+                    <p className="text-muted-foreground font-medium mt-1">Design your perfect storefront.</p>
+                </div>
+
+                {/* Tabs */}
+                <div className="flex bg-muted p-1 rounded-2xl">
+                    {[
+                        { id: "templates", icon: LayoutGrid, label: "Templates" },
+                        { id: "modules", icon: Layers, label: "Modules" },
+                        { id: "design", icon: Palette, label: "Design" },
+                        { id: "settings", icon: Globe, label: "Settings" },
+                    ].map((tab) => (
+                        <button
+                            key={tab.id}
+                            onClick={() => setActiveTab(tab.id)}
+                            className={cn(
+                                "flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-black uppercase tracking-wider transition-all",
+                                activeTab === tab.id ? "bg-white shadow-sm text-black" : "text-muted-foreground hover:text-foreground"
+                            )}
+                        >
+                            <tab.icon size={16} />
+                            {tab.label}
+                        </button>
+                    ))}
+                </div>
+
+                {/* Content Area Based on Tab */}
+                <div className="flex-1 space-y-6">
+                    {activeTab === "templates" && (
+                        <div className="space-y-4">
+                            {templates.map((template) => (
+                                <div
+                                    key={template.id}
+                                    onClick={() => {
+                                        setSelectedTemplate(template.id);
+                                        // Auto-apply defaults if desired, or keep user custom
+                                        // setStoreConfig(prev => ({ ...prev, primaryColor: template.defaultColors.primary, accentColor: template.defaultColors.accent }));
+                                    }}
+                                    className={cn(
+                                        "p-4 rounded-3xl border-2 cursor-pointer transition-all hover:scale-[1.02]",
+                                        selectedTemplate === template.id ? "border-bouteek-green bg-bouteek-green/5" : "border-border/50 bg-card"
+                                    )}
+                                >
+                                    <div className="flex items-center gap-4">
+                                        {/* Use generated image thumbnail */}
+                                        <div className="w-16 h-16 rounded-2xl flex-shrink-0 bg-muted overflow-hidden">
+                                            <img src={template.image} className="w-full h-full object-cover" alt={template.name} />
+                                        </div>
+                                        <div>
+                                            <h3 className="font-black text-lg">{template.name}</h3>
+                                            <p className="text-xs text-muted-foreground line-clamp-2">{template.description}</p>
+                                        </div>
+                                        {selectedTemplate === template.id && (
+                                            <div className="ml-auto bg-bouteek-green text-black rounded-full p-1">
+                                                <Check size={16} />
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    {activeTab === "modules" && (
+                        <div className="space-y-6">
+                            <div className="bouteek-card p-6 space-y-6">
+                                <h3 className="font-black text-xl">Store Capabilities</h3>
+                                <div className="space-y-4">
+                                    <div className="flex items-center justify-between p-4 bg-muted/50 rounded-2xl">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center"><ShoppingBag size={20} /></div>
+                                            <div><p className="font-black text-sm">Product Sales</p></div>
+                                        </div>
+                                        <Switch checked={modules.sales} onCheckedChange={() => toggleModule('sales')} />
+                                    </div>
+                                    <div className="flex items-center justify-between p-4 bg-muted/50 rounded-2xl">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center"><Calendar size={20} /></div>
+                                            <div><p className="font-black text-sm">Rentals</p></div>
+                                        </div>
+                                        <Switch checked={modules.rentals} onCheckedChange={() => toggleModule('rentals')} />
+                                    </div>
+                                    <div className="flex items-center justify-between p-4 bg-muted/50 rounded-2xl">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center"><Briefcase size={20} /></div>
+                                            <div><p className="font-black text-sm">Services</p></div>
+                                        </div>
+                                        <Switch checked={modules.services} onCheckedChange={() => toggleModule('services')} />
+                                    </div>
+
+                                    <div className="flex items-center justify-between p-4 bg-muted/50 rounded-2xl">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-xl bg-pink-100 text-pink-600 flex items-center justify-center"><MessageSquareQuote size={20} /></div>
+                                            <div><p className="font-black text-sm">Testimonials</p></div>
+                                        </div>
+                                        <Switch checked={modules.testimonials} onCheckedChange={() => toggleModule('testimonials')} />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {activeTab === "design" && (
+                        <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
+                            <div className="bouteek-card p-6 space-y-4">
+                                <h3 className="font-black text-lg">Branding & Colors</h3>
+                                <div className="grid gap-4">
+                                    <div className="space-y-2">
+                                        <Label>Primary Color</Label>
+                                        <div className="flex gap-2">
+                                            <Input
+                                                type="color"
+                                                className="w-12 h-12 p-1 rounded-xl cursor-pointer"
+                                                value={storeConfig.primaryColor}
+                                                onChange={(e) => updateConfig('primaryColor', e.target.value)}
+                                            />
+                                            <Input
+                                                value={storeConfig.primaryColor}
+                                                onChange={(e) => updateConfig('primaryColor', e.target.value)}
+                                                className="flex-1 rounded-xl"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Accent Color</Label>
+                                        <div className="flex gap-2">
+                                            <Input
+                                                type="color"
+                                                className="w-12 h-12 p-1 rounded-xl cursor-pointer"
+                                                value={storeConfig.accentColor}
+                                                onChange={(e) => updateConfig('accentColor', e.target.value)}
+                                            />
+                                            <Input
+                                                value={storeConfig.accentColor}
+                                                onChange={(e) => updateConfig('accentColor', e.target.value)}
+                                                className="flex-1 rounded-xl"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="bouteek-card p-6 space-y-4">
+                                <h3 className="font-black text-lg">Hero Content</h3>
+                                <div className="space-y-4">
+                                    <div className="space-y-2">
+                                        <Label>Headline</Label>
+                                        <Input
+                                            value={storeConfig.heroTitle}
+                                            onChange={(e) => updateConfig('heroTitle', e.target.value)}
+                                            className="rounded-xl font-bold"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Subtitle</Label>
+                                        <Input
+                                            value={storeConfig.heroSubtitle}
+                                            onChange={(e) => updateConfig('heroSubtitle', e.target.value)}
+                                            className="rounded-xl"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Button Text</Label>
+                                        <Input
+                                            value={storeConfig.buttonText}
+                                            onChange={(e) => updateConfig('buttonText', e.target.value)}
+                                            className="rounded-xl"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {activeTab === "settings" && (
+                        <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
+                            <div className="bouteek-card p-6 space-y-4">
+                                <h3 className="font-black text-lg flex items-center gap-2">
+                                    <Globe size={18} />
+                                    Custom Domain
+                                </h3>
+
+                                {subscriptionTier === 'growth' || subscriptionTier === 'pro' ? (
+                                    <div className="space-y-6">
+                                        <div className="space-y-2">
+                                            <Label>Domain Name</Label>
+                                            <Input
+                                                placeholder="e.g. mystore.com"
+                                                value={customDomain}
+                                                onChange={(e) => setCustomDomain(e.target.value)}
+                                                className="rounded-xl font-bold"
+                                            />
+                                            <p className="text-xs text-muted-foreground">Enter your domain without http:// or https://</p>
+                                        </div>
+
+                                        <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 space-y-3">
+                                            <div className="flex items-center gap-2 text-blue-800 font-bold text-sm">
+                                                <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                                                DNS Configuration Required
+                                            </div>
+                                            <p className="text-xs text-blue-700 leading-relaxed">
+                                                To connect your domain, please add the following record to your domain provider's DNS settings:
+                                            </p>
+                                            <div className="bg-white rounded-lg border border-blue-200 p-3 font-mono text-xs overflow-x-auto">
+                                                <div className="grid grid-cols-[80px_1fr] gap-2">
+                                                    <span className="text-muted-foreground">Type:</span>
+                                                    <span className="font-bold">CNAME</span>
+                                                    <span className="text-muted-foreground">Name:</span>
+                                                    <span className="font-bold">@ (or www)</span>
+                                                    <span className="text-muted-foreground">Value:</span>
+                                                    <span className="text-blue-600 font-bold">connect.bouteek.com</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {domainStatus !== 'pending' && (
+                                            <div className={cn(
+                                                "p-4 rounded-xl border flex items-center gap-3",
+                                                domainStatus === 'verified' ? "bg-green-50 border-green-200 text-green-800" : "bg-red-50 border-red-200 text-red-800"
+                                            )}>
+                                                {domainStatus === 'verified' ? <Check size={18} /> : <div className="w-4 h-4 rounded-full border-2 border-red-500 border-t-transparent animate-spin" />}
+                                                <div>
+                                                    <p className="text-sm font-bold capitalize">{domainStatus} Status</p>
+                                                    <p className="text-xs opacity-80">
+                                                        {domainStatus === 'verified' ? "Your domain is active!" : "We verified your domain settings."}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div className="text-center py-8 space-y-4">
+                                        <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto text-muted-foreground">
+                                            <Store size={32} />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <h4 className="font-black text-lg">Upgrade to Connect Domain</h4>
+                                            <p className="text-sm text-muted-foreground max-w-[250px] mx-auto">
+                                                Custom domains are available on Growth and Pro plans.
+                                            </p>
+                                        </div>
+                                        <Button className="rounded-full bg-black text-white font-bold" disabled>
+                                            Upgrade Plan (Coming Soon)
+                                        </Button>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                <Button onClick={handleSave} disabled={isLoading} className="w-full h-14 rounded-2xl bg-black text-white font-black text-lg shadow-xl shadow-black/20 mt-auto">
+                    <Save className="mr-2" size={20} />
+                    {isLoading ? "Saving..." : "Save & Publish"}
+                </Button>
+            </div>
+
+            {/* Right Side: Preview */}
+            <div className="flex-1 bg-muted/30 rounded-4xl border-2 border-dashed border-border/50 p-8 flex flex-col items-center justify-center relative overflow-hidden transition-all">
+                {/* View Toggles */}
+                <div className="absolute top-6 flex bg-white rounded-full p-1 shadow-sm border border-border/50 z-20">
+                    <button
+                        onClick={() => setViewMode("mobile")}
+                        className={cn("p-2 rounded-full transition-colors", viewMode === "mobile" ? "bg-black text-white" : "text-muted-foreground hover:bg-muted")}
+                    >
+                        <Smartphone size={20} />
+                    </button>
+                    <button
+                        onClick={() => setViewMode("desktop")}
+                        className={cn("p-2 rounded-full transition-colors", viewMode === "desktop" ? "bg-black text-white" : "text-muted-foreground hover:bg-muted")}
+                    >
+                        <Monitor size={20} />
+                    </button>
+                </div>
+
+                {/* Mobile/Desktop Preview Frame */}
+                <motion.div
+                    layout
+                    className={cn(
+                        "bg-white shadow-2xl border-4 border-zinc-900 overflow-hidden relative transition-all duration-500",
+                        viewMode === "mobile" ? "w-[375px] h-[750px] rounded-[3rem]" : "w-full h-full rounded-xl max-w-5xl"
+                    )}
+                >
+                    {/* Mock Browser Header for Desktop / Notch for Mobile */}
+                    {viewMode === "mobile" ? (
+                        <div className="absolute top-0 left-0 right-0 h-7 bg-black z-50 flex justify-center">
+                            <div className="w-32 h-5 bg-black rounded-b-2xl" />
+                        </div>
+                    ) : null}
+
+                    {/* LIVE Preview Component */}
+                    <div className="w-full h-full overflow-y-auto bg-white">
+                        <PreviewContent />
+                    </div>
+                </motion.div>
+            </div>
+        </div>
+    );
+}

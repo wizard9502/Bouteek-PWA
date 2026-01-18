@@ -68,15 +68,22 @@ export default function ProductsPage() {
             const { data: merchant } = await supabase.from('merchants').select('id').eq('user_id', user.id).single();
             if (!merchant) throw new Error("Merchant profile not found");
 
+            import { compressImage } from "@/lib/utils";
+
+            // ... inside component ...
+
             let imageUrl = null;
             if (imageFile) {
-                const fileExt = imageFile.name.split('.').pop();
+                // Compress Image
+                const compressedFile = await compressImage(imageFile, 0.7, 1000);
+
+                const fileExt = compressedFile.name.split('.').pop();
                 const fileName = `${Math.random()}.${fileExt}`;
                 const filePath = `${merchant.id}/${fileName}`;
 
                 const { error: uploadError } = await supabase.storage
                     .from('products')
-                    .upload(filePath, imageFile);
+                    .upload(filePath, compressedFile);
 
                 if (uploadError) throw uploadError;
 
