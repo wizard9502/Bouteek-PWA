@@ -3,6 +3,16 @@
   "globalDependencies": [
     "**/.env.*local"
   ],
+  "globalEnv": [
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "PAYDUNYA_MASTER_KEY",
+    "PAYDUNYA_PUBLIC_KEY",
+    "PAYDUNYA_PRIVATE_KEY",
+    "PAYDUNYA_TOKEN",
+    "NEXT_PUBLIC_ROOT_DOMAIN"
+  ],
   "tasks": {
     "build": {
       "dependsOn": [
