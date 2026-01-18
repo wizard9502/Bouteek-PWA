@@ -10,7 +10,8 @@ export async function getAdminKPIs() {
     const { data: revenueData } = await supabase
         .from('wallet_transactions')
         .select('amount')
-        .eq('type', 'subscription');
+        .eq('transaction_type', 'subscription');
+
 
     const totalRevenue = revenueData?.reduce((acc, curr) => acc + (Math.abs(curr.amount || 0)), 0) || 0;
 
@@ -142,10 +143,11 @@ export async function adjustMerchantCredit(merchantId: string, amount: number, r
     await supabase.from('wallet_transactions').insert({
         merchant_id: merchantId,
         amount: amount,
-        type: 'topup', // or 'adjustment'
+        transaction_type: 'topup', // or 'adjustment'
         description: `Admin Adjustment: ${reason}`,
         reference_id: adminId
     });
+
 
     // 4. Audit Log
     await supabase.from('admin_audit_logs').insert({
@@ -285,3 +287,49 @@ export async function getAuditLogs() {
         .limit(50);
     return data || [];
 }
+
+export async function getRevenueGrowthData() {
+    // 1. Fetch last 7 days of transactions (subscriptions) and orders (commissions)
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+    const { data: subs } = await supabase
+        .from('wallet_transactions')
+        .select('created_at, amount')
+        .eq('transaction_type', 'subscription')
+        .gte('created_at', sevenDaysAgo.toISOString());
+
+    const { data: orders } = await supabase
+        .from('orders')
+        .select('created_at, commission')
+        .eq('status', 'paid')
+        .gte('created_at', sevenDaysAgo.toISOString());
+
+    // Map to days
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const result = Array.from({ length: 7 }).map((_, i) => {
+        const d = new Date();
+        d.setDate(d.getDate() - (6 - i));
+        return {
+            name: days[d.getDay()],
+            sub: 0,
+            com: 0,
+            date: d.toISOString().split('T')[0]
+        };
+    });
+
+    subs?.forEach(s => {
+        const date = s.created_at.split('T')[0];
+        const day = result.find(r => r.date === date);
+        if (day) day.sub += Math.abs(s.amount || 0);
+    });
+
+    orders?.forEach(o => {
+        const date = o.created_at.split('T')[0];
+        const day = result.find(r => r.date === date);
+        if (day) day.com += (o.commission || 0);
+    });
+
+    return result;
+}
+

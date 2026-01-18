@@ -13,8 +13,12 @@ import {
     Bell,
     Moon,
     Sun,
-    Search
+    Search,
+    Settings,
+    Heart
 } from "lucide-react";
+
+
 import { Button } from "@/components/ui/button";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
@@ -73,25 +77,33 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
 
     const navItems = [
         { href: "/dashboard", label: t("sidebar.dashboard"), icon: LayoutDashboard },
+        { href: "/dashboard/subscription", label: t("sidebar.subscription"), icon: Bell },
         { href: "/dashboard/store", label: t("sidebar.store"), icon: Store },
         { href: "/dashboard/orders", label: t("sidebar.orders"), icon: ShoppingCart },
         { href: "/dashboard/finance", label: t("sidebar.finance"), icon: Wallet },
+        { href: "/dashboard/referrals", label: t("sidebar.referrals") || "Referrals", icon: Heart },
+        { href: "/dashboard/settings", label: t("sidebar.settings"), icon: Settings },
+
         { href: "/dashboard/profile", label: t("sidebar.profile"), icon: UserCircle },
     ];
+
+
 
     return (
         <div className="min-h-screen bg-background flex flex-col md:flex-row overflow-x-hidden">
             <TawkToChat user={user} />
             {/* Desktop Sidebar */}
             <aside className="hidden md:flex flex-col w-72 h-screen sticky top-0 border-r border-border bg-card/50 backdrop-blur-xl transition-all duration-300">
-                <div className="p-8 flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-2xl bg-bouteek-green flex items-center justify-center shadow-lg shadow-bouteek-green/20">
-                        <img src="/bouteek-logo.jpg" alt="Logo" className="w-6 h-6 rounded-lg object-contain" />
+                <div className="p-8 flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-2xl bg-bouteek-green flex items-center justify-center shadow-lg shadow-bouteek-green/20">
+                            <img src="/bouteek-logo.jpg" alt="Logo" className="w-6 h-6 rounded-lg object-contain" />
+                        </div>
+                        <span className="font-black text-2xl tracking-tighter">Bouteek</span>
                     </div>
-                    <span className="font-black text-2xl tracking-tighter">Bouteek</span>
                 </div>
 
-                <nav className="flex-1 px-4 py-4 space-y-1.5">
+                <nav className="flex-1 px-4 py-4 space-y-1.5 overflow-y-auto">
                     {navItems.map((item) => {
                         const Icon = item.icon;
                         const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname?.startsWith(item.href));
@@ -107,7 +119,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
                                 )}
                             >
                                 <Icon size={22} className={cn("transition-transform duration-200", isActive ? "scale-110" : "group-hover:scale-110")} />
-                                <span className="text-sm uppercase tracking-widest font-bold">
+                                <span className="text-[11px] uppercase tracking-widest font-bold">
                                     {item.label}
                                 </span>
                                 {isActive && (
@@ -124,39 +136,47 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
                 </nav>
 
                 <div className="p-6 mt-auto space-y-4">
-                    {/* Language Switcher Desktop */}
-                    <div className="flex bg-muted/50 p-1 rounded-xl">
+                    {/* Theme & Language Switcher Desktop */}
+                    <div className="flex bg-muted/50 p-1 rounded-2xl gap-1">
                         <button
-                            onClick={() => setLanguage('fr')}
-                            className={cn("flex-1 py-1 rounded-lg text-xs font-bold transition-all", language === 'fr' ? "bg-white shadow-sm text-black" : "text-muted-foreground")}
+                            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                            className="p-2 rounded-xl bg-white dark:bg-zinc-800 shadow-sm text-foreground flex-1 flex items-center justify-center hover:bg-muted transition-all"
                         >
-                            FR
+                            {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
                         </button>
-                        <button
-                            onClick={() => setLanguage('en')}
-                            className={cn("flex-1 py-1 rounded-lg text-xs font-bold transition-all", language === 'en' ? "bg-white shadow-sm text-black" : "text-muted-foreground")}
-                        >
-                            EN
-                        </button>
+                        <div className="flex bg-zinc-200 dark:bg-zinc-800 p-1 rounded-xl flex-[2]">
+                            <button
+                                onClick={() => setLanguage('fr')}
+                                className={cn("flex-1 py-1 px-2 rounded-lg text-[10px] font-black transition-all", language === 'fr' ? "bg-white dark:bg-zinc-700 shadow-sm text-black dark:text-white" : "text-muted-foreground")}
+                            >
+                                FR
+                            </button>
+                            <button
+                                onClick={() => setLanguage('en')}
+                                className={cn("flex-1 py-1 px-2 rounded-lg text-[10px] font-black transition-all", language === 'en' ? "bg-white dark:bg-zinc-700 shadow-sm text-black dark:text-white" : "text-muted-foreground")}
+                            >
+                                EN
+                            </button>
+                        </div>
                     </div>
 
-                    <div className="p-6 rounded-4xl bg-muted/30 border border-border/50 space-y-4">
+                    <div className="p-5 rounded-[2.5rem] bg-muted/40 border border-border/50 space-y-4">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-bouteek-green/10 flex items-center justify-center text-bouteek-green">
-                                <Bell size={20} />
+                            <div className="w-10 h-10 rounded-full bg-bouteek-green/10 flex items-center justify-center text-bouteek-green select-none">
+                                <Wallet size={18} />
                             </div>
                             <div>
-                                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("sidebar.storage")}</p>
+                                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Storage</p>
                                 <p className="text-sm font-black">75% Full</p>
                             </div>
                         </div>
                         <Button
                             variant="outline"
-                            className="w-full rounded-2xl border-bouteek-green/20 hover:bg-bouteek-green hover:text-white group"
+                            className="w-full rounded-2xl border-border/50 hover:bg-red-500 hover:text-white hover:border-red-500 group transition-all"
                             onClick={handleLogout}
                         >
-                            <LogOut size={18} className="mr-2 group-hover:translate-x-1 transition-transform" />
-                            {t("sidebar.logout")}
+                            <LogOut size={16} className="mr-2 group-hover:translate-x-1 transition-transform" />
+                            <span className="text-xs font-black uppercase tracking-wider">{t("sidebar.logout")}</span>
                         </Button>
                     </div>
                 </div>
@@ -168,9 +188,10 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
                 scrolled ? "glass-dark py-3" : "bg-transparent"
             )}>
                 <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-xl bg-bouteek-green flex items-center justify-center">
-                        <img src="/bouteek-logo.jpg" alt="Logo" className="w-5 h-5 rounded-md" />
+                    <div className="w-12 h-12 flex items-center justify-center">
+                        <img src="/bouteek-logo.jpg" alt="Logo" className="w-10 h-10 rounded-xl object-contain" />
                     </div>
+
                     <span className="font-black text-xl tracking-tighter">Bouteek</span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -214,7 +235,8 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
             </main>
 
             {/* Mobile Bottom Navigation */}
-            <nav className="md:hidden fixed bottom-0 left-0 right-0 h-20 glass-dark border-t border-white/5 px-6 flex items-center justify-between z-50 pb-safe">
+            <nav className="md:hidden fixed bottom-0 left-0 right-0 h-20 bg-background border-t border-border px-6 flex items-center justify-between z-50 pb-safe">
+
                 {navItems.map((item) => {
                     const Icon = item.icon;
                     const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname?.startsWith(item.href));

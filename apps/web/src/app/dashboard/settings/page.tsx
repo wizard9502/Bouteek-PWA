@@ -7,7 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, Instagram, Music, Smartphone } from "lucide-react";
+import { useTranslation } from "@/contexts/TranslationContext";
+
 
 export default function SettingsPage() {
     const [loading, setLoading] = useState(true);
@@ -19,6 +21,14 @@ export default function SettingsPage() {
     const [slug, setSlug] = useState("");
     const [waveNumber, setWaveNumber] = useState("");
     const [orangeNumber, setOrangeNumber] = useState("");
+    const [referralCode, setReferralCode] = useState("");
+    const [instagram, setInstagram] = useState("");
+    const [tiktok, setTikTok] = useState("");
+    const [snapchat, setSnapchat] = useState("");
+
+    const { t } = useTranslation();
+
+
 
     useEffect(() => {
         fetchMerchantProfile();
@@ -44,6 +54,12 @@ export default function SettingsPage() {
                 setMerchantId(data.id);
                 setBusinessName(data.business_name || "");
                 setSlug(data.slug || "");
+                setReferralCode(data.referral_code || "");
+                setInstagram(data.instagram || "");
+                setTikTok(data.tiktok || "");
+                setSnapchat(data.snapchat || "");
+
+
 
                 // Fetch payment methods if stored separately, or assuming they are in merchant table for MVP?
                 // Checking schema... Schema has separate table 'storefront_payment_methods' usually?
@@ -122,7 +138,13 @@ export default function SettingsPage() {
                 user_id: user.id,
                 business_name: businessName,
                 slug: cleanSlug,
+                referral_code: referralCode.toUpperCase().trim(),
+                instagram,
+                tiktok,
+                snapchat
             };
+
+
 
             // If merchantId exists, update, else insert.
             // But upsert requires primary key or unique constraint.
@@ -187,8 +209,7 @@ export default function SettingsPage() {
                 if (pmError) throw pmError;
             }
 
-            toast.success("Settings saved successfully!");
-
+            toast.success(t("settings.save_changes") + " ✅");
         } catch (error: any) {
             console.error(error);
             toast.error(error.message || "Failed to save settings");
@@ -197,86 +218,153 @@ export default function SettingsPage() {
         }
     };
 
+
     if (loading) {
         return <div className="p-8 flex justify-center"><Loader2 className="animate-spin" /></div>;
     }
 
     return (
-        <div className="max-w-2xl mx-auto space-y-6">
-            <h2 className="text-3xl font-bold">Store Settings</h2>
+        <div className="max-w-2xl mx-auto space-y-10 pb-12">
+            <h2 className="hero-text !text-4xl">{t("settings.title")}</h2>
 
-            <form onSubmit={handleSave} className="space-y-6">
-                <Card>
+            <form onSubmit={handleSave} className="space-y-8">
+                <Card className="rounded-3xl border-border/50">
                     <CardHeader>
-                        <CardTitle>General Information</CardTitle>
+                        <CardTitle className="text-xl font-black">{t("settings.general")}</CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div>
-                            <Label htmlFor="businessName">Business Name</Label>
+                    <CardContent className="space-y-6">
+                        <div className="space-y-2">
+                            <Label htmlFor="businessName" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{t("settings.business_name")}</Label>
                             <Input
                                 id="businessName"
                                 value={businessName}
                                 onChange={e => setBusinessName(e.target.value)}
-                                placeholder="My Awesome Store"
+                                className="h-12 rounded-xl bg-muted/30 font-bold"
                                 required
                             />
                         </div>
-                        <div>
-                            <Label htmlFor="slug">Store URL Slug</Label>
-                            <div className="flex items-center gap-2">
-                                <span className="text-gray-500 text-sm">bouteek.shop/store/</span>
+                        <div className="space-y-2">
+                            <Label htmlFor="slug" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{t("settings.store_slug")}</Label>
+                            <div className="flex items-center gap-3 bg-muted/30 p-1 pl-4 rounded-xl border border-transparent focus-within:border-bouteek-green transition-all">
+                                <span className="text-muted-foreground text-xs font-bold">bouteek.shop/</span>
                                 <Input
                                     id="slug"
                                     value={slug}
                                     onChange={e => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
-                                    placeholder="my-store"
+                                    className="border-none bg-transparent h-10 font-bold focus-visible:ring-0"
                                     required
                                 />
                             </div>
                         </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="referralCode" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{t("settings.referral_code")}</Label>
+                            <Input
+                                id="referralCode"
+                                value={referralCode}
+                                onChange={e => setReferralCode(e.target.value)}
+                                className="h-12 rounded-xl bg-muted/30 font-mono"
+                            />
+                            <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-tight">{t("settings.referral_desc")}</p>
+                        </div>
                     </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="rounded-3xl border-border/50">
                     <CardHeader>
-                        <CardTitle>Payment Methods (Mobile Money)</CardTitle>
+                        <CardTitle className="text-xl font-black">{t("settings.payment_methods")}</CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                        <p className="text-sm text-gray-600">Enter the phone numbers where you want to receive payments.</p>
+                    <CardContent className="space-y-6">
+                        <p className="text-sm text-muted-foreground font-medium">{t("settings.payments_desc")}</p>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="wave" className="flex items-center gap-2">
-                                <img src="/wave-logo.png" className="w-6 h-6 rounded" alt="Wave" />
-                                Wave Number
+                        <div className="space-y-4">
+                            <Label htmlFor="wave" className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest">
+                                <img src="/wave-logo.png" className="w-5 h-5 rounded" alt="Wave" />
+                                {t("settings.wave_number")}
                             </Label>
                             <Input
                                 id="wave"
                                 value={waveNumber}
                                 onChange={e => setWaveNumber(e.target.value)}
+                                className="h-12 rounded-xl bg-muted/30 font-bold"
                                 placeholder="+221 77 000 00 00"
                             />
                         </div>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="om" className="flex items-center gap-2">
-                                <img src="/orange-money-logo.png" className="w-6 h-6 rounded" alt="OM" />
-                                Orange Money Number
+                        <div className="space-y-4">
+                            <Label htmlFor="om" className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest">
+                                <img src="/orange-money-logo.png" className="w-5 h-5 rounded" alt="OM" />
+                                {t("settings.om_number")}
                             </Label>
                             <Input
                                 id="om"
                                 value={orangeNumber}
                                 onChange={e => setOrangeNumber(e.target.value)}
+                                className="h-12 rounded-xl bg-muted/30 font-bold"
                                 placeholder="+221 77 000 00 00"
                             />
                         </div>
                     </CardContent>
                 </Card>
 
-                <Button type="submit" className="w-full bg-[#00D632] hover:bg-[#00b829] text-black font-bold" disabled={saving}>
-                    {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    Save Changes
+                <Card className="rounded-3xl border-border/50">
+                    <CardHeader>
+                        <CardTitle className="text-xl font-black">{t("settings.social_links")}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                        <p className="text-sm text-muted-foreground font-medium">{t("settings.social_desc")}</p>
+
+                        <div className="space-y-4">
+                            <Label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest">
+                                <Instagram size={18} className="text-pink-500" />
+                                Instagram Handle
+                            </Label>
+                            <Input
+                                value={instagram}
+                                onChange={e => setInstagram(e.target.value)}
+                                className="h-12 rounded-xl bg-muted/30 font-bold"
+                                placeholder="@yourshop"
+                            />
+                        </div>
+
+                        <div className="space-y-4">
+                            <Label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest">
+                                <Music size={18} className="text-black dark:text-white" />
+                                TikTok Handle
+                            </Label>
+                            <Input
+                                value={tiktok}
+                                onChange={e => setTikTok(e.target.value)}
+                                className="h-12 rounded-xl bg-muted/30 font-bold"
+                                placeholder="@yourshop"
+                            />
+                        </div>
+
+                        <div className="space-y-4">
+                            <Label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest">
+                                <Smartphone size={18} className="text-yellow-500" />
+                                Snapchat Handle
+                            </Label>
+                            <Input
+                                value={snapchat}
+                                onChange={e => setSnapchat(e.target.value)}
+                                className="h-12 rounded-xl bg-muted/30 font-bold"
+                                placeholder="@yourshop"
+                            />
+                        </div>
+                    </CardContent>
+                </Card>
+
+                <Button type="submit" className="w-full h-16 rounded-3xl bg-black text-white hover:bg-black/90 font-black uppercase tracking-[0.2em] shadow-2xl" disabled={saving}>
+                    {saving ? (
+                        <>
+                            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                            {t("settings.saving")}
+                        </>
+                    ) : t("settings.save_changes")}
                 </Button>
             </form>
         </div>
     );
 }
+

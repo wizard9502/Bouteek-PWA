@@ -16,6 +16,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+
 
 export default function FinancePage() {
     const { t } = useTranslation();
@@ -65,6 +67,40 @@ export default function FinancePage() {
         }
     };
 
+    const handleTopUp = async () => {
+        if (!amount || Number(amount) < 100) {
+            toast.error("Minimum top-up is 100 XOF");
+            return;
+        }
+
+        try {
+            const { data: { user } } = await supabase.auth.getUser();
+            const { data: merchant } = await supabase.from('merchants').select('id, business_name').eq('user_id', user?.id).single();
+
+            const response = await fetch('/api/payments/paydunya/create-session', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    amount: Number(amount),
+                    merchantId: merchant?.id,
+                    userId: user?.id,
+                    businessName: merchant?.business_name
+                })
+            });
+
+            const data = await response.json();
+            if (data.url) {
+                window.location.href = data.url;
+            } else {
+                toast.error(data.message || "Failed to initiate payment");
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Payment Error");
+        }
+    };
+
+
     // ... rest of the render code remains similar, but using 'balance' and 'transactions' state variables
     // Updating the balance display section:
 
@@ -74,8 +110,11 @@ export default function FinancePage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
                     <h1 className="hero-text !text-4xl">{t("finance.title")}</h1>
-                    <p className="text-muted-foreground font-medium mt-1">Manage your Bouteek Cash and earnings.</p>
+                    <p className="text-muted-foreground font-medium mt-1">
+                        {language === 'fr' ? "Gérez votre Bouteek Cash et vos gains." : "Manage your Bouteek Cash and earnings."}
+                    </p>
                 </div>
+
                 <div className="flex gap-3">
                     <Button
                         onClick={() => setShowTopUp(true)}
@@ -107,9 +146,14 @@ export default function FinancePage() {
                             </h2>
 
                             <div className="flex gap-4 mt-12 w-full max-w-sm">
-                                <Button variant="outline" className="flex-1 rounded-2xl h-14 font-bold border-border/50">Analytics</Button>
-                                <Button className="flex-1 rounded-2xl h-14 font-bold bg-black text-white shadow-xl shadow-black/20">Transfer</Button>
+                                <Button variant="outline" className="flex-1 rounded-2xl h-14 font-bold border-border/50">
+                                    {language === 'fr' ? "Analytique" : "Analytics"}
+                                </Button>
+                                <Button className="flex-1 rounded-2xl h-14 font-bold bg-black text-white shadow-xl shadow-black/20">
+                                    {language === 'fr' ? "Transférer" : "Transfer"}
+                                </Button>
                             </div>
+
                         </div>
                     </motion.div>
 
@@ -118,10 +162,13 @@ export default function FinancePage() {
                         <div className="flex items-center justify-between">
                             <h3 className="text-xl font-black tracking-tight flex items-center gap-3">
                                 <History size={24} />
-                                Transaction Log
+                                {language === 'fr' ? "Historique des Transactions" : "Transaction Log"}
                             </h3>
-                            <Button variant="ghost" className="text-sm font-bold text-bouteek-green">See All</Button>
+                            <Button variant="ghost" className="text-sm font-bold text-bouteek-green">
+                                {language === 'fr' ? "Voir Tout" : "See All"}
+                            </Button>
                         </div>
+
 
                         <div className="space-y-3">
                             {transactions.map((tx, i) => (
@@ -166,11 +213,15 @@ export default function FinancePage() {
                         <div className="flex flex-col items-center gap-6">
                             <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-bouteek-green/10 text-bouteek-green font-bold text-[10px] uppercase tracking-widest">
                                 <ShieldCheck size={14} />
-                                Secure PayDunya Bridge
+                                {language === 'fr' ? "Pont Sécurisé PayDunya" : "Secure PayDunya Bridge"}
                             </div>
 
+
                             <div className="w-full">
-                                <p className="text-center text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4">Amount to Top-Up</p>
+                                <p className="text-center text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4">
+                                    {language === 'fr' ? "Montant à Recharger" : "Amount to Top-Up"}
+                                </p>
+
                                 <div className="h-20 bg-muted rounded-3xl flex items-center justify-center border-2 border-transparent focus-within:border-bouteek-green transition-all overflow-hidden group">
                                     <span className="text-4xl font-black">{amount || "0"}</span>
                                     <span className="ml-2 text-xl text-muted-foreground font-black">XOF</span>
@@ -194,11 +245,17 @@ export default function FinancePage() {
                             </div>
 
                             <div className="w-full space-y-3 mt-4">
-                                <Button className="w-full h-14 rounded-2xl bg-bouteek-green text-black font-black uppercase tracking-widest shadow-xl shadow-bouteek-green/20">
-                                    Continue to Wave
+                                <Button
+                                    onClick={handleTopUp}
+                                    disabled={!amount || Number(amount) < 100}
+                                    className="w-full h-14 rounded-2xl bg-bouteek-green text-black font-black uppercase tracking-widest shadow-xl shadow-bouteek-green/20"
+                                >
+                                    {language === 'fr' ? "Payer" : "Pay"}
                                     <ArrowRight size={18} className="ml-2" />
                                 </Button>
+
                                 <div className="flex items-center justify-center gap-4 py-2 opacity-50">
+
                                     <img src="https://paydunya.com/assets/images/payment_methods/wave.png" className="h-6 object-contain" alt="Wave" />
                                     <img src="https://paydunya.com/assets/images/payment_methods/om.png" className="h-6 object-contain" alt="Orange Money" />
                                     <CreditCard size={20} />

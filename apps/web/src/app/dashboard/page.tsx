@@ -3,6 +3,15 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import {
+    BarChart,
+    Bar,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    ResponsiveContainer
+} from "recharts";
+import {
     TrendingUp,
     TrendingDown,
     Plus,
@@ -20,6 +29,8 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
+
+
 import { TranslationProvider, useTranslation } from "@/contexts/TranslationContext";
 
 import { useEffect, useState } from "react";
@@ -34,7 +45,8 @@ export default function DashboardHome() {
 }
 
 function DashboardHomeContent() {
-    const { t } = useTranslation();
+    const { t, language } = useTranslation();
+
     const [stats, setStats] = useState({
         todayRevenue: 0,
         weekRevenue: 0,
@@ -44,14 +56,24 @@ function DashboardHomeContent() {
         completedOrders: 0,
         activeOrders: 0,
         cancelledOrders: 0,
-        balance: 0
+        balance: 0,
+        subscription: {
+            plan: "Starter",
+            start_date: null,
+            end_date: null,
+            percentage: 0
+        }
     });
 
-    useEffect(() => {
-        fetchDashboardData();
-    }, []);
+    const [chartData, setChartData] = useState<any[]>([]);
+    const [timeframe, setTimeframe] = useState("30d");
 
-    const fetchDashboardData = async () => {
+    useEffect(() => {
+        fetchDashboardData(timeframe);
+    }, [timeframe]);
+
+    const fetchDashboardData = async (range: string = "30d") => {
+
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
@@ -98,188 +120,270 @@ function DashboardHomeContent() {
             completedOrders: completed,
             activeOrders: active,
             cancelledOrders: cancelled,
-            balance: merchant.bouteek_cash_balance
+            balance: merchant.bouteek_cash_balance,
+            subscription: {
+                plan: merchant.subscription_tier || "Starter",
+                start_date: merchant.subscription_start,
+                end_date: merchant.subscription_end,
+                percentage: calculateSubscriptionPercentage(merchant.subscription_start, merchant.subscription_end)
+            }
         });
-    };
 
-    const statsCards = [
-        { label: t("dashboard.stats.today"), value: stats.todayRevenue.toLocaleString(), change: "+0%", trendingUp: true },
-        { label: t("dashboard.stats.week"), value: stats.weekRevenue.toLocaleString(), change: "+0%", trendingUp: true },
-        { label: t("dashboard.stats.month"), value: stats.monthRevenue.toLocaleString(), change: "+0%", trendingUp: true },
-    ];
 
-    const orderStatuses = [
-        { label: t("orders.tabs.pending"), count: stats.pendingOrders, icon: Clock, color: "text-amber-500", bg: "bg-amber-500/10" },
-        { label: t("orders.tabs.completed"), count: stats.completedOrders, icon: CheckCircle2, color: "text-bouteek-green", bg: "bg-bouteek-green/10" },
-        { label: "Active", count: stats.activeOrders, icon: AlertCircle, color: "text-blue-500", bg: "bg-blue-500/10" },
-        { label: "Cancelled", count: stats.cancelledOrders, icon: AlertCircle, color: "text-red-500", bg: "bg-red-500/10" },
-    ];
+        // 3. Timeframe logic for chart
+        const daysAgo = new Date();
+        let days = 30;
+        if (range === '14d') days = 14;
+        else if (range === '90d') days = 90;
+        else if (range === '1y') days = 365;
+        daysAgo.setDate(daysAgo.getDate() - days);
 
-    return (
-        <div className="space-y-10 pb-12">
-            {/* Header / Search */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div>
-                    <h1 className="hero-text !text-4xl">{t("dashboard.hello_merchant")}</h1>
-                    <p className="text-muted-foreground font-medium mt-1">{t("dashboard.subtitle")}</p>
-                </div>
-                <div className="relative group max-w-sm w-full">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-bouteek-green transition-colors" size={20} />
-                    <input
-                        type="text"
-                        placeholder={t("dashboard.search_placeholder")}
-                        className="w-full bg-card/50 border border-border/50 rounded-2xl py-3 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-bouteek-green/20 focus:border-bouteek-green transition-all"
-                    />
-                </div>
+        const { data: chartOrders } = await supabase
+            .from('orders')
+            .select('created_at, total')
+            .eq('merchant_id', merchant.id)
+            .gte('created_at', daysAgo.toISOString())
+            .order('created_at', { ascending: true });
+
+        if (chartOrders && chartOrders.length > 0) {
+            const grouped = chartOrders.reduce((acc: any, curr: any) => {
+                const date = new Date(curr.created_at).toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US',
+                    range === '1y' ? { month: 'short' } : { month: 'short', day: 'numeric' }
+                );
+                acc[date] = (acc[date] || 0) + (curr.total || 0);
+                return acc;
+            }, {});
+            setChartData(Object.entries(grouped).map(([name, revenue]) => ({ name, revenue })));
+        } else {
+            // Default mock if empty
+            setChartData([]);
+        }
+    }
+};
+
+
+const calculateSubscriptionPercentage = (start: any, end: any) => {
+    if (!start || !end) return 0;
+    const startTime = new Date(start).getTime();
+    const endTime = new Date(end).getTime();
+    const now = new Date().getTime();
+    const total = endTime - startTime;
+    const progress = now - startTime;
+    return Math.min(Math.max((progress / total) * 100, 0), 100);
+};
+
+
+
+const statsCards = [
+    { label: t("dashboard.stats.today"), value: stats.todayRevenue.toLocaleString(), change: "+0%", trendingUp: true },
+    { label: t("dashboard.stats.week"), value: stats.weekRevenue.toLocaleString(), change: "+0%", trendingUp: true },
+    { label: t("dashboard.stats.month"), value: stats.monthRevenue.toLocaleString(), change: "+0%", trendingUp: true },
+];
+
+const orderStatuses = [
+    { label: t("orders.tabs.pending"), count: stats.pendingOrders, icon: Clock, color: "text-amber-500", bg: "bg-amber-500/10" },
+    { label: t("orders.tabs.completed"), count: stats.completedOrders, icon: CheckCircle2, color: "text-bouteek-green", bg: "bg-bouteek-green/10" },
+    { label: "Active", count: stats.activeOrders, icon: AlertCircle, color: "text-blue-500", bg: "bg-blue-500/10" },
+    { label: "Cancelled", count: stats.cancelledOrders, icon: AlertCircle, color: "text-red-500", bg: "bg-red-500/10" },
+];
+
+return (
+    <div className="space-y-10 pb-12">
+        {/* Header / Search */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div>
+                <h1 className="hero-text !text-4xl">{t("dashboard.hello_merchant")}</h1>
+                <p className="text-muted-foreground font-medium mt-1">{t("dashboard.subtitle")}</p>
             </div>
+            <div className="relative group max-w-sm w-full">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-bouteek-green transition-colors" size={20} />
+                <input
+                    type="text"
+                    placeholder={t("dashboard.search_placeholder")}
+                    className="w-full bg-card/50 border border-border/50 rounded-2xl py-3 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-bouteek-green/20 focus:border-bouteek-green transition-all"
+                />
+            </div>
+        </div>
 
-            {/* Total Revenue Header Card */}
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="relative overflow-hidden group"
-            >
-                <div className="absolute inset-0 bg-bouteek-green rounded-4xl -z-10 blur-3xl opacity-20 group-hover:opacity-30 transition-opacity" />
-                <div className="bg-bouteek-green p-8 md:p-12 rounded-4xl text-black relative z-10 shadow-2xl shadow-bouteek-green/20">
-                    <div className="flex items-start justify-between">
-                        <div>
-                            <p className="text-sm font-black uppercase tracking-widest opacity-70">{t("dashboard.revenue_card.total_revenue")}</p>
-                            <h2 className="text-5xl md:text-7xl font-black mt-2 tracking-tighter">
-                                {stats.totalRevenue.toLocaleString()} <span className="text-2xl md:text-3xl opacity-50">XOF</span>
-                            </h2>
-                        </div>
-                        <div className="bg-white/20 backdrop-blur-md p-4 rounded-3xl">
-                            <ArrowUpRight size={32} />
-                        </div>
+        {/* KPI Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Total Revenue */}
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bouteek-card p-6 bg-bouteek-green text-black border-none">
+                <div className="flex justify-between items-start">
+                    <p className="text-[10px] font-black uppercase tracking-widest opacity-70">{t("dashboard.revenue_card.total_revenue")}</p>
+                    <TrendingUp size={16} className="opacity-70" />
+                </div>
+                <h3 className="text-3xl font-black mt-4">{stats.totalRevenue.toLocaleString()} <span className="text-sm opacity-50 font-bold">XOF</span></h3>
+            </motion.div>
+
+            {/* Bouteek Cash */}
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bouteek-card p-6 border-border/50">
+                <div className="flex justify-between items-start">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Bouteek Cash</p>
+                    <Wallet size={16} className="text-bouteek-green" />
+                </div>
+                <h3 className="text-3xl font-black mt-4">{stats.balance.toLocaleString()} <span className="text-sm text-muted-foreground font-bold">XOF</span></h3>
+            </motion.div>
+
+            {/* Subscription Plan */}
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bouteek-card p-6 border-border/50">
+                <div className="flex justify-between items-start">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Plan: <span className="text-bouteek-green font-black">{stats.subscription.plan}</span></p>
+                </div>
+                <div className="mt-4 space-y-2">
+                    <div className="flex justify-between text-[10px] font-bold text-muted-foreground uppercase">
+                        <span>{stats.subscription.start_date ? new Date(stats.subscription.start_date).toLocaleDateString() : "N/A"}</span>
+                        <span>{stats.subscription.end_date ? new Date(stats.subscription.end_date).toLocaleDateString() : "N/A"}</span>
                     </div>
-
-                    <div className="mt-12 flex flex-wrap gap-4 md:gap-8">
-                        <div className="bg-white/10 backdrop-blur-sm px-6 py-4 rounded-3xl border border-white/10">
-                            <p className="text-xs font-bold uppercase tracking-widest opacity-60">{t("dashboard.revenue_card.balance")}</p>
-                            <p className="text-xl font-black">{stats.balance.toLocaleString()} XOF</p>
-                        </div>
-                        <Link href="/dashboard/finance" className="bg-black text-white px-8 py-4 rounded-3xl font-bold flex items-center gap-3 hover:scale-105 transition-transform active:scale-95">
-                            {t("dashboard.revenue_card.withdraw")}
-                            <ChevronRight size={18} />
-                        </Link>
+                    <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                        <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: `${stats.subscription.percentage}%` }}
+                            className="h-full bg-bouteek-green"
+                        />
                     </div>
                 </div>
             </motion.div>
+        </div>
 
-            {/* Revenue Breakdown Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {statsCards.map((stat, i) => (
-                    <motion.div
-                        key={stat.label}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.1 }}
-                        className="bouteek-card p-8 group cursor-pointer"
-                    >
-                        <div className="flex justify-between items-start">
-                            <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">{stat.label}</p>
-                            <div className={cn(
-                                "flex items-center gap-1 text-xs font-black px-2 py-1 rounded-full",
-                                stat.trendingUp ? "bg-bouteek-green/10 text-bouteek-green" : "bg-red-500/10 text-red-500"
-                            )}>
-                                {stat.trendingUp ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
-                                {stat.change}
+
+        {/* Revenue Breakdown Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {statsCards.map((stat, i) => (
+                <motion.div
+                    key={stat.label}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.1 }}
+                    className="bouteek-card p-8 group cursor-pointer"
+                >
+                    <div className="flex justify-between items-start">
+                        <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">{stat.label}</p>
+                        <div className={cn(
+                            "flex items-center gap-1 text-xs font-black px-2 py-1 rounded-full",
+                            stat.trendingUp ? "bg-bouteek-green/10 text-bouteek-green" : "bg-red-500/10 text-red-500"
+                        )}>
+                            {stat.trendingUp ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+                            {stat.change}
+                        </div>
+                    </div>
+                    <p className="text-3xl font-black mt-4">
+                        {stat.value} <span className="text-sm text-muted-foreground font-medium">XOF</span>
+                    </p>
+                    <div className="mt-6 h-1 w-full bg-muted rounded-full overflow-hidden">
+                        <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: stat.trendingUp ? "70%" : "30%" }}
+                            className={cn("h-full", stat.trendingUp ? "bg-bouteek-green" : "bg-red-500")}
+                        />
+                    </div>
+                </motion.div>
+            ))}
+        </div>
+
+        {/* Middle Section: Status & Charts */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Order Status Grid */}
+            <div className="lg:col-span-1 space-y-6">
+                <h3 className="text-xl font-black tracking-tight">{language === 'fr' ? "Activité des Commandes" : "Order Activity"}</h3>
+
+                <div className="grid grid-cols-2 gap-4">
+                    {orderStatuses.map((status) => (
+                        <div key={status.label} className="bouteek-card p-6 flex flex-col items-center justify-center text-center gap-3 group">
+                            <div className={cn("p-4 rounded-2xl transition-transform group-hover:scale-110", status.bg, status.color)}>
+                                <status.icon size={24} />
+                            </div>
+                            <div>
+                                <p className="text-2xl font-black">{status.count}</p>
+                                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{status.label}</p>
                             </div>
                         </div>
-                        <p className="text-3xl font-black mt-4">
-                            {stat.value} <span className="text-sm text-muted-foreground font-medium">XOF</span>
-                        </p>
-                        <div className="mt-6 h-1 w-full bg-muted rounded-full overflow-hidden">
-                            <motion.div
-                                initial={{ width: 0 }}
-                                animate={{ width: stat.trendingUp ? "70%" : "30%" }}
-                                className={cn("h-full", stat.trendingUp ? "bg-bouteek-green" : "bg-red-500")}
-                            />
-                        </div>
-                    </motion.div>
-                ))}
-            </div>
-
-            {/* Middle Section: Status & Charts */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Order Status Grid */}
-                <div className="lg:col-span-1 space-y-6">
-                    <h3 className="text-xl font-black tracking-tight">Order Activity</h3>
-                    <div className="grid grid-cols-2 gap-4">
-                        {orderStatuses.map((status) => (
-                            <div key={status.label} className="bouteek-card p-6 flex flex-col items-center justify-center text-center gap-3 group">
-                                <div className={cn("p-4 rounded-2xl transition-transform group-hover:scale-110", status.bg, status.color)}>
-                                    <status.icon size={24} />
-                                </div>
-                                <div>
-                                    <p className="text-2xl font-black">{status.count}</p>
-                                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{status.label}</p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Analytics Chart Placeholder (to be implemented) */}
-                <div className="lg:col-span-2 space-y-6">
-                    <div className="flex items-center justify-between">
-                        <h3 className="text-xl font-black tracking-tight">Sales Analytics</h3>
-                        <div className="flex gap-2">
-                            <Button variant="outline" size="sm" className="rounded-full text-[10px] font-bold h-8">7D</Button>
-                            <Button variant="outline" size="sm" className="rounded-full text-[10px] font-bold h-8 bg-bouteek-green text-white border-none">30D</Button>
-                        </div>
-                    </div>
-                    <div className="bouteek-card h-[320px] p-8 flex flex-col justify-end">
-                        {/* Custom SVG Mini-chart */}
-                        <div className="flex items-end justify-between gap-2 h-full">
-                            {[40, 60, 45, 90, 65, 80, 50, 70, 95, 85, 60, 75].map((h, i) => (
-                                <motion.div
-                                    key={i}
-                                    initial={{ height: 0 }}
-                                    animate={{ height: `${h}%` }}
-                                    transition={{ delay: i * 0.05 + 0.5, duration: 1 }}
-                                    className="flex-1 bg-muted group relative cursor-pointer"
-                                >
-                                    <motion.div
-                                        className="absolute inset-0 bg-bouteek-green opacity-0 group-hover:opacity-100 transition-opacity"
-                                    />
-                                    <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] font-black px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                                        {h * 10}k XOF
-                                    </div>
-                                </motion.div>
-                            ))}
-                        </div>
-                        <div className="flex justify-between mt-6 px-1">
-                            {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].map((m) => (
-                                <span key={m} className="text-[10px] font-bold text-muted-foreground uppercase">{m}</span>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Quick Actions */}
-            <section className="space-y-6">
-                <h3 className="text-xl font-black tracking-tight">Quick Operations</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {[
-                        { label: "New Product", icon: Plus, href: "/dashboard/store/new" },
-                        { label: "View Orders", icon: ShoppingCart, href: "/dashboard/orders" },
-                        { label: "Store Settings", icon: LayoutGrid, href: "/dashboard/store/builder" },
-                        { label: "Top-Up Wallet", icon: Wallet, href: "/dashboard/finance" },
-                    ].map((action) => (
-                        <Link key={action.label} href={action.href}>
-                            <Button variant="outline" className="w-full h-auto p-6 rounded-3xl border-border/50 flex flex-col gap-3 hover:border-bouteek-green transition-all group">
-                                <div className="p-3 rounded-2xl bg-muted group-hover:bg-bouteek-green/10 group-hover:text-bouteek-green transition-colors">
-                                    <action.icon size={24} />
-                                </div>
-                                <span className="font-bold text-xs uppercase tracking-wider">{action.label}</span>
-                            </Button>
-                        </Link>
                     ))}
                 </div>
-            </section>
+            </div>
+
+            {/* Analytics Chart Placeholder (to be implemented) */}
+            <div className="lg:col-span-2 space-y-6">
+                <div className="flex items-center justify-between">
+                    <h3 className="text-xl font-black tracking-tight">{language === 'fr' ? "Analytique des Ventes" : "Sales Analytics"}</h3>
+                    <div className="flex gap-2">
+                        {['14d', '30d', '90d', '1y'].map((r) => (
+                            <Button
+                                key={r}
+                                onClick={() => setTimeframe(r)}
+                                variant="outline"
+                                size="sm"
+                                className={cn(
+                                    "rounded-full text-[10px] font-bold h-8 transition-all",
+                                    timeframe === r ? "bg-bouteek-green text-black border-none" : "hover:border-bouteek-green"
+                                )}
+                            >
+                                {r.toUpperCase()}
+                            </Button>
+                        ))}
+                    </div>
+
+                </div>
+
+                <div className="bouteek-card h-[350px] p-8">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={chartData}>
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+                            <XAxis
+                                dataKey="name"
+                                axisLine={false}
+                                tickLine={false}
+                                tick={{ fontSize: 10, fontWeight: 700, fill: '#9CA3AF' }}
+                            />
+                            <YAxis
+                                axisLine={false}
+                                tickLine={false}
+                                tick={{ fontSize: 10, fontWeight: 700, fill: '#9CA3AF' }}
+                                tickFormatter={(value) => `${value / 1000}k`}
+                            />
+                            <Tooltip
+                                contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' }}
+                                cursor={{ fill: '#F3F4F6' }}
+                            />
+                            <Bar dataKey="revenue" fill="#00D632" radius={[6, 6, 0, 0]} />
+                        </BarChart>
+                    </ResponsiveContainer>
+                </div>
+            </div>
+
         </div>
-    );
+
+        {/* Fab Plus Button (Mobile) */}
+        <Link href="/dashboard/store/products/add">
+            <button className="md:hidden fixed bottom-24 right-6 w-14 h-14 bg-bouteek-green text-black rounded-full shadow-2xl flex items-center justify-center z-40 active:scale-95 transition-transform">
+                <Plus size={28} />
+            </button>
+        </Link>
+
+
+        {/* Quick Actions */}
+        <section className="space-y-6 text-foreground">
+            <h3 className="text-xl font-black tracking-tight">{language === 'fr' ? "Opérations Rapides" : "Quick Operations"}</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {[
+                    { label: language === 'fr' ? "Nouveau Produit" : "New Product", icon: Plus, href: "/dashboard/store/products/add" },
+                    { label: language === 'fr' ? "Voir Commandes" : "View Orders", icon: ShoppingCart, href: "/dashboard/orders" },
+                    { label: language === 'fr' ? "Params Boutique" : "Store Settings", icon: LayoutGrid, href: "/dashboard/settings" },
+                    { label: language === 'fr' ? "Recharger" : "Top-Up Wallet", icon: Wallet, href: "/dashboard/finance" },
+                ].map((action) => (
+                    <Link key={action.label} href={action.href}>
+
+                        <Button variant="outline" className="w-full h-auto p-6 rounded-3xl border-border/50 flex flex-col gap-3 hover:border-bouteek-green transition-all group">
+                            <div className="p-3 rounded-2xl bg-muted group-hover:bg-bouteek-green/10 group-hover:text-bouteek-green transition-colors">
+                                <action.icon size={24} />
+                            </div>
+                            <span className="font-bold text-xs uppercase tracking-wider">{action.label}</span>
+                        </Button>
+                    </Link>
+                ))}
+            </div>
+        </section>
+    </div>
+);
 }
 

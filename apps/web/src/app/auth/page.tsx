@@ -19,6 +19,8 @@ export default function AuthPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [fullName, setFullName] = useState("");
+    const [referralCode, setReferralCode] = useState("");
+
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -72,8 +74,10 @@ export default function AuthPage() {
                 options: {
                     data: {
                         full_name: fullName,
+                        referral_code: referralCode.trim(),
                     },
                 },
+
             });
 
             if (error) throw error;
@@ -253,10 +257,25 @@ export default function AuthPage() {
                                 />
                             </div>
 
-                            <Button type="submit" className="w-full bg-black hover:bg-gray-800 text-white font-bold" disabled={loading}>
-                                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                Create Account
-                            </Button>
+                            <div>
+                                <Label htmlFor="referral-code">Referral Code (Optional)</Label>
+                                <Input
+                                    id="referral-code"
+                                    name="referral_code"
+                                    type="text"
+                                    placeholder="ENTER-CODE"
+                                    value={referralCode}
+                                    onChange={(e) => setReferralCode(e.target.value)}
+                                    className="mt-2"
+                                />
+                            </div>
+
+
+
+                                <Button type="submit" className="w-full bg-black hover:bg-gray-800 text-white font-bold" disabled={loading}>
+                                    {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                    Create Account
+                                </Button>
                         </form>
                     </TabsContent>
                 </Tabs>

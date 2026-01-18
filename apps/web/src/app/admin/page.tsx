@@ -12,7 +12,8 @@ import {
     Filter,
     MoreHorizontal
 } from "lucide-react";
-import { getAdminKPIs, getSubscriptionDistribution, getRecentMerchants } from "@/lib/adminData";
+import { getAdminKPIs, getSubscriptionDistribution, getRecentMerchants, getRevenueGrowthData } from "@/lib/adminData";
+
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -35,19 +36,24 @@ export default function AdminDashboard() {
     const [stats, setStats] = useState<any>(null);
     const [distribution, setDistribution] = useState<any[]>([]);
     const [recentMerchants, setRecentMerchants] = useState<any[]>([]);
+    const [revenueGrowth, setRevenueGrowth] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+
 
     useEffect(() => {
         async function loadData() {
             try {
-                const [kpis, dist, recent] = await Promise.all([
+                const [kpis, dist, recent, growth] = await Promise.all([
                     getAdminKPIs(),
                     getSubscriptionDistribution(),
-                    getRecentMerchants()
+                    getRecentMerchants(),
+                    getRevenueGrowthData()
                 ]);
                 setStats(kpis);
                 setDistribution(dist);
                 setRecentMerchants(recent);
+                setRevenueGrowth(growth);
+
             } catch (error) {
                 console.error("Failed to load admin data", error);
             } finally {
@@ -161,14 +167,14 @@ export default function AdminDashboard() {
                     </div>
                     <div className="h-[300px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={[
-                                { name: 'Mon', sub: 4000, com: 2400 },
-                                { name: 'Tue', sub: 3000, com: 1398 },
-                                { name: 'Wed', sub: 2000, com: 9800 },
-                                { name: 'Thu', sub: 2780, com: 3908 },
-                                { name: 'Fri', sub: 1890, com: 4800 },
-                                { name: 'Sat', sub: 2390, com: 3800 },
-                                { name: 'Sun', sub: 3490, com: 4300 },
+                            <BarChart data={revenueGrowth.length ? revenueGrowth : [
+                                { name: 'Mon', sub: 0, com: 0 },
+                                { name: 'Tue', sub: 0, com: 0 },
+                                { name: 'Wed', sub: 0, com: 0 },
+                                { name: 'Thu', sub: 0, com: 0 },
+                                { name: 'Fri', sub: 0, com: 0 },
+                                { name: 'Sat', sub: 0, com: 0 },
+                                { name: 'Sun', sub: 0, com: 0 },
                             ]} barSize={20}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
                                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fontWeight: 700, fill: '#9CA3AF' }} />
@@ -182,6 +188,7 @@ export default function AdminDashboard() {
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
+
                 </div>
 
                 {/* Subscription Dist */}

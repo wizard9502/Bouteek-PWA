@@ -48,22 +48,15 @@ export function TawkToChat({ user }: TawkToChatProps) {
         // Show/Hide Logic based on Pathname
         const checkTawk = setInterval(() => {
             const api = (window as any).Tawk_API;
-            if (api && typeof api.showWidget === 'function') {
-                // Logic: Only show on /settings and /profile
-                if (pathname.includes('/settings') || pathname.includes('/profile')) {
-                    api.showWidget();
-                } else {
-                    api.hideWidget();
-                }
+            // Always hide the default widget bubble
+            api.hideWidget();
+            clearInterval(checkTawk);
+        }
 
-                // We don't clear interval because we want this to retry until it loads,
-                // BUT this effect runs on pathname change.
-                clearInterval(checkTawk);
-            }
         }, 300);
 
-        return () => clearInterval(checkTawk);
-    }, [pathname]);
+    return () => clearInterval(checkTawk);
+}, [pathname]);
 
-    return null;
+return null;
 }

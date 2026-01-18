@@ -3,6 +3,8 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Menu, X, Check, Zap, Lock, Smartphone, Globe, TrendingUp, Instagram, Music } from "lucide-react";
 import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+
 
 import { translations } from "@/lib/translations";
 import NewsletterSignup from "@/components/NewsletterSignup";
@@ -24,7 +26,9 @@ export default function Home() {
 function HomeContent() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [showComingSoon, setShowComingSoon] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { language, setLanguage, t } = useLanguage();
+
 
   useEffect(() => {
     const handleScroll = () => {
@@ -45,7 +49,7 @@ function HomeContent() {
   const pricingPlans = [
     {
       name: t_obj.pricing.starter,
-      price: "1,500 XOF",
+      price: "2,000 XOF",
       description: t_obj.pricing.starterDesc,
       features: t_obj.pricing.features.starter,
       highlighted: false
@@ -72,6 +76,7 @@ function HomeContent() {
       highlighted: false
     }
   ];
+
 
   const features = [
     {
@@ -137,118 +142,158 @@ function HomeContent() {
       )}
 
       {/* Navigation */}
-      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled ? "bg-white shadow-lg" : "bg-transparent"}`}>
-        <div className="container flex items-center justify-between h-20">
-          <div className="flex items-center gap-2">
-            <img src="/bouteek-logo.jpg" alt="Bouteek" className="h-10 w-10 rounded-lg" />
-            <span className="text-2xl font-bold text-black">Bouteek</span>
+      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled ? "bg-white/80 backdrop-blur-md shadow-sm border-b" : "bg-transparent"}`}>
+        <div className="container mx-auto px-6 flex items-center justify-between h-20">
+          <div className="flex items-center gap-2 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+            <img src="/bouteek-logo.jpg" alt="Bouteek" className="h-10 w-10 rounded-lg shadow-lg" />
+            <span className="text-2xl font-black text-black tracking-tighter">Bouteek</span>
           </div>
-          <div className="hidden md:flex items-center gap-8">
-            <a href="#features" className="text-black hover:text-[#00D632] transition-colors">{t_obj.nav.features}</a>
-            <a href="#payments" className="text-black hover:text-[#00D632] transition-colors">{t_obj.nav.payments}</a>
-            <a href="#pricing" className="text-black hover:text-[#00D632] transition-colors">{t_obj.nav.pricing}</a>
-            <div className="flex gap-2 ml-4 border-l border-gray-300 pl-4">
-              <div className="flex gap-2 ml-4 border-l border-gray-300 pl-4">
+
+          {/* Desktop Nav */}
+          <div className="hidden lg:flex items-center gap-10">
+            <a href="#features" className="text-sm font-bold text-gray-600 hover:text-black transition-colors">{t_obj.nav.features}</a>
+            <a href="#payments" className="text-sm font-bold text-gray-600 hover:text-black transition-colors">{t_obj.nav.payments}</a>
+            <a href="#pricing" className="text-sm font-bold text-gray-600 hover:text-black transition-colors">{t_obj.nav.pricing}</a>
+
+            <div className="flex items-center gap-4 ml-4">
+              <div className="flex bg-gray-100 p-1 rounded-full border border-gray-200">
                 <button
                   onClick={() => setLanguage("fr")}
-                  className={`px-3 py-1 rounded font-bold transition-colors ${language === "fr" ? "bg-[#00D632] text-black" : "text-gray-600 hover:text-black"}`}
+                  className={`px-3 py-1 rounded-full text-[10px] font-black tracking-widest transition-all ${language === "fr" ? "bg-white shadow-sm text-black" : "text-gray-400 hover:text-gray-600"}`}
                 >
                   FR
                 </button>
                 <button
                   onClick={() => setLanguage("en")}
-                  className={`px-3 py-1 rounded font-bold transition-colors ${language === "en" ? "bg-[#00D632] text-black" : "text-gray-600 hover:text-black"}`}
+                  className={`px-3 py-1 rounded-full text-[10px] font-black tracking-widest transition-all ${language === "en" ? "bg-white shadow-sm text-black" : "text-gray-400 hover:text-gray-600"}`}
                 >
                   EN
                 </button>
               </div>
-              <a href="/auth" className="text-black font-medium hover:text-[#00D632] transition-colors">
-                {language === "fr" ? "Se connecter" : "Log In"}
+              <a href="/auth" className="text-sm font-black text-black hover:text-[#00D632] transition-colors ml-4">
+                {language === "fr" ? "Connexion" : "Log In"}
               </a>
-              <Button className="btn-primary" onClick={() => window.location.href = '/auth'}>{t_obj.nav.getStarted}</Button>
+              <Button className="h-11 px-8 rounded-full bg-black text-white font-black text-xs uppercase tracking-widest hover:bg-black/90 shadow-xl transition-all" onClick={() => window.location.href = '/auth'}>
+                {t_obj.nav.getStarted}
+              </Button>
             </div>
           </div>
+
+          {/* Mobile Toggle */}
+          <div className="lg:hidden flex items-center gap-4">
+            <div className="flex bg-gray-100 p-1 rounded-full border border-gray-200 scale-90">
+              <button
+                onClick={() => setLanguage("fr")}
+                className={`px-3 py-1 rounded-full text-[10px] font-black transition-all ${language === "fr" ? "bg-white shadow-sm text-black" : "text-gray-400"}`}
+              >
+                FR
+              </button>
+              <button
+                onClick={() => setLanguage("en")}
+                className={`px-3 py-1 rounded-full text-[10px] font-black transition-all ${language === "en" ? "bg-white shadow-sm text-black" : "text-gray-400"}`}
+              >
+                EN
+              </button>
+            </div>
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="w-10 h-10 flex items-center justify-center bg-black text-white rounded-full shadow-lg"
+            >
+              {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
         </div>
+
+        {/* Mobile Menu Overlay */}
+        <AnimatePresence>
+          {isMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="lg:hidden absolute top-20 left-0 w-full bg-white border-b shadow-2xl p-8 space-y-8 flex flex-col items-center text-center"
+            >
+              <div className="flex flex-col gap-6 text-xl font-black">
+                <a href="#features" onClick={() => setIsMenuOpen(false)}>{t_obj.nav.features}</a>
+                <a href="#payments" onClick={() => setIsMenuOpen(false)}>{t_obj.nav.payments}</a>
+                <a href="#pricing" onClick={() => setIsMenuOpen(false)}>{t_obj.nav.pricing}</a>
+              </div>
+              <div className="h-px w-full bg-gray-100" />
+              <div className="flex flex-col gap-4 w-full">
+                <Button className="w-full h-14 rounded-2xl bg-black text-white font-black uppercase tracking-widest text-sm" onClick={() => window.location.href = '/auth'}>
+                  {t_obj.nav.getStarted}
+                </Button>
+                <Button variant="outline" className="w-full h-14 rounded-2xl font-black uppercase tracking-widest text-sm" onClick={() => window.location.href = '/auth'}>
+                  {language === "fr" ? "Connexion" : "Log In"}
+                </Button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
+
 
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 overflow-hidden">
         <div className="absolute inset-0 opacity-20">
           <img src="/hero-bg.jpg" alt="Hero Background" className="w-full h-full object-cover" />
         </div>
-        <div className="container relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-8 animate-in fade-in slide-in-from-left duration-1000">
-              <div>
-                <h1 className="text-5xl lg:text-6xl font-bold text-black mb-4 leading-tight">
-                  {t_obj.hero.title}
-                </h1>
-                <p className="text-lg text-gray-700 leading-relaxed">
-                  {t_obj.hero.subtitle}
-                </p>
+        <div className="container mx-auto px-6 relative z-10 flex flex-col items-center text-center max-w-5xl">
+          <div className="space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+            <div>
+              <div className="inline-flex items-center gap-2 bg-[#00D632]/10 text-[#00D632] px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest mb-8 border border-[#00D632]/20">
+                <Zap size={14} fill="currentColor" />
+                <span>{language === "fr" ? "Nouvelle Génération d'E-commerce" : "Next Gen E-commerce"}</span>
               </div>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <button className="btn-primary flex items-center justify-center gap-2">
-                  {t_obj.hero.cta1} <ArrowRight size={20} />
-                </button>
-                <button className="btn-outline">
-                  {t_obj.hero.cta2}
-                </button>
-              </div>
-              <div className="flex flex-col gap-3 pt-4">
-                <div className="flex items-center gap-3">
-                  <Check size={24} className="text-[#00D632]" />
-                  <span className="text-gray-700">{t_obj.hero.benefit1}</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Check size={24} className="text-[#00D632]" />
-                  <span className="text-gray-700">{t_obj.hero.benefit2}</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Check size={20} className="text-[#00D632]" />
-                  <span className="text-gray-700">{t_obj.hero.benefit3}</span>
-                </div>
-              </div>
-
-              {/* App Store Icons */}
-              <AppStoreButtons />
+              <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-black mb-8 leading-[0.9] tracking-tighter">
+                {t_obj.hero.title}
+              </h1>
+              <p className="text-xl md:text-2xl text-gray-700 leading-relaxed max-w-3xl mx-auto font-medium">
+                {t_obj.hero.subtitle}
+              </p>
             </div>
-            <div className="relative animate-in fade-in slide-in-from-right duration-1000">
-              <div className="bg-gradient-to-br from-[#00D632] to-black rounded-2xl p-8 text-white shadow-2xl">
-                <div className="space-y-6">
-                  <div className="bg-white/10 rounded-lg p-4 backdrop-blur">
-                    <p className="text-sm opacity-80">{language === "fr" ? "Revenu Total" : "Total Revenue"}</p>
-                    <p className="text-3xl font-bold">2.4M XOF</p>
-                    <p className="text-xs opacity-60 mt-1">{language === "fr" ? "+24% ce mois" : "+24% this month"}</p>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-white/10 rounded-lg p-4 backdrop-blur">
-                      <p className="text-xs opacity-80">{language === "fr" ? "Commandes" : "Orders"}</p>
-                      <p className="text-2xl font-bold">1,234</p>
-                    </div>
-                    <div className="bg-white/10 rounded-lg p-4 backdrop-blur">
-                      <p className="text-xs opacity-80">{language === "fr" ? "Clients" : "Customers"}</p>
-                      <p className="text-2xl font-bold">892</p>
-                    </div>
-                  </div>
-                  <div className="bg-white/10 rounded-lg p-4 backdrop-blur">
-                    <p className="text-sm opacity-80 mb-2">{language === "fr" ? "Paiements Récents" : "Recent Payments"}</p>
-                    <div className="space-y-2">
-                      <div className="flex justify-between items-center text-sm">
-                        <span>{language === "fr" ? "Commande #1024" : "Order #1024"}</span>
-                        <span className="font-bold">150K XOF</span>
-                      </div>
-                      <div className="flex justify-between items-center text-sm">
-                        <span>{language === "fr" ? "Commande #1023" : "Order #1023"}</span>
-                        <span className="font-bold">89K XOF</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+
+            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+              <Button
+                className="h-16 px-12 rounded-2xl bg-black text-white font-black text-lg uppercase tracking-widest hover:scale-105 transition-all shadow-2xl flex items-center gap-3"
+                onClick={() => window.location.href = '/auth'}
+              >
+                {t_obj.hero.cta1} <ArrowRight size={24} />
+              </Button>
+              <Button
+                variant="outline"
+                className="h-16 px-12 rounded-2xl border-black/10 bg-white/50 backdrop-blur font-black text-lg uppercase tracking-widest hover:bg-gray-50 transition-all"
+                onClick={() => {
+                  const el = document.getElementById('features');
+                  el?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
+                {t_obj.hero.cta2}
+              </Button>
+            </div>
+
+            <div className="flex flex-wrap justify-center gap-10 pt-10 border-t border-gray-100">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-[#00D632]/20 flex items-center justify-center text-[#00D632]"><Check size={20} /></div>
+                <span className="text-sm font-black uppercase tracking-widest text-gray-500">{t_obj.hero.benefit1}</span>
               </div>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-[#00D632]/20 flex items-center justify-center text-[#00D632]"><Check size={20} /></div>
+                <span className="text-sm font-black uppercase tracking-widest text-gray-500">{t_obj.hero.benefit2}</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-[#00D632]/20 flex items-center justify-center text-[#00D632]"><Check size={20} /></div>
+                <span className="text-sm font-black uppercase tracking-widest text-gray-500">{t_obj.hero.benefit3}</span>
+              </div>
+            </div>
+
+            {/* App Store Icons */}
+            <div className="pt-10">
+              <AppStoreButtons />
             </div>
           </div>
         </div>
+
       </section>
 
       {/* Features Section */}
@@ -372,9 +417,13 @@ function HomeContent() {
                   <span className="text-4xl font-bold">{plan.price}</span>
                   <span className="text-sm ml-2">{t_obj.pricing.perMonth}</span>
                 </div>
-                <button className={`w-full font-bold py-3 rounded-lg mb-6 transition-colors ${plan.highlighted ? "bg-black text-[#00D632] hover:bg-[#1a1a1a]" : "bg-black text-white hover:bg-[#1a1a1a]"}`}>
+                <button
+                  className={`w-full font-black py-4 rounded-2xl mb-6 transition-all uppercase tracking-widest text-xs shadow-lg hover:scale-105 active:scale-95 ${plan.highlighted ? "bg-black text-[#00D632]" : "bg-black text-white text-white"}`}
+                  onClick={() => window.location.href = '/auth'}
+                >
                   {t_obj.pricing.getStartedBtn}
                 </button>
+
                 <ul className="space-y-3">
                   {plan.features.map((feature, fidx) => (
                     <li key={fidx} className="flex items-center gap-2">
@@ -396,9 +445,13 @@ function HomeContent() {
         <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
           {t_obj.cta.subtitle}
         </p>
-        <button className="btn-primary text-lg py-4 px-8 flex items-center justify-center gap-2 mx-auto">
+        <button
+          className="h-16 px-12 rounded-2xl bg-black text-[#00D632] font-black text-xl uppercase tracking-widest hover:scale-105 transition-all shadow-2xl flex items-center justify-center gap-2 mx-auto"
+          onClick={() => window.location.href = '/auth'}
+        >
           {t_obj.cta.button} <ArrowRight size={24} />
         </button>
+
         <p className="text-gray-400 mt-4">{t_obj.cta.note}</p>
       </div>
       </section>
@@ -436,10 +489,14 @@ function HomeContent() {
                     <span className="text-gray-300">{t_obj.referral.benefit3}</span>
                   </div>
                 </div>
-                <button className="bg-[#00D632] text-black px-8 py-4 rounded-lg font-bold text-lg hover:bg-[#00B829] transition-all flex items-center gap-2">
+                <button
+                  className="h-16 px-12 rounded-2xl bg-[#00D632] text-black font-black text-lg uppercase tracking-widest hover:scale-105 transition-all shadow-xl flex items-center gap-2"
+                  onClick={() => window.location.href = '/auth'}
+                >
                   {t_obj.referral.cta}
                   <ArrowRight size={20} />
                 </button>
+
               </div>
 
               {/* Right side - Visual */}

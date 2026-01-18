@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useTranslation } from "@/contexts/TranslationContext";
+import { supabase } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
+
 import {
     LayoutGrid,
     Palette,
@@ -46,8 +48,10 @@ function StoreBuilderContent() {
         sales: true,
         rentals: false,
         services: false,
-        testimonials: false
+        testimonials: false,
+        blog: false
     });
+
 
     // Customization State
     const [storeConfig, setStoreConfig] = useState({
@@ -82,8 +86,10 @@ function StoreBuilderContent() {
                 sales: storefront.enable_sales ?? true,
                 rentals: storefront.enable_rentals ?? false,
                 services: storefront.enable_services ?? false,
-                testimonials: storefront.enable_testimonials ?? false
+                testimonials: storefront.enable_testimonials ?? false,
+                blog: storefront.enable_blog ?? false
             });
+
             if (storefront.template_id) setSelectedTemplate(storefront.template_id);
             if (storefront.theme_config) setStoreConfig(prev => ({ ...prev, ...storefront.theme_config }));
             if (storefront.custom_domain) setCustomDomain(storefront.custom_domain);
@@ -110,7 +116,9 @@ function StoreBuilderContent() {
             enable_rentals: modules.rentals,
             enable_services: modules.services,
             enable_testimonials: modules.testimonials,
+            enable_blog: modules.blog,
             custom_domain: customDomain,
+
             updated_at: new Date().toISOString()
         }, { onConflict: 'merchant_id' });
 
@@ -196,7 +204,79 @@ function StoreBuilderContent() {
             description: "Warm earth tones for handmade and artisanal products.",
             defaultColors: { primary: "#92400e", accent: "#fcd34d" },
             image: "https://images.unsplash.com/photo-1452860606245-08befc0ff44b?q=80&w=2000&auto=format&fit=crop"
+        },
+        {
+            id: "gourmet_delights",
+            name: "Gourmet Delights",
+            description: "Appetizing layout for restaurants and food delivery.",
+            defaultColors: { primary: "#ea580c", accent: "#fbbf24" },
+            image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2000&auto=format&fit=crop"
+        },
+        {
+            id: "pixel_perfect",
+            name: "Pixel Perfect",
+            description: "Cyberpunk aesthetic for gaming and digital products.",
+            defaultColors: { primary: "#7e22ce", accent: "#22d3ee" },
+            image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2000&auto=format&fit=crop"
+        },
+        {
+            id: "serene_spa",
+            name: "Serene Spa",
+            description: "Calm and peaceful design for wellness and beauty.",
+            defaultColors: { primary: "#0d9488", accent: "#99f6e4" },
+            image: "https://images.unsplash.com/photo-1544161515-4af6b1d4640b?q=80&w=2000&auto=format&fit=crop"
+        },
+        {
+            id: "vintage_vault",
+            name: "Vintage Vault",
+            description: "Classic, retro feel for antiques and nostalgia.",
+            defaultColors: { primary: "#451a03", accent: "#b45309" },
+            image: "https://images.unsplash.com/photo-1531353826977-0941b4779a1c?q=80&w=2000&auto=format&fit=crop"
+        },
+        {
+            id: "neon_night",
+            name: "Neon Night",
+            description: "High-energy neon theme for nightlife and events.",
+            defaultColors: { primary: "#db2777", accent: "#a855f7" },
+            image: "https://images.unsplash.com/photo-1514525253361-bee8a187499b?q=80&w=2000&auto=format&fit=crop"
+        },
+        {
+            id: "organic_oasis",
+            name: "Organic Oasis",
+            description: "Eco-friendly design with organic shapes and earthy greens.",
+            defaultColors: { primary: "#166534", accent: "#4ade80" },
+            image: "https://images.unsplash.com/photo-1542601906990-b4d3fb7d5c73?q=80&w=2000&auto=format&fit=crop"
+        },
+        {
+            id: "midnight_muse",
+            name: "Midnight Muse",
+            description: "Mysterious and elegant theme with deep blacks and gold accents.",
+            defaultColors: { primary: "#0a0a0a", accent: "#fbbf24" },
+            image: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?q=80&w=2000&auto=format&fit=crop"
+        },
+        {
+            id: "pastel_paradise",
+            name: "Pastel Paradise",
+            description: "Soft, dreamy colors for a friendly and approachable feel.",
+            defaultColors: { primary: "#f472b6", accent: "#93c5fd" },
+            image: "https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2000&auto=format&fit=crop"
+        },
+        {
+            id: "golden_glam",
+            name: "Golden Glam",
+            description: "Luxury and high fashion with sophisticated gold and serif typography.",
+            defaultColors: { primary: "#451a03", accent: "#d97706" },
+            image: "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?q=80&w=2000&auto=format&fit=crop"
+        },
+        {
+            id: "tech_titan",
+            name: "Tech Titan",
+            description: "Cutting-edge design for high-tech hardware and gaming.",
+            defaultColors: { primary: "#1e3a8a", accent: "#06b6d4" },
+            image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2000&auto=format&fit=crop"
         }
+
+
     ];
 
     const toggleModule = (key: keyof typeof modules) => {
@@ -316,23 +396,44 @@ function StoreBuilderContent() {
                         </section>
                     )}
 
+                    {modules.blog && (
+                        <section className="space-y-6">
+                            <h3 className="font-black text-xl" style={{ color: storeConfig.primaryColor }}>Latest from Blog</h3>
+                            <div className="grid gap-6">
+                                {[1, 2].map(i => (
+                                    <div key={i} className="flex gap-4 group cursor-pointer bg-muted/20 p-4 rounded-3xl border border-border/5">
+                                        <div className="w-24 h-24 bg-muted rounded-2xl overflow-hidden flex-shrink-0">
+                                            <div className="w-full h-full bg-gray-200 group-hover:scale-110 transition-transform duration-500" />
+                                        </div>
+                                        <div className="flex flex-col justify-center">
+                                            <h4 className="font-bold text-sm mb-1 leading-tight">Trending Styles for the Season</h4>
+                                            <p className="text-[10px] opacity-60 mb-2">Jan 12, 2025 • 5 min read</p>
+                                            <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: storeConfig.accentColor }}>Read More</span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    )}
+
                     {modules.testimonials && (
                         <section className="space-y-6">
                             <h3 className="font-black text-xl text-center" style={{ color: storeConfig.primaryColor }}>What People Say</h3>
                             <div className="flex bg-muted/30 p-6 rounded-3xl gap-4 border border-border/10">
-                                <div className="w-10 h-10 bg-muted rounded-full flex-shrink-0" />
+                                <div className="w-10 h-10 bg-muted rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold" style={{ backgroundColor: storeConfig.accentColor + '20', color: storeConfig.accentColor }}>J</div>
                                 <div>
                                     <div className="flex gap-1 mb-2">
                                         {[1, 2, 3, 4, 5].map(star => (
-                                            <div key={star} className="w-3 h-3 bg-yellow-400 rounded-full" />
+                                            <div key={star} className="w-2 h-2 rounded-full" style={{ backgroundColor: storeConfig.accentColor }} />
                                         ))}
                                     </div>
-                                    <p className="text-sm italic opacity-80 mb-2">"Great products and amazing service. Highly recommended!"</p>
-                                    <p className="text-xs font-bold" style={{ color: storeConfig.accentColor }}>- Happy Customer</p>
+                                    <p className="text-sm italic opacity-80 mb-2 leading-relaxed">"Great products and amazing service. Highly recommended for anyone looking for quality."</p>
+                                    <p className="text-[10px] font-black uppercase tracking-widest" style={{ color: storeConfig.accentColor }}>- Jane Doe</p>
                                 </div>
                             </div>
                         </section>
                     )}
+
                 </div>
 
                 {/* Footer */}
@@ -467,9 +568,18 @@ function StoreBuilderContent() {
                                         </div>
                                         <Switch checked={modules.testimonials} onCheckedChange={() => toggleModule('testimonials')} />
                                     </div>
+
+                                    <div className="flex items-center justify-between p-4 bg-muted/50 rounded-2xl">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-xl bg-green-100 text-green-600 flex items-center justify-center"><LayoutGrid size={20} /></div>
+                                            <div><p className="font-black text-sm">Blog & News</p></div>
+                                        </div>
+                                        <Switch checked={modules.blog} onCheckedChange={() => toggleModule('blog')} />
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
                     )}
 
                     {activeTab === "design" && (

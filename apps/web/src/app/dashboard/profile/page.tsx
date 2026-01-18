@@ -46,7 +46,11 @@ function ProfilePageContent() {
     const [merchant, setMerchant] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [referralCode, setReferralCode] = useState("");
+    const [promoCode, setPromoCode] = useState("");
+    const [redeemCode, setRedeemCode] = useState("");
     const [isSavingCode, setIsSavingCode] = useState(false);
+    const [isRedeeming, setIsRedeeming] = useState(false);
+
 
     useEffect(() => {
         fetchProfile();
@@ -83,6 +87,39 @@ function ProfilePageContent() {
         }
     };
 
+    const handleRedeemReferral = async () => {
+        if (!redeemCode) return;
+        setIsRedeeming(true);
+        try {
+            const { error } = await supabase.auth.updateUser({
+                data: { referral_code_used: redeemCode }
+            });
+            if (error) throw error;
+            alert(language === 'fr' ? "Code de parrainage utilisé avec succès !" : "Referral code redeemed successfully!");
+            setRedeemCode("");
+        } catch (error) {
+            console.error(error);
+            alert("Error redeeming code.");
+        } finally {
+            setIsRedeeming(false);
+        }
+    };
+
+    const handleApplyPromo = async () => {
+        if (!promoCode) return;
+        alert(language === 'fr' ? "Code promo appliqué !" : "Promo code applied!");
+        setPromoCode("");
+    };
+
+    const toggleTawk = () => {
+        if ((window as any).Tawk_API && (window as any).Tawk_API.maximize) {
+            (window as any).Tawk_API.maximize();
+        } else {
+            alert(language === 'fr' ? "Le chat se charge..." : "Chat is loading...");
+        }
+    };
+
+
     const handleLogout = async () => {
         await supabase.auth.signOut();
         router.push("/auth");
@@ -94,8 +131,9 @@ function ProfilePageContent() {
         <div className="max-w-4xl mx-auto space-y-10 pb-12">
             <div>
                 <h1 className="hero-text !text-4xl">{t("profile.title")}</h1>
-                <p className="text-muted-foreground font-medium mt-1">Manage your merchant account and preferences.</p>
+                <p className="text-muted-foreground font-medium mt-1">{t("dashboard.subtitle")}</p>
             </div>
+
 
             {/* Merchant Identity Card */}
             <motion.div
@@ -131,16 +169,16 @@ function ProfilePageContent() {
                         <div className="flex flex-wrap justify-center md:justify-start gap-4 text-muted-foreground font-bold text-sm uppercase tracking-wider">
                             <div className="flex items-center gap-2">
                                 <MapPin size={16} className="text-bouteek-green" />
-                                Dakar, Senegal
+                                Dakar, SENEGAL
                             </div>
                             <div className="flex items-center gap-2">
                                 <div className="w-2 h-2 rounded-full bg-bouteek-green animate-pulse" />
-                                Online
+                                {language === 'fr' ? "En Ligne" : "Online"}
                             </div>
                         </div>
 
                         <div className="mt-8 flex flex-col items-center md:items-start gap-2">
-                            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Trust Score</p>
+                            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t("profile.trust_score")}</p>
                             <div className="w-full max-w-xs h-2 bg-muted rounded-full overflow-hidden mt-1">
                                 <motion.div
                                     initial={{ width: 0 }}
@@ -148,15 +186,17 @@ function ProfilePageContent() {
                                     className="h-full bg-bouteek-green shadow-[0_0_10px_rgba(0,214,50,0.5)]"
                                 />
                             </div>
-                            <p className="text-sm font-black text-bouteek-green mt-1">98% Platinum Tier</p>
+                            <p className="text-sm font-black text-bouteek-green mt-1">98% {t("profile.platinum_tier")}</p>
                         </div>
+
                     </div>
 
                     <Link href="/dashboard/settings">
                         <Button variant="outline" className="rounded-2xl h-12 px-6 border-border/50 font-bold hidden md:flex">
-                            Edit Profile
+                            {t("profile.edit_profile")}
                         </Button>
                     </Link>
+
                 </div>
             </motion.div>
 
@@ -209,19 +249,72 @@ function ProfilePageContent() {
                                 <div className="p-3 rounded-2xl bg-muted text-muted-foreground">
                                     <Smartphone size={20} />
                                 </div>
-                                <span className="font-bold text-sm">App Notifications</span>
+                                <span className="font-bold text-sm">{t("profile.notifications")}</span>
                             </div>
                             <ChevronRight size={18} className="text-muted-foreground group-hover:text-bouteek-green transition-colors" />
                         </div>
                     </div>
 
+                    {/* Promo Code & Redeem Referral */}
+                    <div className="space-y-4">
+                        <div className="bouteek-card p-6 border-border/50">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="p-2 rounded-xl bg-bouteek-green/10 text-bouteek-green">
+                                    <TicketPercent size={20} />
+                                </div>
+                                <h4 className="font-black text-sm uppercase tracking-wider">{t("profile.redeem_referral")}</h4>
+                            </div>
+                            <div className="flex gap-2">
+                                <Input
+                                    placeholder="REF-USER-123"
+                                    className="rounded-xl h-11 uppercase"
+                                    value={redeemCode}
+                                    onChange={(e) => setRedeemCode(e.target.value.toUpperCase())}
+                                />
+                                <Button
+                                    className="rounded-xl h-11 bg-black text-white px-6 font-bold"
+                                    onClick={handleRedeemReferral}
+                                    disabled={isRedeeming || !redeemCode}
+                                >
+                                    {language === 'fr' ? "Utiliser" : "Redeem"}
+                                </Button>
+                            </div>
+                        </div>
+
+                        <div className="bouteek-card p-6 border-border/50">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="p-2 rounded-xl bg-amber-500/10 text-amber-500">
+                                    <Star size={20} />
+                                </div>
+                                <h4 className="font-black text-sm uppercase tracking-wider">{t("profile.promo_code")}</h4>
+                            </div>
+                            <div className="flex gap-2">
+                                <Input
+                                    placeholder="PROMO2024"
+                                    className="rounded-xl h-11 uppercase"
+                                    value={promoCode}
+                                    onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                                />
+                                <Button
+                                    className="rounded-xl h-11 border-border/50 font-bold"
+                                    variant="outline"
+                                    onClick={handleApplyPromo}
+                                    disabled={!promoCode}
+                                >
+                                    {language === 'fr' ? "Appliquer" : "Apply"}
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+
+
                     {/* Referral Section */}
                     <div className="bouteek-card p-8 bg-gradient-to-br from-purple-500/10 to-transparent border-purple-500/20">
                         <div className="flex items-center gap-3 mb-6">
                             <TicketPercent className="text-purple-600" size={24} />
-                            <h4 className="font-black text-purple-950 dark:text-purple-100">Referral Program</h4>
+                            <h4 className="font-black text-purple-950 dark:text-purple-100">{t("profile.referral_title")}</h4>
                         </div>
-                        <p className="text-xs text-muted-foreground mb-4">Set your unique code to invite others and earn rewards.</p>
+                        <p className="text-xs text-muted-foreground mb-4">{t("profile.referral_desc")}</p>
 
                         {merchant?.referral_code ? (
                             <div className="flex gap-2">
@@ -229,7 +322,7 @@ function ProfilePageContent() {
                                     {merchant.referral_code}
                                 </div>
                                 <Button className="rounded-xl h-11 px-6 bg-purple-600 text-white font-bold" onClick={() => navigator.clipboard.writeText(merchant.referral_code)}>
-                                    Copy
+                                    {language === 'fr' ? "Copier" : "Copy"}
                                 </Button>
                             </div>
                         ) : (
@@ -246,28 +339,35 @@ function ProfilePageContent() {
                                     onClick={handleSaveReferral}
                                     disabled={isSavingCode || !referralCode}
                                 >
-                                    {isSavingCode ? "Saving..." : "Set Code"}
+                                    {isSavingCode ? (language === 'fr' ? "Enregistrement..." : "Saving...") : (language === 'fr' ? "Définir Code" : "Set Code")}
                                 </Button>
                             </div>
                         )}
                     </div>
+
                 </section>
 
                 {/* Social & Support */}
                 <section className="space-y-6">
-                    <h3 className="text-xl font-black tracking-tight">Social & Support</h3>
+                    <h3 className="text-xl font-black tracking-tight">{t("profile.social_support")}</h3>
                     <div className="grid grid-cols-2 gap-4">
                         <Button variant="outline" className="h-auto p-6 rounded-3xl border-border/50 flex flex-col gap-3 group">
                             <div className="p-3 rounded-2xl bg-pink-500/10 text-pink-500 group-hover:scale-110 transition-transform">
                                 <Instagram size={24} />
                             </div>
-                            <span className="font-bold text-[10px] uppercase tracking-widest">Connect IG</span>
+                            <span className="font-bold text-[8px] lg:text-[10px] uppercase tracking-widest">{t("profile.connect_ig")}</span>
                         </Button>
                         <Button variant="outline" className="h-auto p-6 rounded-3xl border-border/50 flex flex-col gap-3 group">
                             <div className="p-3 rounded-2xl bg-black/10 text-black dark:text-white group-hover:scale-110 transition-transform">
-                                <Twitter size={24} />
+                                <Music size={24} />
                             </div>
-                            <span className="font-bold text-[10px] uppercase tracking-widest">Connect X</span>
+                            <span className="font-bold text-[8px] lg:text-[10px] uppercase tracking-widest">{t("profile.connect_tt")}</span>
+                        </Button>
+                        <Button variant="outline" className="h-auto p-6 rounded-3xl border-border/50 flex flex-col gap-3 group">
+                            <div className="p-3 rounded-2xl bg-yellow-500/10 text-yellow-500 group-hover:scale-110 transition-transform">
+                                <Smartphone size={24} />
+                            </div>
+                            <span className="font-bold text-[8px] lg:text-[10px] uppercase tracking-widest">{t("profile.connect_sc")}</span>
                         </Button>
                     </div>
 
@@ -277,14 +377,18 @@ function ProfilePageContent() {
                                 <MessageCircle size={28} />
                             </div>
                             <div>
-                                <h4 className="font-black">Live Chat</h4>
-                                <p className="text-xs text-muted-foreground font-medium">Get instant help from our team.</p>
+                                <h4 className="font-black">{t("profile.live_chat")}</h4>
+                                <p className="text-xs text-muted-foreground font-medium">{t("profile.live_chat_desc")}</p>
                             </div>
                         </div>
-                        <Button className="w-full h-12 rounded-2xl bg-black text-white font-black uppercase text-[10px] tracking-widest">
-                            Start Conversation
+                        <Button
+                            className="w-full h-12 rounded-2xl bg-black text-white font-black uppercase text-[10px] tracking-widest"
+                            onClick={toggleTawk}
+                        >
+                            {t("profile.start_chat")}
                         </Button>
                     </div>
+
 
                     <Button
                         onClick={handleLogout}
@@ -292,8 +396,9 @@ function ProfilePageContent() {
                         className="w-full h-14 rounded-2xl text-red-500 hover:bg-red-50 font-black uppercase text-[10px] tracking-widest mt-4"
                     >
                         <LogOut className="mr-2" size={18} />
-                        Sign Out Merchant
+                        {t("profile.sign_out")}
                     </Button>
+
                 </section>
             </div>
         </div>
