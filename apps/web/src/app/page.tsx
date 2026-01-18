@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Menu, X, Check, Zap, Lock, Smartphone, Globe, TrendingUp, Instagram, Music } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useLanguage } from "@/contexts/LanguageContext";
+
 import { translations } from "@/lib/translations";
 import NewsletterSignup from "@/components/NewsletterSignup";
 import FAQ from "@/components/FAQ";
