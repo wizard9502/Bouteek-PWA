@@ -10,6 +10,8 @@ import {
     LogOut
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useRouter, usePathname } from "next/navigation";
+import Link from "next/link";
 import { supabase } from "@/lib/supabaseClient";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
