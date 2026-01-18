@@ -2,6 +2,20 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { useTranslation } from "@/contexts/TranslationContext";
+import {
+    Plus,
+    Wallet,
+    History,
+    ArrowUpCircle,
+    ArrowDownCircle,
+    ShieldCheck,
+    ArrowRight,
+    CreditCard
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 export default function FinancePage() {
     const { t } = useTranslation();
