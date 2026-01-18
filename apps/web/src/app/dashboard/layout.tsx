@@ -10,14 +10,7 @@ import {
     LogOut
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { createClient } from "@supabase/supabase-js";
-import { useRouter, usePathname } from "next/navigation";
-import Link from "next/link";
-
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+import { supabase } from "@/lib/supabaseClient";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const router = useRouter();
@@ -64,8 +57,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                 key={item.href}
                                 href={item.href}
                                 className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive
-                                        ? "bg-[#00D632]/10 text-[#006b19] font-medium"
-                                        : "text-gray-600 hover:bg-gray-50"
+                                    ? "bg-[#00D632]/10 text-[#006b19] font-medium"
+                                    : "text-gray-600 hover:bg-gray-50"
                                     }`}
                                 onClick={() => setIsSidebarOpen(false)}
                             >
