@@ -9,10 +9,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+import { supabase } from "@/lib/supabaseClient";
 
 export default function StorePage({ params }: { params: { domain: string } }) {
     const [store, setStore] = useState<any>(null);

@@ -11,12 +11,7 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
 // Initialize client manually here or import from lib if "use client" allows
-// Ideally import from lib/supabaseClient but that file might be server-side only depending on env vars exposure.
-// Assuming env vars are public.
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+import { supabase } from "@/lib/supabaseClient";
 
 export default function AuthPage() {
     const router = useRouter();
