@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Smartphone } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function AppShowcase() {

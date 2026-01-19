@@ -19,7 +19,9 @@ export function TranslationProvider({ children }: { children: React.ReactNode })
         // Check localStorage for saved language preference on mount
         const saved = localStorage.getItem("bouteek-language") as Language | null;
         if (saved && (saved === "fr" || saved === "en")) {
-            setLanguageState(saved);
+            // Use a small timeout or requestAnimationFrame to avoid synchronous setState in effect
+            // which triggers React 19 linting warnings
+            setTimeout(() => setLanguageState(saved), 0);
         }
     }, []);
 

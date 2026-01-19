@@ -24,6 +24,7 @@ export default function HeatmapsPage() {
     });
     const [points, setPoints] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [subscriptionTier, setSubscriptionTier] = useState("starter");
 
     useEffect(() => {
         fetchRealData();
@@ -33,8 +34,14 @@ export default function HeatmapsPage() {
         setLoading(true);
         try {
             const { data: { user } } = await supabase.auth.getUser();
-            const { data: merchant } = await supabase.from('merchants').select('id').eq('user_id', user?.id).single();
+            const { data: merchant } = await supabase.from('merchants').select('id, subscription_tier').eq('user_id', user?.id).single();
             if (!merchant) return;
+            setSubscriptionTier(merchant.subscription_tier || "starter");
+
+            if (merchant.subscription_tier === "starter") {
+                setLoading(false);
+                return;
+            }
 
             // Fetch real analytics events
             const { data: events, error } = await supabase
@@ -65,6 +72,26 @@ export default function HeatmapsPage() {
             setLoading(false);
         }
     };
+
+    if (subscriptionTier === "starter") {
+        return (
+            <div className="h-[calc(100vh-200px)] flex flex-col items-center justify-center text-center p-8">
+                <div className="w-20 h-20 rounded-3xl bg-amber-100 text-amber-600 flex items-center justify-center mb-6">
+                    <TrendingUp size={40} />
+                </div>
+                <h2 className="text-3xl font-black tracking-tighter">Growth Feature</h2>
+                <p className="text-muted-foreground mt-2 max-w-sm font-medium">
+                    Heatmaps and advanced analytics are only available on Growth and Pro plans.
+                </p>
+                <Button 
+                    className="mt-8 h-12 px-8 rounded-2xl bg-black text-white font-bold"
+                    onClick={() => window.location.href = '/dashboard/finance'}
+                >
+                    Upgrade Now
+                </Button>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-10 pb-12">

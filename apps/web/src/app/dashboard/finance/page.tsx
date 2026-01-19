@@ -309,6 +309,12 @@ function SubscriptionManager({ plans }: { plans: any[] }) {
     const [processing, setProcessing] = useState(false);
     const [merchant, setMerchant] = useState<any>(null);
     const [selectedPlanSlug, setSelectedPlanSlug] = useState<string>("starter");
+    const PRICES = {
+        starter: 2000,
+        launch: 5000,
+        growth: 12500,
+        pro: 20000
+    };
     const [duration, setDuration] = useState<number>(1); // 1, 3, 6, 12
     const [autoRenew, setAutoRenew] = useState(false);
 
@@ -329,7 +335,7 @@ function SubscriptionManager({ plans }: { plans: any[] }) {
 
             if (error) throw error;
             setMerchant(data);
-            if (data.subscription_tier) setSelectedPlan(data.subscription_tier);
+            if (data.subscription_tier) setSelectedPlanSlug(data.subscription_tier);
             if (data.auto_renew) setAutoRenew(data.auto_renew);
 
         } catch (error) {
@@ -343,14 +349,14 @@ function SubscriptionManager({ plans }: { plans: any[] }) {
     const handleSubscribe = async () => {
         setProcessing(true);
         try {
-            const basePrice = PRICES[selectedPlan as keyof typeof PRICES];
+            const basePrice = PRICES[selectedPlanSlug as keyof typeof PRICES] || 0;
             const totalCost = basePrice * duration;
             const currentBalance = Number(merchant.bouteek_cash_balance || 0);
 
             // Perform atomic subscription purchase via RPC
             const { data: result, error: rpcError } = await supabase.rpc('purchase_subscription', {
                 merchant_id_input: merchant.id,
-                plan_slug_input: selectedPlan.slug,
+                plan_slug_input: selectedPlanSlug,
                 duration_months: duration,
                 total_cost: totalCost
             });
@@ -394,7 +400,7 @@ function SubscriptionManager({ plans }: { plans: any[] }) {
                 <div className="lg:col-span-2 space-y-6">
                     <Card>
                         <CardHeader>
-                            <CardTitle>{t("finance.sub_manager.configure")}: <span className="uppercase text-bouteek-green">{selectedPlan}</span></CardTitle>
+                            <CardTitle>{t("finance.sub_manager.configure")}: <span className="uppercase text-bouteek-green">{selectedPlanSlug}</span></CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-6">
                             <div className="space-y-3">
@@ -457,7 +463,7 @@ function SubscriptionManager({ plans }: { plans: any[] }) {
                         </CardHeader>
                         <CardContent className="pt-6 space-y-4">
                             <div className="flex justify-between text-sm">
-                                <span>Plan ({selectedPlan})</span>
+                                <span>Plan ({selectedPlanSlug})</span>
                                 <span className="font-mono">{currentPrice.toLocaleString()} x {duration}</span>
                             </div>
                             {discount > 0 && (

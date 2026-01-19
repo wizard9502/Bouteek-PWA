@@ -315,6 +315,15 @@ function StoreBuilderContent() {
     ];
 
     const toggleModule = (key: keyof typeof modules) => {
+        // Gating Logic
+        if (subscriptionTier === "starter" && key !== "sales") {
+            toast.error("Upgrade to Growth or Pro to unlock this module!");
+            return;
+        }
+        if (subscriptionTier === "growth" && (key === "testimonials" || key === "blog")) {
+            toast.error("Upgrade to Pro to unlock this module!");
+            return;
+        }
         setModules(prev => ({ ...prev, [key]: !prev[key] }));
     };
 
