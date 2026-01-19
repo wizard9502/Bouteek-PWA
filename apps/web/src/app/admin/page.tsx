@@ -7,6 +7,14 @@ import {
     ShoppingBag,
     CreditCard,
     TrendingUp,
+    Search,
+    Filter,
+    MoreHorizontal
+} from "lucide-react";
+import { getAdminKPIs, getSubscriptionDistribution, getRecentMerchants, getRevenueGrowthData } from "@/lib/adminData";
+
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
     BarChart,
@@ -20,7 +28,6 @@ import {
     Pie,
     Cell
 } from "recharts";
-import { cn } from "@/lib/utils";
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
