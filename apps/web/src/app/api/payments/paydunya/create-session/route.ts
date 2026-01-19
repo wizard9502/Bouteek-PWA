@@ -5,6 +5,13 @@ const PAYDUNYA_PRIVATE_KEY = process.env.PAYDUNYA_PRIVATE_KEY;
 const PAYDUNYA_TOKEN = process.env.PAYDUNYA_TOKEN;
 
 export async function POST(req: NextRequest) {
+    if (!PAYDUNYA_MASTER_KEY || !PAYDUNYA_PRIVATE_KEY || !PAYDUNYA_TOKEN) {
+        console.error("PayDunya Config Missing: Check Railway Env Vars");
+        return NextResponse.json({
+            message: "Configuration Error: Payment Gateway Keys Missing on Server"
+        }, { status: 500 });
+    }
+
     try {
         const { amount, merchantId, userId, businessName } = await req.json();
 
