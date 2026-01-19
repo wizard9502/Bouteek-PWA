@@ -174,8 +174,8 @@ function FinanceOverview() {
 
             if (data.url) {
                 toast.dismiss(toastId);
-                toast.success("Redirecting to PayDunya...");
-                window.location.href = data.url;
+                toast.success("Opening PayDunya in new tab...");
+                window.open(data.url, '_blank');
             } else {
                 console.error("No URL in response:", data);
                 toast.error(data.message || "Failed to initiate payment: No URL returned");
