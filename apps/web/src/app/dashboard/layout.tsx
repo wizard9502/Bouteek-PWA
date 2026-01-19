@@ -85,11 +85,10 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
     };
 
     const navItems = [
-        { href: "/dashboard", label: t("sidebar.dashboard"), icon: LayoutDashboard },
+        { href: "/dashboard", label: "Analytics", icon: LayoutDashboard }, // Renamed from Dashboard
         { href: "/dashboard/store", label: t("sidebar.store"), icon: Store },
         { href: "/dashboard/orders", label: t("sidebar.orders"), icon: ShoppingCart },
         { href: "/dashboard/finance", label: t("sidebar.billing") || "Billing & Subscriptions", icon: Wallet },
-        { href: "/dashboard/settings", label: t("sidebar.settings"), icon: Settings },
         { href: "/dashboard/profile", label: t("sidebar.profile"), icon: UserCircle },
     ];
 

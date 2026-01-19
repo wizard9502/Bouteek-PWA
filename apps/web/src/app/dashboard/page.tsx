@@ -62,7 +62,8 @@ function DashboardHomeContent() {
             start_date: null,
             end_date: null,
             percentage: 0
-        }
+        },
+        lowStockCount: 0
     });
 
     const [chartData, setChartData] = useState<any[]>([]);
@@ -85,6 +86,19 @@ function DashboardHomeContent() {
                 .from('orders')
                 .select('status, total, created_at')
                 .eq('merchant_id', merchant.id);
+
+            // Fetch Low Stock Products
+            const { data: products } = await supabase
+                .from('products')
+                .select('stock_quantity, low_stock_threshold')
+                .eq('merchant_id', merchant.id);
+
+            let lowStock = 0;
+            products?.forEach(p => {
+                if ((p.stock_quantity || 0) <= (p.low_stock_threshold || 5)) {
+                    lowStock++;
+                }
+            });
 
             let today = 0, week = 0, month = 0, total = 0;
             let pending = 0, completed = 0, active = 0, cancelled = 0;
@@ -128,7 +142,8 @@ function DashboardHomeContent() {
                     start_date: merchant.subscription_start,
                     end_date: merchant.subscription_end,
                     percentage: calculateSubscriptionPercentage(merchant.subscription_start, merchant.subscription_end)
-                }
+                },
+                lowStockCount: lowStock
             });
 
 
@@ -290,8 +305,9 @@ function DashboardHomeContent() {
             {/* Middle Section: Status & Charts */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Order Status Grid */}
+                {/* Order & Stock Status Grid */}
                 <div className="lg:col-span-1 space-y-6">
-                    <h3 className="text-xl font-black tracking-tight">{language === 'fr' ? "Activité des Commandes" : "Order Activity"}</h3>
+                    <h3 className="text-xl font-black tracking-tight">{language === 'fr' ? "Activité" : "Activity & Alerts"}</h3>
 
                     <div className="grid grid-cols-2 gap-4">
                         {orderStatuses.map((status) => (
@@ -305,6 +321,19 @@ function DashboardHomeContent() {
                                 </div>
                             </div>
                         ))}
+                        {/* Low Stock Alert Card */}
+                        <div className={cn(
+                            "bouteek-card p-6 flex flex-col items-center justify-center text-center gap-3 group border-2",
+                            stats.lowStockCount > 0 ? "border-red-500/50 bg-red-50" : "border-border/50"
+                        )}>
+                            <div className={cn("p-4 rounded-2xl transition-transform group-hover:scale-110", stats.lowStockCount > 0 ? "bg-red-500 text-white" : "bg-muted text-muted-foreground")}>
+                                <AlertCircle size={24} />
+                            </div>
+                            <div>
+                                <p className={cn("text-2xl font-black", stats.lowStockCount > 0 ? "text-red-600" : "")}>{stats.lowStockCount}</p>
+                                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Low Stock</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

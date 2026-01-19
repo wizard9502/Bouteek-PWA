@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "@/contexts/TranslationContext";
 import { supabase } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 import {
     LayoutGrid,
@@ -67,6 +68,8 @@ function StoreBuilderContent() {
 
     const [isLoading, setIsLoading] = useState(true);
     const [customDomain, setCustomDomain] = useState("");
+    const [subscriptionTier, setSubscriptionTier] = useState("starter"); // starter, growth, pro
+    const [domainStatus, setDomainStatus] = useState("pending"); // pending, verified, failed
 
     useEffect(() => {
         loadStoreData();
@@ -77,8 +80,10 @@ function StoreBuilderContent() {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) return; // Wait for auth middleware or use separate loading state
 
-            const { data: merchant } = await supabase.from('merchants').select('id').eq('user_id', user.id).single();
+            const { data: merchant } = await supabase.from('merchants').select('id, subscription_tier').eq('user_id', user.id).single();
             if (!merchant) return;
+
+            setSubscriptionTier(merchant.subscription_tier || "starter");
 
             const { data: storefront } = await supabase.from('storefronts').select('*').eq('merchant_id', merchant.id).single();
 
@@ -94,9 +99,11 @@ function StoreBuilderContent() {
                 if (storefront.template_id) setSelectedTemplate(storefront.template_id);
                 if (storefront.theme_config) setStoreConfig(prev => ({ ...prev, ...storefront.theme_config }));
                 if (storefront.custom_domain) setCustomDomain(storefront.custom_domain);
+                if (storefront.custom_domain_status) setDomainStatus(storefront.custom_domain_status);
             }
         } catch (error) {
             console.error("Error loading store data:", error);
+            toast.error("Failed to load store data");
         } finally {
             setIsLoading(false);
         }
@@ -145,35 +152,35 @@ function StoreBuilderContent() {
             name: "Modern Ecommerce",
             description: "Clean lines, whitespace, and focus on product photography.",
             defaultColors: { primary: "#000000", accent: "#00D632" },
-            image: "/template_ecommerce_modern_1768734107548.png"
+            image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2000&auto=format&fit=crop"
         },
         {
             id: "bold_vibrant",
             name: "Corporate Business",
             description: "Professional layout with team sections and clear service offerings.",
             defaultColors: { primary: "#1e3a8a", accent: "#3b82f6" },
-            image: "/template_business_corp_1768734125853.png"
+            image: "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2000&auto=format&fit=crop"
         },
         {
             id: "classic_boutique",
             name: "Service Booking",
             description: "Optimized for appointments, salons, and consultancies.",
             defaultColors: { primary: "#78350f", accent: "#d97706" },
-            image: "/template_service_booking_1768734141246.png"
+            image: "https://images.unsplash.com/photo-1556761175-4b46a572b786?q=80&w=2000&auto=format&fit=crop"
         },
         {
             id: "dark_mode_pro",
             name: "Luxury Premium",
             description: "Sleek, premium dark interface for luxury items.",
             defaultColors: { primary: "#000000", accent: "#fbbf24" },
-            image: "/template_luxury_premium_1768734171843.png"
+            image: "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?q=80&w=2000&auto=format&fit=crop"
         },
         {
             id: "grid_masonry",
             name: "Minimalist Clean",
             description: "Sophisticated 'less is more' design for high-end retail.",
             defaultColors: { primary: "#404040", accent: "#737373" },
-            image: "/template_minimalist_clean_1768734156244.png"
+            image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=2000&auto=format&fit=crop"
         },
         {
             id: "chic_vogue",
@@ -411,7 +418,7 @@ function StoreBuilderContent() {
 
                     {modules.blog && (
                         <section className="space-y-6">
-                            <h3 className="font-black text-xl" style={{ color: storeConfig.primaryColor }}>Latest from Blog</h3>
+                            <h3 className="font-black text-xl" style={{ color: storeConfig.primaryColor }}>{storeConfig.blogTitle || "Latest from Blog"}</h3>
                             <div className="grid gap-6">
                                 {[1, 2].map(i => (
                                     <div key={i} className="flex gap-4 group cursor-pointer bg-muted/20 p-4 rounded-3xl border border-border/5">
@@ -419,7 +426,7 @@ function StoreBuilderContent() {
                                             <div className="w-full h-full bg-gray-200 group-hover:scale-110 transition-transform duration-500" />
                                         </div>
                                         <div className="flex flex-col justify-center">
-                                            <h4 className="font-bold text-sm mb-1 leading-tight">Trending Styles for the Season</h4>
+                                            <h4 className="font-bold text-sm mb-1 leading-tight">Trending Styles...</h4>
                                             <p className="text-[10px] opacity-60 mb-2">Jan 12, 2025 • 5 min read</p>
                                             <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: storeConfig.accentColor }}>Read More</span>
                                         </div>
@@ -431,7 +438,7 @@ function StoreBuilderContent() {
 
                     {modules.testimonials && (
                         <section className="space-y-6">
-                            <h3 className="font-black text-xl text-center" style={{ color: storeConfig.primaryColor }}>What People Say</h3>
+                            <h3 className="font-black text-xl text-center" style={{ color: storeConfig.primaryColor }}>{storeConfig.testimonialsTitle || "What People Say"}</h3>
                             <div className="flex bg-muted/30 p-6 rounded-3xl gap-4 border border-border/10">
                                 <div className="w-10 h-10 bg-muted rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold" style={{ backgroundColor: storeConfig.accentColor + '20', color: storeConfig.accentColor }}>J</div>
                                 <div>
@@ -440,8 +447,8 @@ function StoreBuilderContent() {
                                             <div key={star} className="w-2 h-2 rounded-full" style={{ backgroundColor: storeConfig.accentColor }} />
                                         ))}
                                     </div>
-                                    <p className="text-sm italic opacity-80 mb-2 leading-relaxed">"Great products and amazing service. Highly recommended for anyone looking for quality."</p>
-                                    <p className="text-[10px] font-black uppercase tracking-widest" style={{ color: storeConfig.accentColor }}>- Jane Doe</p>
+                                    <p className="text-sm italic opacity-80 mb-2 leading-relaxed">"Great products and amazing service..."</p>
+                                    <p className="text-[10px] font-black uppercase tracking-widest" style={{ color: storeConfig.accentColor }}>- {storeConfig.testimonialAuthor || "Jane Doe"}</p>
                                 </div>
                             </div>
                         </section>
@@ -494,6 +501,7 @@ function StoreBuilderContent() {
                         { id: "templates", icon: LayoutGrid, label: "Templates" },
                         { id: "modules", icon: Layers, label: "Modules" },
                         { id: "design", icon: Palette, label: "Design" },
+                        { id: "content", icon: Type, label: "Content" }, // Added Content tab
                         { id: "settings", icon: Globe, label: "Settings" },
                     ].map((tab) => (
                         <button
@@ -521,6 +529,7 @@ function StoreBuilderContent() {
                                         setSelectedTemplate(template.id);
                                         // Auto-apply defaults
                                         setStoreConfig(prev => ({ ...prev, primaryColor: template.defaultColors.primary, accentColor: template.defaultColors.accent }));
+                                        toast.success("Theme selected: " + template.name);
                                     }}
                                     className={cn(
                                         "p-4 rounded-3xl border-2 cursor-pointer transition-all hover:scale-[1.02]",
@@ -665,130 +674,165 @@ function StoreBuilderContent() {
                                 </div>
                             </div>
                         </div>
+                        </div>
                     )}
 
-                    {activeTab === "settings" && (
-                        <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
-                            <div className="bouteek-card p-6 space-y-4">
-                                <h3 className="font-black text-lg flex items-center gap-2">
-                                    <Globe size={18} />
-                                    Custom Domain
-                                </h3>
-
-                                {subscriptionTier === 'growth' || subscriptionTier === 'pro' ? (
-                                    <div className="space-y-6">
-                                        <div className="space-y-2">
-                                            <Label>Domain Name</Label>
-                                            <Input
-                                                placeholder="e.g. mystore.com"
-                                                value={customDomain}
-                                                onChange={(e) => setCustomDomain(e.target.value)}
-                                                className="rounded-xl font-bold"
-                                            />
-                                            <p className="text-xs text-muted-foreground">Enter your domain without http:// or https://</p>
-                                        </div>
-
-                                        <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 space-y-3">
-                                            <div className="flex items-center gap-2 text-blue-800 font-bold text-sm">
-                                                <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                                                DNS Configuration Required
-                                            </div>
-                                            <p className="text-xs text-blue-700 leading-relaxed">
-                                                To connect your domain, please add the following record to your domain provider's DNS settings:
-                                            </p>
-                                            <div className="bg-white rounded-lg border border-blue-200 p-3 font-mono text-xs overflow-x-auto">
-                                                <div className="grid grid-cols-[80px_1fr] gap-2">
-                                                    <span className="text-muted-foreground">Type:</span>
-                                                    <span className="font-bold">CNAME</span>
-                                                    <span className="text-muted-foreground">Name:</span>
-                                                    <span className="font-bold">@ (or www)</span>
-                                                    <span className="text-muted-foreground">Value:</span>
-                                                    <span className="text-blue-600 font-bold">connect.bouteek.com</span>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {domainStatus !== 'pending' && (
-                                            <div className={cn(
-                                                "p-4 rounded-xl border flex items-center gap-3",
-                                                domainStatus === 'verified' ? "bg-green-50 border-green-200 text-green-800" : "bg-red-50 border-red-200 text-red-800"
-                                            )}>
-                                                {domainStatus === 'verified' ? <Check size={18} /> : <div className="w-4 h-4 rounded-full border-2 border-red-500 border-t-transparent animate-spin" />}
-                                                <div>
-                                                    <p className="text-sm font-bold capitalize">{domainStatus} Status</p>
-                                                    <p className="text-xs opacity-80">
-                                                        {domainStatus === 'verified' ? "Your domain is active!" : "We verified your domain settings."}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                ) : (
-                                    <div className="text-center py-8 space-y-4">
-                                        <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto text-muted-foreground">
-                                            <Store size={32} />
-                                        </div>
-                                        <div className="space-y-1">
-                                            <h4 className="font-black text-lg">Upgrade to Connect Domain</h4>
-                                            <p className="text-sm text-muted-foreground max-w-[250px] mx-auto">
-                                                Custom domains are available on Growth and Pro plans.
-                                            </p>
-                                        </div>
-                                        <Button className="rounded-full bg-black text-white font-bold" disabled>
-                                            Upgrade Plan (Coming Soon)
-                                        </Button>
-                                    </div>
-                                )}
+                {activeTab === "content" && (
+                    <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
+                        <div className="bouteek-card p-6 space-y-4">
+                            <h3 className="font-black text-lg">Section Titles</h3>
+                            <div className="space-y-4">
+                                <div className="space-y-2">
+                                    <Label>Blog Section Title</Label>
+                                    <Input
+                                        value={storeConfig.blogTitle || "Latest from Blog"}
+                                        onChange={(e) => updateConfig('blogTitle', e.target.value)}
+                                        className="rounded-xl"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Testimonials Title</Label>
+                                    <Input
+                                        value={storeConfig.testimonialsTitle || "What People Say"}
+                                        onChange={(e) => updateConfig('testimonialsTitle', e.target.value)}
+                                        className="rounded-xl"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Testimonial Author</Label>
+                                    <Input
+                                        value={storeConfig.testimonialAuthor || "Jane Doe"}
+                                        onChange={(e) => updateConfig('testimonialAuthor', e.target.value)}
+                                        className="rounded-xl"
+                                    />
+                                </div>
                             </div>
                         </div>
-                    )}
-                </div>
-
-                <Button onClick={handleSave} disabled={isLoading} className="w-full h-14 rounded-2xl bg-black text-white font-black text-lg shadow-xl shadow-black/20 mt-auto">
-                    <Save className="mr-2" size={20} />
-                    {isLoading ? "Saving..." : "Save & Publish"}
-                </Button>
-            </div>
-
-            {/* Right Side: Preview */}
-            <div className="flex-1 bg-muted/30 rounded-4xl border-2 border-dashed border-border/50 p-8 flex flex-col items-center justify-center relative overflow-hidden transition-all">
-                {/* View Toggles */}
-                <div className="absolute top-6 flex bg-white rounded-full p-1 shadow-sm border border-border/50 z-20">
-                    <button
-                        onClick={() => setViewMode("mobile")}
-                        className={cn("p-2 rounded-full transition-colors", viewMode === "mobile" ? "bg-black text-white" : "text-muted-foreground hover:bg-muted")}
-                    >
-                        <Smartphone size={20} />
-                    </button>
-                    <button
-                        onClick={() => setViewMode("desktop")}
-                        className={cn("p-2 rounded-full transition-colors", viewMode === "desktop" ? "bg-black text-white" : "text-muted-foreground hover:bg-muted")}
-                    >
-                        <Monitor size={20} />
-                    </button>
-                </div>
-
-                {/* Mobile/Desktop Preview Frame */}
-                <motion.div
-                    layout
-                    className={cn(
-                        "bg-white shadow-2xl border-4 border-zinc-900 overflow-hidden relative transition-all duration-500",
-                        viewMode === "mobile" ? "w-[375px] h-[750px] rounded-[3rem]" : "w-full h-full rounded-xl max-w-5xl"
-                    )}
-                >
-                    {/* Mock Browser Header for Desktop / Notch for Mobile */}
-                    {viewMode === "mobile" ? (
-                        <div className="absolute top-0 left-0 right-0 h-7 bg-black z-50 flex justify-center">
-                            <div className="w-32 h-5 bg-black rounded-b-2xl" />
-                        </div>
-                    ) : null}
-
-                    {/* LIVE Preview Component */}
-                    <div className="w-full h-full overflow-y-auto bg-white">
-                        <PreviewContent />
                     </div>
-                </motion.div>
+                )}
+
+                {activeTab === "settings" && (
+                    <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
+                        <div className="bouteek-card p-6 space-y-4">
+                            <h3 className="font-black text-lg flex items-center gap-2">
+                                <Globe size={18} />
+                                Custom Domain
+                            </h3>
+
+                            {subscriptionTier === 'growth' || subscriptionTier === 'pro' ? (
+                                <div className="space-y-6">
+                                    <div className="space-y-2">
+                                        <Label>Domain Name</Label>
+                                        <Input
+                                            placeholder="e.g. mystore.com"
+                                            value={customDomain}
+                                            onChange={(e) => setCustomDomain(e.target.value)}
+                                            className="rounded-xl font-bold"
+                                        />
+                                        <p className="text-xs text-muted-foreground">Enter your domain without http:// or https://</p>
+                                    </div>
+
+                                    <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 space-y-3">
+                                        <div className="flex items-center gap-2 text-blue-800 font-bold text-sm">
+                                            <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                                            DNS Configuration Required
+                                        </div>
+                                        <p className="text-xs text-blue-700 leading-relaxed">
+                                            To connect your domain, please add the following record to your domain provider's DNS settings:
+                                        </p>
+                                        <div className="bg-white rounded-lg border border-blue-200 p-3 font-mono text-xs overflow-x-auto">
+                                            <div className="grid grid-cols-[80px_1fr] gap-2">
+                                                <span className="text-muted-foreground">Type:</span>
+                                                <span className="font-bold">CNAME</span>
+                                                <span className="text-muted-foreground">Name:</span>
+                                                <span className="font-bold">@ (or www)</span>
+                                                <span className="text-muted-foreground">Value:</span>
+                                                <span className="text-blue-600 font-bold">connect.bouteek.com</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {domainStatus !== 'pending' && (
+                                        <div className={cn(
+                                            "p-4 rounded-xl border flex items-center gap-3",
+                                            domainStatus === 'verified' ? "bg-green-50 border-green-200 text-green-800" : "bg-red-50 border-red-200 text-red-800"
+                                        )}>
+                                            {domainStatus === 'verified' ? <Check size={18} /> : <div className="w-4 h-4 rounded-full border-2 border-red-500 border-t-transparent animate-spin" />}
+                                            <div>
+                                                <p className="text-sm font-bold capitalize">{domainStatus} Status</p>
+                                                <p className="text-xs opacity-80">
+                                                    {domainStatus === 'verified' ? "Your domain is active!" : "We verified your domain settings."}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            ) : (
+                                <div className="text-center py-8 space-y-4">
+                                    <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto text-muted-foreground">
+                                        <Store size={32} />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <h4 className="font-black text-lg">Upgrade to Connect Domain</h4>
+                                        <p className="text-sm text-muted-foreground max-w-[250px] mx-auto">
+                                            Custom domains are available on Growth and Pro plans.
+                                        </p>
+                                    </div>
+                                    <Button className="rounded-full bg-black text-white font-bold" disabled>
+                                        Upgrade Plan (Coming Soon)
+                                    </Button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
             </div>
+
+            <Button onClick={handleSave} disabled={isLoading} className="w-full h-14 rounded-2xl bg-black text-white font-black text-lg shadow-xl shadow-black/20 mt-auto">
+                <Save className="mr-2" size={20} />
+                {isLoading ? "Saving..." : "Save & Publish"}
+            </Button>
         </div>
+
+            {/* Right Side: Preview */ }
+    <div className="flex-1 bg-muted/30 rounded-4xl border-2 border-dashed border-border/50 p-8 flex flex-col items-center justify-center relative overflow-hidden transition-all">
+        {/* View Toggles */}
+        <div className="absolute top-6 flex bg-white rounded-full p-1 shadow-sm border border-border/50 z-20">
+            <button
+                onClick={() => setViewMode("mobile")}
+                className={cn("p-2 rounded-full transition-colors", viewMode === "mobile" ? "bg-black text-white" : "text-muted-foreground hover:bg-muted")}
+            >
+                <Smartphone size={20} />
+            </button>
+            <button
+                onClick={() => setViewMode("desktop")}
+                className={cn("p-2 rounded-full transition-colors", viewMode === "desktop" ? "bg-black text-white" : "text-muted-foreground hover:bg-muted")}
+            >
+                <Monitor size={20} />
+            </button>
+        </div>
+
+        {/* Mobile/Desktop Preview Frame */}
+        <motion.div
+            layout
+            className={cn(
+                "bg-white shadow-2xl border-4 border-zinc-900 overflow-hidden relative transition-all duration-500",
+                viewMode === "mobile" ? "w-[375px] h-[750px] rounded-[3rem]" : "w-full h-full rounded-xl max-w-5xl"
+            )}
+        >
+            {/* Mock Browser Header for Desktop / Notch for Mobile */}
+            {viewMode === "mobile" ? (
+                <div className="absolute top-0 left-0 right-0 h-7 bg-black z-50 flex justify-center">
+                    <div className="w-32 h-5 bg-black rounded-b-2xl" />
+                </div>
+            ) : null}
+
+            {/* LIVE Preview Component */}
+            <div className="w-full h-full overflow-y-auto bg-white">
+                <PreviewContent />
+            </div>
+        </motion.div>
+    </div>
+        </div >
     );
 }
