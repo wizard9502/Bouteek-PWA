@@ -2,34 +2,31 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import dynamic from "next/dynamic";
 import {
     TrendingUp,
     BarChart3,
     Users,
     CreditCard,
     Calendar,
-    Filter,
     ArrowUpRight,
     ArrowDownRight,
-    Loader2,
-    Search
+    Loader2
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ClientOnly } from "@/components/ClientOnly";
-import {
-    ResponsiveContainer,
-    AreaChart,
-    Area,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    BarChart,
-    Bar,
-    Legend
-} from "recharts";
 import { motion } from "framer-motion";
+
+// Dynamic import for Recharts components to prevent SSR crashes
+const RevenueGrowthChart = dynamic(
+    () => import("@/components/admin/AnalyticsCharts").then((mod) => mod.RevenueGrowthChart),
+    { ssr: false, loading: () => <div className="w-full h-full animate-pulse bg-gray-100 rounded-xl" /> }
+);
+
+const SubscriptionDistributionChart = dynamic(
+    () => import("@/components/admin/AnalyticsCharts").then((mod) => mod.SubscriptionDistributionChart),
+    { ssr: false, loading: () => <div className="w-full h-full animate-pulse bg-gray-100 rounded-xl" /> }
+);
 
 export default function AdminAnalytics() {
     const [loading, setLoading] = useState(true);
@@ -190,40 +187,7 @@ export default function AdminAnalytics() {
                         </div>
                     </CardHeader>
                     <CardContent className="p-8 h-[400px]">
-                        <ClientOnly>
-                            <ResponsiveContainer width="100%" height="100%">
-                                <AreaChart data={revenueData}>
-                                    <defs>
-                                        <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3} />
-                                            <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
-                                        </linearGradient>
-                                        <linearGradient id="colorGMV" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#10B981" stopOpacity={0.3} />
-                                            <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
-                                        </linearGradient>
-                                    </defs>
-                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f1f1" />
-                                    <XAxis
-                                        dataKey="name"
-                                        axisLine={false}
-                                        tickLine={false}
-                                        tick={{ fontSize: 10, fontWeight: 700, fill: '#9CA3AF' }}
-                                    />
-                                    <YAxis
-                                        axisLine={false}
-                                        tickLine={false}
-                                        tick={{ fontSize: 10, fontWeight: 700, fill: '#9CA3AF' }}
-                                        tickFormatter={(v) => `${v / 1000}k`}
-                                    />
-                                    <Tooltip
-                                        contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)' }}
-                                    />
-                                    <Area type="monotone" dataKey="revenue" stroke="#3B82F6" strokeWidth={4} fillOpacity={1} fill="url(#colorRev)" />
-                                    <Area type="monotone" dataKey="gmv" stroke="#10B981" strokeWidth={4} fillOpacity={1} fill="url(#colorGMV)" />
-                                </AreaChart>
-                            </ResponsiveContainer>
-                        </ClientOnly>
+                        <RevenueGrowthChart data={revenueData} />
                     </CardContent>
                 </Card>
 
@@ -271,24 +235,12 @@ export default function AdminAnalytics() {
                 </CardHeader>
                 <CardContent className="p-8">
                     <div className="h-[300px]">
-                        <ClientOnly>
-                            <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={[
-                                    { tier: 'Starter', users: 420 },
-                                    { tier: 'Launch', users: 180 },
-                                    { tier: 'Growth', users: 95 },
-                                    { tier: 'Pro', users: 34 }
-                                ]}>
-                                    <XAxis dataKey="tier" axisLine={false} tickLine={false} tick={{ fontSize: 11, fontWeight: 700 }} />
-                                    <YAxis axisLine={false} tickLine={false} hide />
-                                    <Tooltip
-                                        cursor={{ fill: '#f8f9fa' }}
-                                        contentStyle={{ borderRadius: '12px', border: 'none' }}
-                                    />
-                                    <Bar dataKey="users" fill="#10b981" radius={[10, 10, 10, 10]} barSize={60} />
-                                </BarChart>
-                            </ResponsiveContainer>
-                        </ClientOnly>
+                        <SubscriptionDistributionChart data={[
+                            { tier: 'Starter', users: 420 },
+                            { tier: 'Launch', users: 180 },
+                            { tier: 'Growth', users: 95 },
+                            { tier: 'Pro', users: 34 }
+                        ]} />
                     </div>
                 </CardContent>
             </Card>
