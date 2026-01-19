@@ -4,8 +4,6 @@ import { useEffect, useState, use } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { ShoppingCart, Phone, Check, Loader2, Minus, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
@@ -16,20 +14,11 @@ export default function StorePage({ params }: { params: Promise<{ domain: string
     const [store, setStore] = useState<any>(null);
     const [products, setProducts] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
-    const [paymentMethods, setPaymentMethods] = useState<any[]>([]);
 
     // Cart
     const [cart, setCart] = useState<{ product: any, quantity: number }[]>([]);
     const [isCartOpen, setIsCartOpen] = useState(false);
-    const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
-    // Checkout Form
-    const [customerName, setCustomerName] = useState("");
-    const [customerPhone, setCustomerPhone] = useState("");
-    const [customerAddress, setCustomerAddress] = useState("");
-    const [transactionId, setTransactionId] = useState("");
-    const [selectedMethod, setSelectedMethod] = useState<string>("");
-    const [placingOrder, setPlacingOrder] = useState(false);
 
     useEffect(() => {
         fetchStore(domain);
@@ -101,50 +90,13 @@ export default function StorePage({ params }: { params: Promise<{ domain: string
 
     const totalAmount = cart.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
 
-    const handlePlaceOrder = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!transactionId) {
-            toast.error("Please enter the Transaction ID");
-            return;
-        }
-
-        setPlacingOrder(true);
-        try {
-            // 1. Create Order
-            // 1. Create Order Atomically via RPC (handles inventory)
-            const { data: result, error: rpcError } = await supabase.rpc('place_order', {
-                merchant_id_input: store.id,
-                customer_name_input: customerName,
-                customer_phone_input: customerPhone,
-                delivery_address_input: customerAddress,
-                items_json: cart.map(item => ({
-                    id: item.product.id,
-                    name: item.product.name,
-                    price: item.product.price,
-                    quantity: item.quantity
-                })),
-                subtotal_input: totalAmount,
-                total_input: totalAmount,
-                payment_method_input: selectedMethod,
-                notes_input: `Trans ID: ${transactionId}`
-            });
-
-            if (rpcError) throw rpcError;
-            if (!result.success) throw new Error(result.message);
-
-
-
-            toast.success("Order placed successfully! The merchant will verify your payment.");
-            setCart([]);
-            setIsCheckoutOpen(false);
-            setIsCartOpen(false);
-
-        } catch (error: any) {
-            console.error(error);
-            toast.error("Failed to place order. " + error.message);
-        } finally {
-            setPlacingOrder(false);
-        }
+    // Navigate to Checkout
+    const proceedToCheckout = () => {
+        // Persist cart for the checkout page
+        localStorage.setItem(`cart_${domain}`, JSON.stringify(cart));
+        setIsCartOpen(false);
+        // Navigate
+        window.location.href = `/store/${domain}/checkout`;
     };
 
     if (loading) return <div className="h-screen flex items-center justify-center"><Loader2 className="animate-spin" /></div>;
@@ -224,89 +176,11 @@ export default function StorePage({ params }: { params: Promise<{ domain: string
                                 <span>Total</span>
                                 <span>{totalAmount} XOF</span>
                             </div>
-                            <Button className="w-full bg-[#00D632] text-black font-bold h-12" onClick={() => { setIsCartOpen(false); setIsCheckoutOpen(true); }}>
-                                Checkout
+                            <Button className="w-full bg-[#00D632] text-black font-bold h-12" onClick={proceedToCheckout}>
+                                Proceed to Checkout
                             </Button>
                         </div>
                     )}
-                </DialogContent>
-            </Dialog>
-
-            {/* Checkout Dialog */}
-            <Dialog open={isCheckoutOpen} onOpenChange={setIsCheckoutOpen}>
-                <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
-                    <DialogHeader>
-                        <DialogTitle>Checkout</DialogTitle>
-                    </DialogHeader>
-
-                    <form onSubmit={handlePlaceOrder} className="space-y-6">
-                        {/* 1. Customer Details */}
-                        <div className="space-y-3">
-                            <h3 className="font-bold text-sm uppercase text-gray-500">1. Your Details</h3>
-                            <Input placeholder="Full Name" value={customerName} onChange={e => setCustomerName(e.target.value)} required />
-                            <Input placeholder="Phone Number" value={customerPhone} onChange={e => setCustomerPhone(e.target.value)} required />
-                            <Input placeholder="Delivery Address" value={customerAddress} onChange={e => setCustomerAddress(e.target.value)} required />
-                        </div>
-
-                        {/* 2. Payment Method Display */}
-                        <div className="space-y-3">
-                            <h3 className="font-bold text-sm uppercase text-gray-500">2. Payment</h3>
-                            <p className="text-sm text-gray-600 mb-2">
-                                Complete the payment on your phone to the number below, then enter the Transaction ID.
-                            </p>
-
-                            {paymentMethods.length === 0 ? (
-                                <div className="p-4 bg-red-50 text-red-600 rounded-lg text-sm">
-                                    Merchant has not set up payment methods yet.
-                                </div>
-                            ) : (
-                                <div className="space-y-2">
-                                    {paymentMethods.map(method => (
-                                        <div
-                                            key={method.id}
-                                            className={`p-4 rounded-lg border-2 cursor-pointer flex items-center justify-between ${selectedMethod === method.type ? 'border-[#00D632] bg-[#00D632]/5' : 'border-gray-200'}`}
-                                            onClick={() => setSelectedMethod(method.type)}
-                                        >
-                                            <div className="flex items-center gap-3">
-                                                <img
-                                                    src={method.type === 'wave' ? '/wave-logo.png' : '/orange-money-logo.png'}
-                                                    className="w-8 h-8 rounded"
-                                                    alt={method.type}
-                                                />
-                                                <div>
-                                                    <p className="font-bold capitalize">{method.type.replace('_', ' ')}</p>
-                                                    <p className="text-lg font-mono tracking-wide">{method.details?.phoneNumber}</p>
-                                                </div>
-                                            </div>
-                                            {selectedMethod === method.type && <Check className="text-[#00D632]" />}
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-
-                        {/* 3. Confirmation */}
-                        <div className="space-y-3">
-                            <h3 className="font-bold text-sm uppercase text-gray-500">3. Confirmation</h3>
-                            <div className="bg-gray-100 p-4 rounded-lg text-center mb-2">
-                                <p className="text-gray-500 text-sm">Amount to Pay</p>
-                                <p className="text-2xl font-bold">{totalAmount} XOF</p>
-                            </div>
-                            <Label htmlFor="txId">Transaction ID (from SMS)</Label>
-                            <Input
-                                id="txId"
-                                placeholder="e.g. QWE12345 or sms content"
-                                value={transactionId}
-                                onChange={e => setTransactionId(e.target.value)}
-                                required
-                            />
-                        </div>
-
-                        <Button type="submit" className="w-full bg-black text-white font-bold h-12" disabled={placingOrder || paymentMethods.length === 0}>
-                            {placingOrder && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                            Confirm Payment
-                        </Button>
-                    </form>
                 </DialogContent>
             </Dialog>
         </div>
