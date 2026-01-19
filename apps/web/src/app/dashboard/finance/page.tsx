@@ -134,9 +134,14 @@ function FinanceOverview() {
             return;
         }
 
+        const toastId = toast.loading("Initiating PayDunya session...");
+
         try {
+            console.log("Starting PayDunya top-up flow...", { amount });
             const { data: { user } } = await supabase.auth.getUser();
             const { data: merchant } = await supabase.from('merchants').select('id, business_name').eq('user_id', user?.id).single();
+
+            console.log("Merchant data:", merchant);
 
             const response = await fetch('/api/payments/paydunya/create-session', {
                 method: 'POST',
@@ -149,15 +154,37 @@ function FinanceOverview() {
                 })
             });
 
-            const data = await response.json();
+            console.log("API Response Status:", response.status);
+
+            let data;
+            try {
+                data = await response.json();
+                console.log("API Response Data:", data);
+            } catch (e) {
+                console.error("Failed to parse JSON:", e);
+                // If parsing fails, it's likely a 500 HTML error page
+                const text = await response.text();
+                console.error("Raw response:", text);
+                throw new Error("Server Error: Unable to create payment session.");
+            }
+
+            if (!response.ok) {
+                throw new Error(data.message || `API Error: ${response.status}`);
+            }
+
             if (data.url) {
+                toast.dismiss(toastId);
+                toast.success("Redirecting to PayDunya...");
                 window.location.href = data.url;
             } else {
-                toast.error(data.message || "Failed to initiate payment");
+                console.error("No URL in response:", data);
+                toast.error(data.message || "Failed to initiate payment: No URL returned");
+                toast.dismiss(toastId);
             }
-        } catch (error) {
-            console.error(error);
-            toast.error("Payment Error");
+        } catch (error: any) {
+            console.error("Top-up Error Exception:", error);
+            toast.dismiss(toastId);
+            toast.error(`Payment Error: ${error.message}`);
         }
     };
 
