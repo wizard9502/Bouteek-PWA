@@ -27,6 +27,13 @@ import { TranslationProvider, useTranslation } from "@/contexts/TranslationConte
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import dynamic from "next/dynamic";
+
+// Dynamic import to avoid SSR issues with canvas
+const DashboardRevenueChart = dynamic(
+    () => import("@/components/admin/AnalyticsCharts").then((mod) => mod.DashboardRevenueChart),
+    { ssr: false, loading: () => <div className="w-full h-full bg-muted animate-pulse rounded-xl" /> }
+);
 
 export default function DashboardHome() {
     return (
@@ -350,8 +357,10 @@ function DashboardHomeContent() {
 
                     </div>
 
-                    <div className="bouteek-card h-[350px] p-8 flex items-center justify-center bg-gray-50 border-2 border-dashed">
-                        <p className="text-gray-400 font-bold">Analytics temporarily disabled for build stability</p>
+                    <div className="bouteek-card h-[350px] p-6">
+                        <div className="w-full h-full">
+                            <DashboardRevenueChart data={chartData} />
+                        </div>
                     </div>
                 </div>
 

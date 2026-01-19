@@ -16,6 +16,16 @@ import { getAdminKPIs, getSubscriptionDistribution, getRecentMerchants, getReven
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import dynamic from "next/dynamic";
+
+const RevenueGrowthChart = dynamic(
+    () => import("@/components/admin/AnalyticsCharts").then((mod) => mod.RevenueGrowthChart),
+    { ssr: false }
+);
+const SubscriptionDistributionChart = dynamic(
+    () => import("@/components/admin/AnalyticsCharts").then((mod) => mod.SubscriptionDistributionChart),
+    { ssr: false }
+);
 import {
     BarChart,
     Bar,
@@ -164,8 +174,8 @@ export default function AdminDashboard() {
                             <span className="text-xs font-bold text-muted-foreground">Commissions</span>
                         </div>
                     </div>
-                    <div className="h-[300px] w-full flex items-center justify-center bg-gray-50 border-2 border-dashed rounded-xl">
-                        <p className="text-gray-400 font-bold">Growth Chart Disabled</p>
+                    <div className="h-[300px] w-full p-2">
+                        <RevenueGrowthChart data={revenueGrowth.length ? revenueGrowth : []} />
                     </div>
 
                 </div>
@@ -176,13 +186,8 @@ export default function AdminDashboard() {
                     <div className="h-[300px] w-full relative flex items-center justify-center bg-gray-50 border-2 border-dashed rounded-xl">
                         <p className="text-gray-400 font-bold">Pie Chart Disabled</p>
                     </div>
-                    <div className="flex flex-wrap gap-4 justify-center mt-4">
-                        {distribution.map((entry, index) => (
-                            <div key={entry.name} className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[index % COLORS.length] }} />
-                                <span className="text-xs font-bold capitalize">{entry.name}</span>
-                            </div>
-                        ))}
+                    <div className="mt-4 text-center text-xs text-muted-foreground">
+                        Distribution across subscription tiers
                     </div>
                 </div>
             </div>

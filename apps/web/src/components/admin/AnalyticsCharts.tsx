@@ -1,27 +1,89 @@
 "use client";
 
-// TEMPORARY FIX: Recharts is causing SSR build crashes on Next.js 16 / React 19.
-// Replacing with static placeholders to unblock deployment.
-// TODO: Re-enable or switch to a compatible library once stable.
+import React from 'react';
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend,
+    Filler,
+    ArcElement
+} from 'chart.js';
+import { Line, Doughnut, Bar } from 'react-chartjs-2';
 
-import { Card } from "@/components/ui/card";
+// Ensure registration happens
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    BarElement,
+    ArcElement,
+    Title,
+    Tooltip,
+    Legend,
+    Filler
+);
 
 interface RevenueChartProps {
     data: any[];
 }
 
 export function RevenueGrowthChart({ data }: RevenueChartProps) {
-    return (
-        <div className="w-full h-full flex items-center justify-center bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
-            <div className="text-center">
-                <p className="font-bold text-gray-400">Revenue Growth Chart</p>
-                <p className="text-xs text-gray-300 mt-1">Visualization temporarily disabled for build stability</p>
-                <div className="mt-4 text-xs font-mono text-gray-400">
-                    Data Points: {data.length}
-                </div>
-            </div>
-        </div>
-    );
+    const chartData = {
+        labels: data.map(d => d.name),
+        datasets: [
+            {
+                label: 'Subscriptions',
+                data: data.map(d => d.sub),
+                borderColor: '#3B82F6',
+                backgroundColor: 'rgba(59, 130, 246, 0.5)',
+                tension: 0.4,
+                fill: true
+            },
+            {
+                label: 'Commissions',
+                data: data.map(d => d.com),
+                borderColor: '#10B981',
+                backgroundColor: 'rgba(16, 185, 129, 0.5)',
+                tension: 0.4,
+                fill: true
+            }
+        ]
+    };
+
+    const options = {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top' as const,
+            },
+            tooltip: {
+                mode: 'index' as const,
+                intersect: false,
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                grid: {
+                    display: false
+                }
+            },
+            x: {
+                grid: {
+                    display: false
+                }
+            }
+        }
+    };
+
+    return <Line options={options} data={chartData} />;
 }
 
 interface SubscriptionChartProps {
@@ -29,12 +91,99 @@ interface SubscriptionChartProps {
 }
 
 export function SubscriptionDistributionChart({ data }: SubscriptionChartProps) {
-    return (
-        <div className="w-full h-full flex items-center justify-center bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
-            <div className="text-center">
-                <p className="font-bold text-gray-400">Subscription Distribution</p>
-                <p className="text-xs text-gray-300 mt-1">Visualization temporarily disabled for build stability</p>
-            </div>
-        </div>
-    );
+    const chartData = {
+        labels: data.map(d => d.name),
+        datasets: [
+            {
+                label: '# of Merchants',
+                data: data.map(d => d.value),
+                backgroundColor: [
+                    '#0088FE', // Starter
+                    '#00C49F', // Launch
+                    '#FFBB28', // Growth
+                    '#FF8042'  // Pro
+                ],
+                borderWidth: 0,
+            },
+        ],
+    };
+
+    const options = {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom' as const
+            }
+        }
+    };
+
+    return <Doughnut data={chartData} options={options} />;
+}
+
+
+// --- Generic Dashboard Charts ---
+
+interface DashboardBarChartProps {
+    data: { name: string; revenue: number }[];
+}
+
+export function DashboardRevenueChart({ data }: DashboardBarChartProps) {
+    const chartData = {
+        labels: data.map(d => d.name),
+        datasets: [
+            {
+                label: 'Revenue',
+                data: data.map(d => d.revenue),
+                backgroundColor: '#00D632',
+                borderRadius: 4,
+            }
+        ]
+    };
+
+    const options = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                callbacks: {
+                    label: function (context: any) {
+                        return context.parsed.y.toLocaleString() + ' XOF';
+                    }
+                }
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                grid: {
+                    color: '#f3f4f6'
+                },
+                ticks: {
+                    callback: function (value: any) {
+                        return (value / 1000) + 'k';
+                    },
+                    font: {
+                        size: 10,
+                        weight: 'bold' as const
+                    }
+                },
+                border: { display: false }
+            },
+            x: {
+                grid: { display: false },
+                ticks: {
+                    font: {
+                        size: 10,
+                        weight: 'bold' as const
+                    }
+                },
+                border: { display: false }
+            }
+        }
+    };
+
+    return <Bar data={chartData} options={options} />;
 }
