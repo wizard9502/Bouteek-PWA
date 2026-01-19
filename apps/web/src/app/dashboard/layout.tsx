@@ -267,35 +267,71 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
             </main >
 
             {/* Mobile Bottom Navigation */}
-            < nav className="md:hidden fixed bottom-0 left-0 right-0 h-20 bg-background border-t border-border px-6 flex items-center justify-between z-50 pb-safe" >
+            <nav className="md:hidden fixed bottom-0 left-0 right-0 h-20 bg-background/80 backdrop-blur-lg border-t border-border px-6 flex items-center justify-between z-50 pb-safe shadow-[0_-5px_20px_-5px_rgba(0,0,0,0.1)]">
+                {[
+                    navItems.find(i => i.href === "/dashboard/store"),
+                    navItems.find(i => i.href === "/dashboard/orders"),
+                    navItems.find(i => i.href === "/dashboard"),
+                    navItems.find(i => i.href === "/dashboard/finance"),
+                    navItems.find(i => i.href === "/dashboard/profile"),
+                ].filter(Boolean).map((item, index) => {
+                    // Force non-null assertion since we know these exist
+                    if (!item) return null;
 
-                {
-                    navItems.map((item) => {
-                        const Icon = item.icon;
-                        const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname?.startsWith(item.href));
+                    const Icon = item.icon;
+                    const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname?.startsWith(item.href));
+                    const isMiddle = index === 2; // Dashboard is now in the middle (index 2 of 5)
+
+                    if (isMiddle) {
                         return (
                             <Link
                                 key={item.href}
                                 href={item.href}
-                                className={cn(
-                                    "flex flex-col items-center gap-1 transition-all duration-200",
-                                    isActive ? "text-bouteek-green scale-110" : "text-muted-foreground hover:text-foreground"
-                                )}
+                                className="relative -top-8 flex flex-col items-center justify-center"
                             >
                                 <div className={cn(
-                                    "p-2 rounded-2xl transition-all duration-200",
-                                    isActive ? "bg-bouteek-green/20" : "bg-transparent"
+                                    "w-16 h-16 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300",
+                                    isActive
+                                        ? "bg-black text-bouteek-green scale-110 shadow-bouteek-green/50 ring-4 ring-background"
+                                        : "bg-black text-white hover:scale-105 ring-4 ring-background"
                                 )}>
-                                    <Icon size={24} />
+                                    <Icon size={28} strokeWidth={2.5} />
                                 </div>
-                                <span className="text-[10px] font-bold uppercase tracking-tighter">
+                                <span className={cn(
+                                    "absolute -bottom-6 text-[10px] font-black uppercase tracking-widest transition-all",
+                                    isActive ? "text-primary opacity-100" : "text-muted-foreground opacity-0"
+                                )}>
                                     {item.label}
                                 </span>
                             </Link>
                         );
-                    })
-                }
-            </nav >
+                    }
+
+                    return (
+                        <Link
+                            key={item.href}
+                            href={item.href}
+                            className={cn(
+                                "flex flex-col items-center gap-1 transition-all duration-200 w-12",
+                                isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                            )}
+                        >
+                            <div className={cn(
+                                "p-1.5 rounded-xl transition-all duration-200",
+                                isActive ? "bg-primary/10 translate-y-[-2px]" : "bg-transparent"
+                            )}>
+                                <Icon size={22} strokeWidth={isActive ? 2.5 : 2} />
+                            </div>
+                            <span className={cn(
+                                "text-[9px] font-bold uppercase tracking-tighter transition-all",
+                                isActive ? "scale-110 font-black" : "scale-100"
+                            )}>
+                                {item.label}
+                            </span>
+                        </Link>
+                    );
+                })}
+            </nav>
 
             {/* Global FAB (Mobile) */}
             < Button

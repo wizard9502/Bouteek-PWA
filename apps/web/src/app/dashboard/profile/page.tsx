@@ -69,7 +69,7 @@ function ProfilePageContent() {
                         activeTab === "profile" ? "bg-white shadow-sm text-black" : "text-muted-foreground hover:text-foreground"
                     )}
                 >
-                    {language === 'fr' ? "Profil & Préférences" : "Profile & Settings"}
+                    {t("profile.tabs.profile")}
                 </button>
                 <button
                     onClick={() => setActiveTab("referrals")}
@@ -78,7 +78,7 @@ function ProfilePageContent() {
                         activeTab === "referrals" ? "bg-white shadow-sm text-black" : "text-muted-foreground hover:text-foreground"
                     )}
                 >
-                    {language === 'fr' ? "Parrainage" : "Referrals"}
+                    {t("profile.tabs.referrals")}
                 </button>
             </div>
 
@@ -516,14 +516,14 @@ function ReferralsManager() {
                     <div className="space-y-8">
                         <div className="inline-flex items-center gap-2 bg-bouteek-green/20 text-bouteek-green px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest">
                             <TrendingUp size={14} />
-                            Grow Together
+                            {t("profile.referral_hero.grow")}
                         </div>
                         <h2 className="text-4xl md:text-5xl font-black tracking-tighter leading-tight">
-                            Build your empire with <span className="text-bouteek-green">Bouteek.</span>
+                            {t("profile.referral_hero.title")} <span className="text-bouteek-green">Bouteek.</span>
                         </h2>
 
                         <div className="space-y-4">
-                            <p className="text-gray-400 font-bold uppercase text-[10px] tracking-widest">Your Private Referral Code</p>
+                            <p className="text-gray-400 font-bold uppercase text-[10px] tracking-widest">{t("profile.referral_hero.code_label")}</p>
                             {merchant?.referral_code ? (
                                 <div className="flex gap-2">
                                     <div className="flex-1 bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl h-16 flex items-center px-6 font-mono font-black text-2xl tracking-widest">
@@ -550,7 +550,7 @@ function ReferralsManager() {
                                         onClick={handleSaveReferral}
                                         disabled={isSavingCode || !referralCode}
                                     >
-                                        {isSavingCode ? "..." : "SET"}
+                                        {isSavingCode ? "..." : t("profile.referral_hero.set_btn")}
                                     </Button>
                                 </div>
                             )}
@@ -561,28 +561,31 @@ function ReferralsManager() {
                         <div className="bg-white/5 border border-white/10 p-6 rounded-3xl backdrop-blur-sm">
                             <Users className="text-bouteek-green mb-4" size={24} />
                             <p className="text-3xl font-black">{stats.referralCount}</p>
-                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Total Referrals</p>
-                        </div>
-                        <div className="bg-white/5 border border-white/10 p-6 rounded-3xl backdrop-blur-sm">
-                            <Wallet className="text-bouteek-green mb-4" size={24} />
-                            <p className="text-3xl font-black text-bouteek-green">{stats.pendingEarnings.toLocaleString()} <span className="text-[10px] text-white">XOF</span></p>
-                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Pending Balance</p>
+                            <div className="bg-white/5 border border-white/10 p-6 rounded-3xl backdrop-blur-sm">
+                                <Users className="text-bouteek-green mb-4" size={24} />
+                                <p className="text-3xl font-black">{stats.referralCount}</p>
+                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">{t("profile.stats.total")}</p>
+                            </div>
+                            <div className="bg-white/5 border border-white/10 p-6 rounded-3xl backdrop-blur-sm">
+                                <Wallet className="text-bouteek-green mb-4" size={24} />
+                                <p className="text-3xl font-black text-bouteek-green">{stats.pendingEarnings.toLocaleString()} <span className="text-[10px] text-white">XOF</span></p>
+                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">{t("profile.stats.pending")}</p>
+                            </div>
                         </div>
                     </div>
-                </div>
             </motion.div>
 
             {/* List of Referrals */}
             <section className="space-y-6">
-                <h3 className="text-xl font-black">Your Referrals</h3>
+                <h3 className="text-xl font-black">{t("profile.table.title")}</h3>
                 <div className="bouteek-card overflow-hidden">
                     <table className="w-full text-left">
                         <thead className="bg-muted/50 border-b">
                             <tr>
-                                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest">Merchant</th>
-                                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest">Plan</th>
-                                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest">Joined</th>
-                                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-right">Status</th>
+                                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest">{t("profile.table.merchant")}</th>
+                                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest">{t("profile.table.plan")}</th>
+                                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest">{t("profile.table.joined")}</th>
+                                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-right">{t("profile.table.status")}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y">
@@ -602,14 +605,14 @@ function ReferralsManager() {
                                     <td className="px-6 py-4 text-right">
                                         <div className="inline-flex items-center gap-1 text-bouteek-green font-bold text-[10px] uppercase">
                                             <CheckCircle2 size={12} />
-                                            Active
+                                            {t("profile.table.active")}
                                         </div>
                                     </td>
                                 </tr>
                             )) : (
                                 <tr>
                                     <td colSpan={4} className="px-6 py-12 text-center text-muted-foreground font-medium italic">
-                                        You haven't referred any merchants yet. Start sharing your code!
+                                        {t("profile.table.empty")}
                                     </td>
                                 </tr>
                             )}

@@ -62,7 +62,7 @@ export default function FinancePage() {
                         activeTab === "overview" ? "bg-white shadow-sm text-black" : "text-muted-foreground hover:text-foreground"
                     )}
                 >
-                    {language === 'fr' ? "Vue d'ensemble" : "Overview"}
+                    {t("finance.tabs.overview")}
                 </button>
                 <button
                     onClick={() => setActiveTab("subscription")}
@@ -71,7 +71,7 @@ export default function FinancePage() {
                         activeTab === "subscription" ? "bg-white shadow-sm text-black" : "text-muted-foreground hover:text-foreground"
                     )}
                 >
-                    {language === 'fr' ? "Abonnements" : "Subscriptions"}
+                    {t("finance.tabs.subscription")}
                 </button>
             </div>
 
@@ -183,10 +183,10 @@ function FinanceOverview() {
 
                         <div className="flex gap-4 mt-12 w-full max-w-sm">
                             <Button variant="outline" className="flex-1 rounded-2xl h-14 font-bold border-border/50">
-                                {language === 'fr' ? "Analytique" : "Analytics"}
+                                {t("finance.analytics")}
                             </Button>
                             <Button className="flex-1 rounded-2xl h-14 font-bold bg-black text-white shadow-xl shadow-black/20">
-                                {language === 'fr' ? "Transférer" : "Transfer"}
+                                {t("finance.transfer")}
                             </Button>
                         </div>
 
@@ -198,10 +198,10 @@ function FinanceOverview() {
                     <div className="flex items-center justify-between">
                         <h3 className="text-xl font-black tracking-tight flex items-center gap-3">
                             <History size={24} />
-                            {language === 'fr' ? "Historique des Transactions" : "Transaction Log"}
+                            {t("finance.history_title")}
                         </h3>
                         <Button variant="ghost" className="text-sm font-bold text-bouteek-green">
-                            {language === 'fr' ? "Voir Tout" : "See All"}
+                            {t("finance.see_all")}
                         </Button>
                     </div>
 
@@ -249,13 +249,13 @@ function FinanceOverview() {
                     <div className="flex flex-col items-center gap-6">
                         <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-bouteek-green/10 text-bouteek-green font-bold text-[10px] uppercase tracking-widest">
                             <ShieldCheck size={14} />
-                            {language === 'fr' ? "Pont Sécurisé PayDunya" : "Secure PayDunya Bridge"}
+                            {t("finance.paydunya")}
                         </div>
 
 
                         <div className="w-full">
                             <p className="text-center text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4">
-                                {language === 'fr' ? "Montant à Recharger" : "Amount to Top-Up"}
+                                {t("finance.amount_topup")}
                             </p>
 
                             <div className="h-20 bg-muted rounded-3xl flex items-center justify-center border-2 border-transparent focus-within:border-bouteek-green transition-all overflow-hidden group">
@@ -286,7 +286,7 @@ function FinanceOverview() {
                                 disabled={!amount || Number(amount) < 100}
                                 className="w-full h-14 rounded-2xl bg-bouteek-green text-black font-black uppercase tracking-widest shadow-xl shadow-bouteek-green/20"
                             >
-                                {language === 'fr' ? "Payer" : "Pay"}
+                                {t("finance.pay")}
                                 <ArrowRight size={18} className="ml-2" />
                             </Button>
 
@@ -398,8 +398,8 @@ function SubscriptionManager() {
     return (
         <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4">
             <div>
-                <h2 className="text-xl font-black">Choosing Plan</h2>
-                <p className="text-muted-foreground">Select the best plan for your business.</p>
+                <h2 className="text-xl font-black">{t("finance.sub_manager.title")}</h2>
+                <p className="text-muted-foreground">{t("finance.sub_manager.subtitle")}</p>
             </div>
 
             {/* Optimizer */}
@@ -410,11 +410,11 @@ function SubscriptionManager() {
                 <div className="lg:col-span-2 space-y-6">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Configure: <span className="uppercase text-bouteek-green">{selectedPlan}</span></CardTitle>
+                            <CardTitle>{t("finance.sub_manager.configure")}: <span className="uppercase text-bouteek-green">{selectedPlan}</span></CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-6">
                             <div className="space-y-3">
-                                <Label>Billing Cycle</Label>
+                                <Label>{t("finance.sub_manager.cycle")}</Label>
                                 <div className="grid grid-cols-4 gap-2">
                                     {[1, 3, 6, 12].map((m) => (
                                         <div
@@ -426,10 +426,10 @@ function SubscriptionManager() {
                                             )}
                                         >
                                             <div className="text-2xl font-black">{m}</div>
-                                            <div className="text-xs uppercase font-bold opacity-80">{m === 1 ? 'Month' : 'Months'}</div>
+                                            <div className="text-xs uppercase font-bold opacity-80">{m === 1 ? t("finance.sub_manager.month") : t("finance.sub_manager.months")}</div>
                                             {m > 1 && (
                                                 <Badge variant="secondary" className="mt-2 text-[10px] px-1 h-5">
-                                                    Save {m === 12 ? '20%' : m === 6 ? '10%' : '5%'}
+                                                    {t("finance.sub_manager.save")} {m === 12 ? '20%' : m === 6 ? '10%' : '5%'}
                                                 </Badge>
                                             )}
                                         </div>
@@ -440,9 +440,9 @@ function SubscriptionManager() {
                             <div className="flex items-center space-x-4 border p-4 rounded-xl bg-muted/20">
                                 <Switch id="auto-renew" checked={autoRenew} onCheckedChange={setAutoRenew} />
                                 <div className="space-y-1">
-                                    <Label htmlFor="auto-renew" className="font-bold">Auto-Renew Subscription</Label>
+                                    <Label htmlFor="auto-renew" className="font-bold">{t("finance.sub_manager.auto_renew")}</Label>
                                     <p className="text-xs text-muted-foreground">
-                                        Automatically deduct from wallet to prevent downtime.
+                                        {t("finance.sub_manager.auto_renew_desc")}
                                     </p>
                                 </div>
                             </div>
@@ -456,7 +456,7 @@ function SubscriptionManager() {
                                 <Wallet size={24} />
                             </div>
                             <div>
-                                <p className="text-sm opacity-80">Current Balance</p>
+                                <p className="text-sm opacity-80">{t("finance.sub_manager.current_balance")}</p>
                                 <h3 className="text-2xl font-black font-mono">
                                     {Number(merchant?.bouteek_cash_balance || 0).toLocaleString()} XOF
                                 </h3>
@@ -469,7 +469,7 @@ function SubscriptionManager() {
                 <div className="space-y-6">
                     <Card className="border-2 border-black h-fit sticky top-6">
                         <CardHeader className="bg-muted/50 pb-4">
-                            <CardTitle>Order Summary</CardTitle>
+                            <CardTitle>{t("finance.sub_manager.order_summary")}</CardTitle>
                         </CardHeader>
                         <CardContent className="pt-6 space-y-4">
                             <div className="flex justify-between text-sm">
@@ -478,12 +478,12 @@ function SubscriptionManager() {
                             </div>
                             {discount > 0 && (
                                 <div className="flex justify-between text-sm text-green-600 font-bold">
-                                    <span>Discount</span>
+                                    <span>{t("finance.sub_manager.discount")}</span>
                                     <span>-{(currentPrice * duration * discount).toLocaleString()}</span>
                                 </div>
                             )}
                             <div className="border-t pt-4 flex justify-between items-end">
-                                <span className="font-bold text-lg">Total</span>
+                                <span className="font-bold text-lg">{t("finance.sub_manager.total")}</span>
                                 <div className="text-right">
                                     <span className="block text-3xl font-black">{totalPrice.toLocaleString()}</span>
                                     <span className="text-xs text-muted-foreground">XOF</span>
@@ -496,7 +496,7 @@ function SubscriptionManager() {
                                 onClick={handleSubscribe}
                                 disabled={processing}
                             >
-                                {processing ? <Loader2 className="animate-spin" /> : "Confirm Subscription"}
+                                {processing ? <Loader2 className="animate-spin" /> : t("finance.sub_manager.confirm")}
                             </Button>
                         </CardFooter>
                     </Card>

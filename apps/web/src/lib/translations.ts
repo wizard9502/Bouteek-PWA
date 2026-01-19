@@ -57,7 +57,48 @@ export const translations = {
       withdraw: "Retirer",
       transactions: "Transactions Récentes",
       plans: "Abonnements",
-      current_plan: "Plan Actuel"
+      plans: "Abonnements",
+      plans: "Abonnements",
+      current_plan: "Plan Actuel",
+      optimizer: {
+        title: "Estimateur de Ventes",
+        subtitle: "Glissez pour estimer votre volume de ventes mensuel (V)",
+        est_cost: "Coût Total Est.",
+        save: "Économisez",
+        base: "Base",
+        comm: "Comm.",
+        best_value: "Meilleur Choix",
+        month: "mois"
+      },
+      tabs: {
+        overview: "Vue d'ensemble",
+        subscription: "Abonnements"
+      },
+      analytics: "Analytique",
+      transfer: "Transférer",
+      history_title: "Historique des Transactions",
+      see_all: "Voir Tout",
+      paydunya: "Pont Sécurisé PayDunya",
+      amount_topup: "Montant à Recharger",
+      pay: "Payer",
+      sub_manager: {
+        title: "Choisir un Plan",
+        subtitle: "Sélectionnez le meilleur plan pour votre entreprise.",
+        configure: "Configurer",
+        cycle: "Cycle de Facturation",
+        month: "Mois",
+        months: "Mois",
+        save: "Économisez",
+        auto_renew: "Renouvellement Auto",
+        auto_renew_desc: "Déduit automatiquement du portefeuille pour éviter toute interruption.",
+        current_balance: "Solde Actuel",
+        order_summary: "Résumé de la Commande",
+        discount: "Réduction",
+        total: "Total",
+        confirm: "Confirmer l'Abonnement",
+        insufficient: "Solde Bouteek Cash insuffisant.",
+        success: "Abonnement mis à jour !"
+      }
     },
     profile: {
       title: "Profil Marchand",
@@ -92,7 +133,30 @@ export const translations = {
       trust_score: "Score de Confiance",
       platinum_tier: "Palier Platinum",
       verified: "Vérifié",
-      edit_profile: "Modifier Profil"
+      edit_profile: "Modifier Profil",
+      tabs: {
+        profile: "Profil & Préférences",
+        referrals: "Parrainage"
+      },
+      referral_hero: {
+        grow: "Grandir Ensemble",
+        title: "Construisez votre empire avec",
+        code_label: "Votre Code de Parrainage Privé",
+        set_btn: "DÉFINIR"
+      },
+      stats: {
+        total: "Total Parrainages",
+        pending: "Solde En Attente"
+      },
+      table: {
+        title: "Vos Filleuls",
+        merchant: "Marchand",
+        plan: "Plan",
+        joined: "Inscrit",
+        status: "Statut",
+        active: "Actif",
+        empty: "Vous n'avez parrainé personne. Partagez votre code !"
+      }
     },
 
     settings: {
@@ -290,7 +354,48 @@ export const translations = {
       withdraw: "Withdraw",
       transactions: "Recent Transactions",
       plans: "Plans",
-      current_plan: "Current Plan"
+      plans: "Plans",
+      plans: "Plans",
+      current_plan: "Current Plan",
+      optimizer: {
+        title: "Sales Estimator",
+        subtitle: "Slide to estimate your monthly sales volume (V)",
+        est_cost: "Est. Total Cost",
+        save: "Save",
+        base: "Base",
+        comm: "Comm.",
+        best_value: "Best Value",
+        month: "mo"
+      },
+      tabs: {
+        overview: "Overview",
+        subscription: "Subscriptions"
+      },
+      analytics: "Analytics",
+      transfer: "Transfer",
+      history_title: "Transaction Log",
+      see_all: "See All",
+      paydunya: "Secure PayDunya Bridge",
+      amount_topup: "Amount to Top-Up",
+      pay: "Pay",
+      sub_manager: {
+        title: "Choosing Plan",
+        subtitle: "Select the best plan for your business.",
+        configure: "Configure",
+        cycle: "Billing Cycle",
+        month: "Month",
+        months: "Months",
+        save: "Save",
+        auto_renew: "Auto-Renew Subscription",
+        auto_renew_desc: "Automatically deduct from wallet to prevent downtime.",
+        current_balance: "Current Balance",
+        order_summary: "Order Summary",
+        discount: "Discount",
+        total: "Total",
+        confirm: "Confirm Subscription",
+        insufficient: "Insufficient Bouteek Cash balance.",
+        success: "Subscription updated!"
+      }
     },
     profile: {
       title: "Merchant Profile",
@@ -325,7 +430,30 @@ export const translations = {
       trust_score: "Trust Score",
       platinum_tier: "Platinum Tier",
       verified: "Verified",
-      edit_profile: "Edit Profile"
+      edit_profile: "Edit Profile",
+      tabs: {
+        profile: "Profile & Settings",
+        referrals: "Referrals"
+      },
+      referral_hero: {
+        grow: "Grow Together",
+        title: "Build your empire with",
+        code_label: "Your Private Referral Code",
+        set_btn: "SET"
+      },
+      stats: {
+        total: "Total Referrals",
+        pending: "Pending Balance"
+      },
+      table: {
+        title: "Your Referrals",
+        merchant: "Merchant",
+        plan: "Plan",
+        joined: "Joined",
+        status: "Status",
+        active: "Active",
+        empty: "You haven't referred any merchants yet. Start sharing your code!"
+      }
     },
     settings: {
       title: "Store Settings",

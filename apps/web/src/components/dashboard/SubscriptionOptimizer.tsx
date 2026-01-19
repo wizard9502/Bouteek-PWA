@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Check, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/contexts/TranslationContext";
 
 interface OptimizerProps {
     prices: {
@@ -18,6 +19,7 @@ interface OptimizerProps {
 }
 
 export function SubscriptionOptimizer({ prices, onSelectPlan }: OptimizerProps) {
+    const { t } = useTranslation();
     const [salesVolume, setSalesVolume] = useState([100000]); // Default 100k XOF
 
     const calculations = useMemo(() => {
@@ -38,11 +40,8 @@ export function SubscriptionOptimizer({ prices, onSelectPlan }: OptimizerProps) 
         // Find Cheapest
         const minCost = Math.min(...withCost.map(p => p.totalCost));
 
-        // Calculate Savings relative to Starter (or generally just show absolute cost)
-        // Let's calculate savings relative to the most expensive option for this volume? 
-        // Or relative to the "Starter" plan if you were to stay on it? 
-        // The prompt says "Monthly Savings badge compared to other plans".
-        // Let's compare to the *most expensive* feasible plan, or specifically to Starter as baseline.
+        // Compare to Starter as baseline for savings (or the most expensive one?)
+        // Let's compare to Starter as baseline.
         const starterCost = withCost.find(p => p.id === "starter")?.totalCost || 0;
 
         return withCost.map(p => ({
@@ -57,7 +56,7 @@ export function SubscriptionOptimizer({ prices, onSelectPlan }: OptimizerProps) 
         <div className="space-y-8 py-6">
             <div className="bg-muted/30 p-6 rounded-3xl border border-border/50 space-y-4">
                 <div className="flex justify-between items-center">
-                    <h3 className="font-black text-lg">Sales Estimator</h3>
+                    <h3 className="font-black text-lg">{t("finance.optimizer.title")}</h3>
                     <Badge variant="outline" className="text-lg px-4 py-1 bg-white shadow-sm border-2 font-mono">
                         {salesVolume[0].toLocaleString()} XOF
                     </Badge>
@@ -71,7 +70,7 @@ export function SubscriptionOptimizer({ prices, onSelectPlan }: OptimizerProps) 
                     className="py-4"
                 />
                 <p className="text-xs text-muted-foreground text-center">
-                    Slide to estimate your monthly sales volume (V)
+                    {t("finance.optimizer.subtitle")}
                 </p>
             </div>
 
@@ -87,7 +86,7 @@ export function SubscriptionOptimizer({ prices, onSelectPlan }: OptimizerProps) 
                     >
                         {plan.isBestValue && (
                             <div className="absolute top-0 right-0 bg-bouteek-green text-black px-3 py-1 text-xs font-black uppercase rounded-bl-xl z-10 flex items-center gap-1">
-                                <Star size={12} fill="currentColor" /> Best Value
+                                <Star size={12} fill="currentColor" /> {t("finance.optimizer.best_value")}
                             </div>
                         )}
 
@@ -98,14 +97,14 @@ export function SubscriptionOptimizer({ prices, onSelectPlan }: OptimizerProps) 
                                     <span className="text-2xl font-black">
                                         {Math.round(plan.totalCost).toLocaleString()}
                                     </span>
-                                    <span className="text-[10px] font-bold text-muted-foreground">XOF/mo</span>
+                                    <span className="text-[10px] font-bold text-muted-foreground">XOF/{t("finance.optimizer.month")}</span>
                                 </div>
-                                <p className="text-xs text-muted-foreground mt-1">Est. Total Cost</p>
+                                <p className="text-xs text-muted-foreground mt-1">{t("finance.optimizer.est_cost")}</p>
                             </div>
 
                             {plan.savings > 0 && (
                                 <Badge className="w-full justify-center bg-black text-white hover:bg-black/90">
-                                    Save {Math.round(plan.savings).toLocaleString()} XOF
+                                    {t("finance.optimizer.save")} {Math.round(plan.savings).toLocaleString()} XOF
                                 </Badge>
                             )}
 
@@ -115,11 +114,11 @@ export function SubscriptionOptimizer({ prices, onSelectPlan }: OptimizerProps) 
 
                             <div className="pt-4 border-t border-border/10 text-xs text-muted-foreground space-y-1">
                                 <div className="flex justify-between">
-                                    <span>Base:</span>
+                                    <span>{t("finance.optimizer.base")}:</span>
                                     <span>{plan.base.toLocaleString()}</span>
                                 </div>
                                 <div className="flex justify-between font-medium text-black">
-                                    <span>Comm. ({plan.rate * 100}%):</span>
+                                    <span>{t("finance.optimizer.comm")} ({plan.rate * 100}%):</span>
                                     <span>+{Math.round(salesVolume[0] * plan.rate).toLocaleString()}</span>
                                 </div>
                             </div>
