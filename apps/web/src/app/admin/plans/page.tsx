@@ -11,6 +11,23 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Loader2, Check, Shield } from "lucide-react";
 import { motion } from "framer-motion";
+const updatePlanCommission = async (planId: string, value: string) => {
+    setSaving(planId);
+    try {
+        const { error } = await supabase
+            .from('plans')
+            .update({ commission_rate: Number(value) })
+            .eq('id', planId);
+
+        if (error) throw error;
+        setPlans(plans.map(p => p.id === planId ? { ...p, commission_rate: Number(value) } : p));
+        toast.success("Commission rate updated");
+    } catch (error) {
+        toast.error("Failed to update commission");
+    } finally {
+        setSaving(null);
+    }
+};
 
 export default function PlansPage() {
     const [plans, setPlans] = useState<any[]>([]);
@@ -100,6 +117,18 @@ export default function PlansPage() {
                                     <p className="text-3xl font-black mt-4">
                                         {plan.price.toLocaleString()} <span className="text-sm font-bold text-muted-foreground">XOF</span>
                                     </p>
+                                    <div className="mt-4 space-y-1">
+                                        <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Commission Rate (%)</Label>
+                                        <div className="flex items-center gap-2">
+                                            <Input
+                                                type="number"
+                                                defaultValue={plan.commission_rate || 0}
+                                                onBlur={(e) => updatePlanCommission(plan.id, e.target.value)}
+                                                className="h-10 w-24 font-bold bg-muted/30"
+                                            />
+                                            <span className="font-bold text-sm">%</span>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div className="space-y-6 flex-1">

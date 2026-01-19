@@ -28,6 +28,7 @@ export default function AdminSidebar() {
         { label: "Users", icon: Users, href: "/admin/users", color: "text-blue-500" }, // Added Users link
         { label: "Plans", icon: Component, href: "/admin/plans", color: "text-purple-500" }, // Added Plans link
         { label: "Merchants", icon: Users, href: "/admin/merchants", color: "text-violet-500" },
+        { label: "Plans", icon: Component, href: "/admin/plans", color: "text-purple-500" },
         { label: "Analytics", icon: BarChart3, href: "/admin/analytics", color: "text-pink-700" },
         { label: "Campaigns", icon: Bell, href: "/admin/notifications", color: "text-orange-700" },
         { label: "Payouts", icon: CreditCard, href: "/admin/payouts", color: "text-emerald-500" },

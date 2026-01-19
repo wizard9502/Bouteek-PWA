@@ -55,7 +55,7 @@ function StoreBuilderContent() {
 
 
     // Customization State
-    const [storeConfig, setStoreConfig] = useState({
+    const [storeConfig, setStoreConfig] = useState<any>({
         primaryColor: "#050505",
         secondaryColor: "#ffffff",
         accentColor: "#00D632",
@@ -63,7 +63,10 @@ function StoreBuilderContent() {
         heroTitle: "New Arrivals",
         heroSubtitle: "Discover our latest collection",
         buttonText: "Shop Now",
-        heroImage: "https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=2070&auto=format&fit=crop"
+        heroImage: "https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=2070&auto=format&fit=crop",
+        blogTitle: "Latest from Blog",
+        testimonialsTitle: "What People Say",
+        testimonialAuthor: "Jane Doe"
     });
 
     const [isLoading, setIsLoading] = useState(true);
@@ -120,25 +123,37 @@ function StoreBuilderContent() {
             return;
         }
 
-        const { error } = await supabase.from('storefronts').upsert({
+        // Consolidated Storefront Data Object
+        const storefrontData = {
             merchant_id: merchant.id,
             template_id: selectedTemplate,
-            theme_config: storeConfig,
+            theme_config: {
+                ...storeConfig,
+                // Ensure explicit mapping of new fields
+                primaryColor: storeConfig.primaryColor,
+                accentColor: storeConfig.accentColor,
+                heroTitle: storeConfig.heroTitle,
+                heroSubtitle: storeConfig.heroSubtitle,
+                blogTitle: storeConfig.blogTitle,
+                testimonialsTitle: storeConfig.testimonialsTitle,
+                testimonialAuthor: storeConfig.testimonialAuthor
+            },
             enable_sales: modules.sales,
             enable_rentals: modules.rentals,
             enable_services: modules.services,
             enable_testimonials: modules.testimonials,
             enable_blog: modules.blog,
             custom_domain: customDomain,
-
             updated_at: new Date().toISOString()
-        }, { onConflict: 'merchant_id' });
+        };
+
+        const { error } = await supabase.from('storefronts').upsert(storefrontData, { onConflict: 'merchant_id' });
 
         if (error) {
             console.error(error);
-            alert("Failed to save changes.");
+            toast.error("Failed to save changes. Please try again.");
         } else {
-            alert("Storefront saved successfully!");
+            toast.success("Storefront saved successfully!");
         }
         setIsLoading(false);
     };
