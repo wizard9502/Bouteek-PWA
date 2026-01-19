@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import dynamic from "next/dynamic";
+import dynamicImport from "next/dynamic";
 import {
     TrendingUp,
     BarChart3,
@@ -20,12 +20,12 @@ import { motion } from "framer-motion";
 // Dynamic import for Recharts components to prevent SSR crashes
 export const dynamic = 'force-dynamic';
 
-const RevenueGrowthChart = dynamic(
+const RevenueGrowthChart = dynamicImport(
     () => import("@/components/admin/AnalyticsCharts").then((mod) => mod.RevenueGrowthChart),
     { ssr: false, loading: () => <div className="w-full h-full animate-pulse bg-gray-100 rounded-xl" /> }
 );
 
-const SubscriptionDistributionChart = dynamic(
+const SubscriptionDistributionChart = dynamicImport(
     () => import("@/components/admin/AnalyticsCharts").then((mod) => mod.SubscriptionDistributionChart),
     { ssr: false, loading: () => <div className="w-full h-full animate-pulse bg-gray-100 rounded-xl" /> }
 );
