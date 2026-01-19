@@ -88,7 +88,7 @@ export default function EditProductPage() {
         setIsUploading(true);
         try {
             const fileExt = file.name.split('.').pop();
-            const fileName = `${Math.random().toString(36).substring(2)}_${Date.now()}.${fileExt}`;
+            const fileName = `${crypto.randomUUID()}_${Date.now()}.${fileExt}`;
             const filePath = `product-images/${fileName}`;
 
             const { error: uploadError, data } = await supabase.storage

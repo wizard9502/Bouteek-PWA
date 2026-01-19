@@ -119,11 +119,11 @@ function ProfileSettings({ theme, setTheme }: { theme: string | undefined, setTh
                 data: { referral_code_used: redeemCode }
             });
             if (error) throw error;
-            alert(language === 'fr' ? "Code de parrainage utilisé avec succès !" : "Referral code redeemed successfully!");
+            toast.success(language === 'fr' ? "Code de parrainage utilisé avec succès !" : "Referral code redeemed successfully!");
             setRedeemCode("");
         } catch (error) {
             console.error(error);
-            alert("Error redeeming code.");
+            toast.error("Error redeeming code.");
         } finally {
             setIsRedeeming(false);
         }
@@ -131,7 +131,7 @@ function ProfileSettings({ theme, setTheme }: { theme: string | undefined, setTh
 
     const handleApplyPromo = async () => {
         if (!promoCode) return;
-        alert(language === 'fr' ? "Code promo appliqué !" : "Promo code applied!");
+        toast.success(language === 'fr' ? "Code promo appliqué !" : "Promo code applied!");
         setPromoCode("");
     };
 
@@ -139,7 +139,7 @@ function ProfileSettings({ theme, setTheme }: { theme: string | undefined, setTh
         if ((window as any).Tawk_API && (window as any).Tawk_API.maximize) {
             (window as any).Tawk_API.maximize();
         } else {
-            alert(language === 'fr' ? "Le chat se charge..." : "Chat is loading...");
+            toast.info(language === 'fr' ? "Le chat se charge..." : "Chat is loading...");
         }
     };
 
@@ -496,8 +496,7 @@ function ReferralsManager() {
     const copyCode = () => {
         if (!merchant?.referral_code) return;
         navigator.clipboard.writeText(merchant.referral_code);
-        // Assuming toast is available or use alert
-        alert("Referral code copied!");
+        toast.success("Referral code copied!");
     };
     // Lucide icons for ReferralsManager specific
     const { TrendingUp, Copy, Users, Wallet, Gift, Share2, CheckCircle2 } = require("lucide-react");

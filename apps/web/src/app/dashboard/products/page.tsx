@@ -79,8 +79,8 @@ export default function ProductsPage() {
                 const compressedFile = await compressImage(imageFile, 0.7, 1000);
 
                 const fileExt = compressedFile.name.split('.').pop();
-                const fileName = `${Math.random()}.${fileExt}`;
-                const filePath = `${merchant.id}/${fileName}`;
+                const fileName = `${crypto.randomUUID()}_${Date.now()}.${fileExt}`;
+                const filePath = `product-images/${fileName}`;
 
                 const { error: uploadError } = await supabase.storage
                     .from('products')

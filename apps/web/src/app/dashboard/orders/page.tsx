@@ -73,12 +73,23 @@ function OrdersPageContent() {
 
     const updateStatus = async (orderId: string, status: string) => {
         try {
-            const { error } = await supabase.from('orders').update({ status }).eq('id', orderId);
+            let error;
+            if (status === 'paid') {
+                // Use RPC to deduct commission and log transaction
+                const { error: rpcError } = await supabase.rpc('confirm_order', { order_id_input: orderId });
+                error = rpcError;
+            } else {
+                // Direct update for other statuses
+                const { error: updateError } = await supabase.from('orders').update({ status }).eq('id', orderId);
+                error = updateError;
+            }
+
             if (error) throw error;
             toast.success(`Order marked as ${status}`);
             fetchOrders();
-        } catch (error) {
-            toast.error("Failed to update status");
+        } catch (error: any) {
+            console.error(error);
+            toast.error(error.message || "Failed to update status");
         }
     };
 

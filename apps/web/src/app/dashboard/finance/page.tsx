@@ -347,36 +347,20 @@ function SubscriptionManager({ plans }: { plans: any[] }) {
             const totalCost = basePrice * duration;
             const currentBalance = Number(merchant.bouteek_cash_balance || 0);
 
-            if (currentBalance < totalCost) {
-                toast.error("Insufficient Bouteek Cash balance.", {
-                    description: `You need ${totalCost.toLocaleString()} XOF.`,
-                });
-                setProcessing(false);
-                return;
-            }
-
-            const expiryDate = new Date();
-            expiryDate.setMonth(expiryDate.getMonth() + duration);
-
-            const { error: updateError } = await supabase
-                .from('merchants')
-                .update({
-                    subscription_tier: selectedPlan,
-                    subscription_expiry: expiryDate.toISOString(),
-                    bouteek_cash_balance: currentBalance - totalCost,
-                    auto_renew: autoRenew
-                })
-                .eq('id', merchant.id);
-
-            if (updateError) throw updateError;
-
-            // Log Transaction (Ideally via RPC for atomicity)
-            await supabase.from('wallet_transactions').insert({
-                merchant_id: merchant.id,
-                amount: -totalCost,
-                description: `Subscription: ${selectedPlan.toUpperCase()} (${duration} months)`,
-                transaction_type: 'subscription_payment'
+            // Perform atomic subscription purchase via RPC
+            const { data: result, error: rpcError } = await supabase.rpc('purchase_subscription', {
+                merchant_id_input: merchant.id,
+                plan_slug_input: selectedPlan.slug,
+                duration_months: duration,
+                total_cost: totalCost
             });
+
+            if (rpcError) throw rpcError;
+
+            if (!result.success) {
+                // Handle business logic errors returned from RPC
+                throw new Error(result.message || "Subscription purchase failed");
+            }
 
             toast.success("Subscription updated!");
             fetchSubscriptionData();

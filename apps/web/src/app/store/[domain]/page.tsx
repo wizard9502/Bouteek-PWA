@@ -111,30 +111,27 @@ export default function StorePage({ params }: { params: Promise<{ domain: string
         setPlacingOrder(true);
         try {
             // 1. Create Order
-            const { data: order, error: orderError } = await supabase
-                .from('orders')
-                .insert({
-                    merchant_id: store.id,
-                    order_number: `BTK-${Math.random().toString(36).substring(2, 7).toUpperCase()}-${Date.now().toString().slice(-4)}`,
-                    customer_name: customerName,
-                    customer_phone: customerPhone,
-                    delivery_address: customerAddress,
-                    items: cart.map(item => ({
-                        id: item.product.id,
-                        name: item.product.name,
-                        quantity: item.quantity,
-                        price: item.product.price
-                    })),
-                    subtotal: totalAmount,
-                    total: totalAmount,
-                    status: 'pending',
-                    payment_method: selectedMethod,
-                    notes: `Trans ID: ${transactionId}`
-                })
-                .select()
-                .single();
+            // 1. Create Order Atomically via RPC (handles inventory)
+            const { data: result, error: rpcError } = await supabase.rpc('place_order', {
+                merchant_id_input: store.id,
+                customer_name_input: customerName,
+                customer_phone_input: customerPhone,
+                delivery_address_input: customerAddress,
+                items_json: cart.map(item => ({
+                    id: item.product.id,
+                    name: item.product.name,
+                    price: item.product.price,
+                    quantity: item.quantity
+                })),
+                subtotal_input: totalAmount,
+                total_input: totalAmount,
+                payment_method_input: selectedMethod,
+                notes_input: `Trans ID: ${transactionId}`
+            });
 
-            if (orderError) throw orderError;
+            if (rpcError) throw rpcError;
+            if (!result.success) throw new Error(result.message);
+
 
 
             toast.success("Order placed successfully! The merchant will verify your payment.");

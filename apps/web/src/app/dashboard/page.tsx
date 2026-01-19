@@ -165,9 +165,7 @@ function DashboardHomeContent() {
 
             if (chartOrders && chartOrders.length > 0) {
                 const grouped = chartOrders.reduce((acc: any, curr: any) => {
-                    const date = new Date(curr.created_at).toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US',
-                        range === '1y' ? { month: 'short' } : { month: 'short', day: 'numeric' }
-                    );
+                    const date = new Date(curr.created_at).toISOString().split('T')[0]; // YYYY-MM-DD
                     acc[date] = (acc[date] || 0) + (curr.total || 0);
                     return acc;
                 }, {});
