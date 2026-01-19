@@ -311,7 +311,6 @@ function SubscriptionManager({ plans }: { plans: any[] }) {
     const [selectedPlanSlug, setSelectedPlanSlug] = useState<string>("starter");
     const [duration, setDuration] = useState<number>(1); // 1, 3, 6, 12
     const [autoRenew, setAutoRenew] = useState(false);
-    const [autoRenew, setAutoRenew] = useState(false);
 
     useEffect(() => {
         fetchSubscriptionData();

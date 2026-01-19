@@ -563,59 +563,53 @@ function ReferralsManager() {
                             <p className="text-3xl font-black">{stats.referralCount}</p>
                             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">{t("profile.stats.total")}</p>
                         </div>
-                        <div className="bg-white/5 border border-white/10 p-6 rounded-3xl backdrop-blur-sm">
-                            <Wallet className="text-bouteek-green mb-4" size={24} />
-                            <p className="text-3xl font-black text-bouteek-green">{stats.pendingEarnings.toLocaleString()} <span className="text-[10px] text-white">XOF</span></p>
-                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">{t("profile.stats.pending")}</p>
-                        </div>
-                    </div>
-            </motion.div>
+                    </motion.div>
 
-            {/* List of Referrals */}
-            <section className="space-y-6">
-                <h3 className="text-xl font-black">{t("profile.table.title")}</h3>
-                <div className="bouteek-card overflow-hidden">
-                    <table className="w-full text-left">
-                        <thead className="bg-muted/50 border-b">
-                            <tr>
-                                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest">{t("profile.table.merchant")}</th>
-                                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest">{t("profile.table.plan")}</th>
-                                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest">{t("profile.table.joined")}</th>
-                                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-right">{t("profile.table.status")}</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y">
-                            {referrals.length > 0 ? referrals.map((ref) => (
-                                <tr key={ref.id} className="hover:bg-muted/30 transition-colors">
-                                    <td className="px-6 py-4">
-                                        <p className="font-bold">{ref.business_name}</p>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="uppercase text-[10px] font-black px-2 py-1 rounded-full border border-border w-fit">
-                                            {ref.subscription_tier || 'Starter'}
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4 text-xs font-medium text-muted-foreground">
-                                        {new Date(ref.created_at).toLocaleDateString()}
-                                    </td>
-                                    <td className="px-6 py-4 text-right">
-                                        <div className="inline-flex items-center gap-1 text-bouteek-green font-bold text-[10px] uppercase">
-                                            <CheckCircle2 size={12} />
-                                            {t("profile.table.active")}
-                                        </div>
-                                    </td>
-                                </tr>
-                            )) : (
-                                <tr>
-                                    <td colSpan={4} className="px-6 py-12 text-center text-muted-foreground font-medium italic">
-                                        {t("profile.table.empty")}
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
+                    {/* List of Referrals */}
+                    <section className="space-y-6">
+                        <h3 className="text-xl font-black">{t("profile.table.title")}</h3>
+                        <div className="bouteek-card overflow-hidden">
+                            <table className="w-full text-left">
+                                <thead className="bg-muted/50 border-b">
+                                    <tr>
+                                        <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest">{t("profile.table.merchant")}</th>
+                                        <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest">{t("profile.table.plan")}</th>
+                                        <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest">{t("profile.table.joined")}</th>
+                                        <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-right">{t("profile.table.status")}</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y">
+                                    {referrals.length > 0 ? referrals.map((ref) => (
+                                        <tr key={ref.id} className="hover:bg-muted/30 transition-colors">
+                                            <td className="px-6 py-4">
+                                                <p className="font-bold">{ref.business_name}</p>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className="uppercase text-[10px] font-black px-2 py-1 rounded-full border border-border w-fit">
+                                                    {ref.subscription_tier || 'Starter'}
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4 text-xs font-medium text-muted-foreground">
+                                                {new Date(ref.created_at).toLocaleDateString()}
+                                            </td>
+                                            <td className="px-6 py-4 text-right">
+                                                <div className="inline-flex items-center gap-1 text-bouteek-green font-bold text-[10px] uppercase">
+                                                    <CheckCircle2 size={12} />
+                                                    {t("profile.table.active")}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    )) : (
+                                        <tr>
+                                            <td colSpan={4} className="px-6 py-12 text-center text-muted-foreground font-medium italic">
+                                                {t("profile.table.empty")}
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
                 </div>
-            </section>
-        </div>
-    );
+                );
 }

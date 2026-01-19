@@ -94,20 +94,19 @@ export default function AppShowcase() {
           </button>
         </div>
       </div>
-    </div>
 
-      {/* Slide Indicators */ }
-  <div className="flex justify-center gap-2 flex-wrap mt-8">
-    {slides.map((_, index) => (
-      <button
-        key={index}
-        onClick={() => setCurrentSlide(index)}
-        className={`w-3 h-3 rounded-full transition-all duration-200 ${index === currentSlide ? 'bg-[#00D632] w-8' : 'bg-gray-600 hover:bg-gray-500'
-          }`}
-        aria-label={`Go to slide ${index + 1}`}
-      />
-    ))}
-  </div>
-    </section >
+      {/* Slide Indicators */}
+      <div className="flex justify-center gap-2 flex-wrap mt-8">
+        {slides.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentSlide(index)}
+            className={`w-3 h-3 rounded-full transition-all duration-200 ${index === currentSlide ? 'bg-[#00D632] w-8' : 'bg-gray-600 hover:bg-gray-500'
+              }`}
+            aria-label={`Go to slide ${index + 1}`}
+          />
+        ))}
+      </div>
+    </section>
   );
 }
