@@ -7,15 +7,7 @@ import {
     ShoppingBag,
     CreditCard,
     TrendingUp,
-    ArrowUpRight,
-    Search,
-    Filter,
-    MoreHorizontal
-} from "lucide-react";
-import { getAdminKPIs, getSubscriptionDistribution, getRecentMerchants, getRevenueGrowthData } from "@/lib/adminData";
-
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import {
     BarChart,
     Bar,
@@ -165,28 +157,8 @@ export default function AdminDashboard() {
                             <span className="text-xs font-bold text-muted-foreground">Commissions</span>
                         </div>
                     </div>
-                    <div className="h-[300px] w-full">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={revenueGrowth.length ? revenueGrowth : [
-                                { name: 'Mon', sub: 0, com: 0 },
-                                { name: 'Tue', sub: 0, com: 0 },
-                                { name: 'Wed', sub: 0, com: 0 },
-                                { name: 'Thu', sub: 0, com: 0 },
-                                { name: 'Fri', sub: 0, com: 0 },
-                                { name: 'Sat', sub: 0, com: 0 },
-                                { name: 'Sun', sub: 0, com: 0 },
-                            ]} barSize={20}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-                                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fontWeight: 700, fill: '#9CA3AF' }} />
-                                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fontWeight: 700, fill: '#9CA3AF' }} />
-                                <Tooltip
-                                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' }}
-                                    cursor={{ fill: '#F3F4F6' }}
-                                />
-                                <Bar dataKey="sub" stackId="a" fill="#3B82F6" radius={[0, 0, 4, 4]} />
-                                <Bar dataKey="com" stackId="a" fill="#10B981" radius={[4, 4, 0, 0]} />
-                            </BarChart>
-                        </ResponsiveContainer>
+                    <div className="h-[300px] w-full flex items-center justify-center bg-gray-50 border-2 border-dashed rounded-xl">
+                        <p className="text-gray-400 font-bold">Growth Chart Disabled</p>
                     </div>
 
                 </div>
@@ -194,31 +166,8 @@ export default function AdminDashboard() {
                 {/* Subscription Dist */}
                 <div className="bg-white p-8 rounded-3xl border border-border/50 shadow-sm">
                     <h3 className="text-xl font-black text-gray-900 mb-8">User Distribution</h3>
-                    <div className="h-[300px] w-full relative">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <PieChart>
-                                <Pie
-                                    data={distribution.length ? distribution : [{ name: 'Empty', value: 1 }]}
-                                    cx="50%"
-                                    cy="50%"
-                                    innerRadius={60}
-                                    outerRadius={80}
-                                    paddingAngle={5}
-                                    dataKey="value"
-                                >
-                                    {distribution.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                    ))}
-                                </Pie>
-                                <Tooltip />
-                            </PieChart>
-                        </ResponsiveContainer>
-                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                            <div className="text-center">
-                                <p className="text-3xl font-black">{stats?.activeMerchants}</p>
-                                <p className="text-xs font-bold text-muted-foreground uppercase">Merchants</p>
-                            </div>
-                        </div>
+                    <div className="h-[300px] w-full relative flex items-center justify-center bg-gray-50 border-2 border-dashed rounded-xl">
+                        <p className="text-gray-400 font-bold">Pie Chart Disabled</p>
                     </div>
                     <div className="flex flex-wrap gap-4 justify-center mt-4">
                         {distribution.map((entry, index) => (

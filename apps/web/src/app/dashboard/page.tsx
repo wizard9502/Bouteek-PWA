@@ -2,15 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import {
-    BarChart,
-    Bar,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    ResponsiveContainer
-} from "recharts";
+
 import {
     TrendingUp,
     TrendingDown,
@@ -358,29 +350,8 @@ function DashboardHomeContent() {
 
                     </div>
 
-                    <div className="bouteek-card h-[350px] p-8">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={chartData}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-                                <XAxis
-                                    dataKey="name"
-                                    axisLine={false}
-                                    tickLine={false}
-                                    tick={{ fontSize: 10, fontWeight: 700, fill: '#9CA3AF' }}
-                                />
-                                <YAxis
-                                    axisLine={false}
-                                    tickLine={false}
-                                    tick={{ fontSize: 10, fontWeight: 700, fill: '#9CA3AF' }}
-                                    tickFormatter={(value) => `${value / 1000}k`}
-                                />
-                                <Tooltip
-                                    contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' }}
-                                    cursor={{ fill: '#F3F4F6' }}
-                                />
-                                <Bar dataKey="revenue" fill="#00D632" radius={[6, 6, 0, 0]} />
-                            </BarChart>
-                        </ResponsiveContainer>
+                    <div className="bouteek-card h-[350px] p-8 flex items-center justify-center bg-gray-50 border-2 border-dashed">
+                        <p className="text-gray-400 font-bold">Analytics temporarily disabled for build stability</p>
                     </div>
                 </div>
 
