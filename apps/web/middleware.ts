@@ -54,8 +54,15 @@ export default async function middleware(req: NextRequest) {
         if (subdomainSafe === "dashboard") {
             // Rewrite dashboard.bouteek.shop to /dashboard
             const dashboardPath = path === "/" ? "" : path;
-            console.log(`Rewriting dashboard subdomain to /dashboard${path}`);
+            // console.log(`Rewriting dashboard subdomain to /dashboard${path}`);
             return NextResponse.rewrite(new URL(`/dashboard${dashboardPath}`, req.url));
+        }
+
+        // SPECIAL CASE: Admin
+        if (subdomainSafe === "admin") {
+            // Rewrite admin.bouteek.shop to /admin
+            const adminPath = path === "/" ? "" : path;
+            return NextResponse.rewrite(new URL(`/admin${adminPath}`, req.url));
         }
 
         console.log(`Rewriting subdomain ${hostname} to /store/${subdomainSafe}${path}`);
