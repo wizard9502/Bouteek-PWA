@@ -234,16 +234,22 @@ function HomeContent() {
 
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 overflow-hidden">
-        <div className="absolute inset-0 opacity-20">
-          <img src="/hero-bg.jpg" alt="Hero Background" className="w-full h-full object-cover" />
+      <section className="relative pt-32 pb-20 overflow-hidden bg-white">
+        <div className="absolute inset-0 opacity-10">
+          {/* Senegalese Flag Gradient Background */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_#FDEF42_0%,_transparent_50%),_radial-gradient(circle_at_0%_0%,_#00853F_0%,_transparent_50%),_radial-gradient(circle_at_100%_0%,_#E31B23_0%,_transparent_50%)] blur-3xl opacity-40"></div>
         </div>
         <div className="container mx-auto px-6 relative z-10 flex flex-col items-center text-center max-w-5xl">
           <div className="space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-1000">
             <div>
-              <div className="inline-flex items-center gap-2 bg-[#00D632]/10 text-[#00D632] px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest mb-8 border border-[#00D632]/20">
-                <Zap size={14} fill="currentColor" />
-                <span>{language === "fr" ? "Nouvelle Génération d'E-commerce" : "Next Gen E-commerce"}</span>
+              <div className="flex flex-col items-center mb-8">
+                <div className="inline-flex items-center gap-2 bg-black/5 text-black/60 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border border-black/5">
+                  <span>Incubated by Ninety5 Ventures</span>
+                </div>
+                <div className="inline-flex items-center gap-2 bg-[#00D632]/10 text-[#00D632] px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest border border-[#00D632]/20">
+                  <Zap size={14} fill="currentColor" />
+                  <span>{language === "fr" ? "Nouvelle Génération d'E-commerce" : "Next Gen E-commerce"}</span>
+                </div>
               </div>
               <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-black mb-8 leading-[0.9] tracking-tighter">
                 {t_obj.hero.title}
@@ -529,6 +535,25 @@ function HomeContent() {
       <section className="bg-white py-16 border-t border-gray-200">
         <div className="container max-w-2xl">
           <NewsletterSignup />
+        </div>
+      </section>
+
+      {/* Founder Section */}
+      <section className="py-20 bg-white border-t border-gray-100">
+        <div className="container max-w-4xl mx-auto text-center">
+          <div className="mb-8">
+            <img src="/founder.jpg" alt="Mohamed Sow" className="w-24 h-24 rounded-full mx-auto object-cover mb-4 shadow-xl" onError={(e) => {
+              // Fallback if image missing
+              e.currentTarget.src = "https://ui-avatars.com/api/?name=Mohamed+Sow&background=000&color=fff";
+            }} />
+            <h3 className="text-2xl font-bold text-black">Mohamed Sow</h3>
+            <p className="text-[#00D632] font-black uppercase tracking-widest text-xs">Founder & CEO</p>
+          </div>
+          <p className="text-xl text-gray-700 italic leading-relaxed">
+            "{language === "fr"
+              ? "Notre mission est de donner aux entrepreneurs africains les outils de classe mondiale qu'ils méritent. Bouteek n'est pas juste une application, c'est votre partenaire de croissance."
+              : "Our mission is to empower African entrepreneurs with the world-class tools they deserve. Bouteek is not just an app, it's your growth partner."}"
+          </p>
         </div>
       </section>
 

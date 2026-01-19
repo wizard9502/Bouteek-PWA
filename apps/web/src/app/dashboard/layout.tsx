@@ -86,13 +86,10 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
 
     const navItems = [
         { href: "/dashboard", label: t("sidebar.dashboard"), icon: LayoutDashboard },
-        { href: "/dashboard/subscription", label: t("sidebar.subscription"), icon: Bell },
         { href: "/dashboard/store", label: t("sidebar.store"), icon: Store },
         { href: "/dashboard/orders", label: t("sidebar.orders"), icon: ShoppingCart },
-        { href: "/dashboard/finance", label: t("sidebar.finance"), icon: Wallet },
-        { href: "/dashboard/referrals", label: t("sidebar.referrals") || "Referrals", icon: Heart },
+        { href: "/dashboard/finance", label: t("sidebar.billing") || "Billing & Subscriptions", icon: Wallet },
         { href: "/dashboard/settings", label: t("sidebar.settings"), icon: Settings },
-
         { href: "/dashboard/profile", label: t("sidebar.profile"), icon: UserCircle },
     ];
 
@@ -105,8 +102,8 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
             <aside className="hidden md:flex flex-col w-72 h-screen sticky top-0 border-r border-border bg-card/50 backdrop-blur-xl transition-all duration-300">
                 <div className="p-8 flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-2xl bg-bouteek-green flex items-center justify-center shadow-lg shadow-bouteek-green/20">
-                            <img src="/bouteek-logo.jpg" alt="Logo" className="w-6 h-6 rounded-lg object-contain" />
+                        <div className="w-14 h-14 rounded-2xl bg-bouteek-green/10 flex items-center justify-center shadow-lg shadow-bouteek-green/10">
+                            <img src="/bouteek-logo.jpg" alt="Logo" className="w-12 h-12 rounded-xl object-contain" />
                         </div>
                         <span className="font-black text-2xl tracking-tighter">Bouteek</span>
                     </div>

@@ -245,15 +245,17 @@ export default function SettingsPage() {
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="slug" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{t("settings.store_slug")}</Label>
-                            <div className="flex items-center gap-3 bg-muted/30 p-1 pl-4 rounded-xl border border-transparent focus-within:border-bouteek-green transition-all">
-                                <span className="text-muted-foreground text-xs font-bold">bouteek.shop/</span>
+                            <div className="flex items-center gap-1 bg-muted/30 p-1 rounded-xl border border-transparent focus-within:border-bouteek-green transition-all">
+                                <span className="text-muted-foreground text-xs font-bold pl-3">https://</span>
                                 <Input
                                     id="slug"
                                     value={slug}
                                     onChange={e => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
-                                    className="border-none bg-transparent h-10 font-bold focus-visible:ring-0"
+                                    className="border-none bg-transparent h-10 font-bold focus-visible:ring-0 px-0 w-full text-right"
+                                    placeholder="your-store"
                                     required
                                 />
+                                <span className="text-muted-foreground text-xs font-bold pr-3">.bouteek.shop</span>
                             </div>
                         </div>
 

@@ -519,8 +519,8 @@ function StoreBuilderContent() {
                                     key={template.id}
                                     onClick={() => {
                                         setSelectedTemplate(template.id);
-                                        // Auto-apply defaults if desired, or keep user custom
-                                        // setStoreConfig(prev => ({ ...prev, primaryColor: template.defaultColors.primary, accentColor: template.defaultColors.accent }));
+                                        // Auto-apply defaults
+                                        setStoreConfig(prev => ({ ...prev, primaryColor: template.defaultColors.primary, accentColor: template.defaultColors.accent }));
                                     }}
                                     className={cn(
                                         "p-4 rounded-3xl border-2 cursor-pointer transition-all hover:scale-[1.02]",

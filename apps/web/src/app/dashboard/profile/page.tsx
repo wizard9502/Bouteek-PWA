@@ -39,18 +39,62 @@ export default function ProfilePage() {
     );
 }
 
+export default function ProfilePage() {
+    return (
+        <TranslationProvider>
+            <ProfilePageContent />
+        </TranslationProvider>
+    );
+}
+
 function ProfilePageContent() {
     const { t, language, setLanguage } = useTranslation();
     const { theme, setTheme } = useTheme();
     const router = useRouter();
+    const [activeTab, setActiveTab] = useState("profile"); // profile, referrals
+
+    return (
+        <div className="max-w-4xl mx-auto space-y-10 pb-12">
+            <div>
+                <h1 className="hero-text !text-4xl">{t("profile.title")}</h1>
+                <p className="text-muted-foreground font-medium mt-1">{t("dashboard.subtitle")}</p>
+            </div>
+
+            {/* Tabs */}
+            <div className="flex bg-muted p-1 rounded-2xl w-fit">
+                <button
+                    onClick={() => setActiveTab("profile")}
+                    className={cn(
+                        "px-6 py-3 rounded-xl text-xs font-black uppercase tracking-wider transition-all",
+                        activeTab === "profile" ? "bg-white shadow-sm text-black" : "text-muted-foreground hover:text-foreground"
+                    )}
+                >
+                    {language === 'fr' ? "Profil & Préférences" : "Profile & Settings"}
+                </button>
+                <button
+                    onClick={() => setActiveTab("referrals")}
+                    className={cn(
+                        "px-6 py-3 rounded-xl text-xs font-black uppercase tracking-wider transition-all",
+                        activeTab === "referrals" ? "bg-white shadow-sm text-black" : "text-muted-foreground hover:text-foreground"
+                    )}
+                >
+                    {language === 'fr' ? "Parrainage" : "Referrals"}
+                </button>
+            </div>
+
+            {activeTab === "profile" ? <ProfileSettings theme={theme} setTheme={setTheme} /> : <ReferralsManager />}
+        </div>
+    );
+}
+
+function ProfileSettings({ theme, setTheme }: { theme: string | undefined, setTheme: (t: string) => void }) {
+    const { t, language, setLanguage } = useTranslation();
+    const router = useRouter();
     const [merchant, setMerchant] = useState<any>(null);
     const [loading, setLoading] = useState(true);
-    const [referralCode, setReferralCode] = useState("");
     const [promoCode, setPromoCode] = useState("");
     const [redeemCode, setRedeemCode] = useState("");
-    const [isSavingCode, setIsSavingCode] = useState(false);
     const [isRedeeming, setIsRedeeming] = useState(false);
-
 
     useEffect(() => {
         fetchProfile();
@@ -62,29 +106,9 @@ function ProfilePageContent() {
             const { data } = await supabase.from('merchants').select('*').eq('user_id', user.id).single();
             if (data) {
                 setMerchant(data);
-                if (data.referral_code) setReferralCode(data.referral_code);
             }
         }
         setLoading(false);
-    };
-
-    const handleSaveReferral = async () => {
-        if (!merchant) return;
-        setIsSavingCode(true);
-        try {
-            const { error } = await supabase
-                .from('merchants')
-                .update({ referral_code: referralCode })
-                .eq('id', merchant.id);
-            if (error) throw error;
-            // Refresh
-            fetchProfile();
-        } catch (error) {
-            console.error(error);
-            alert("Failed to save referral code. It might be taken.");
-        } finally {
-            setIsSavingCode(false);
-        }
     };
 
     const handleRedeemReferral = async () => {
@@ -119,7 +143,6 @@ function ProfilePageContent() {
         }
     };
 
-
     const handleLogout = async () => {
         await supabase.auth.signOut();
         router.push("/auth");
@@ -142,13 +165,7 @@ function ProfilePageContent() {
     if (loading) return <div className="p-8 flex justify-center"><div className="animate-spin w-6 h-6 border-2 border-black rounded-full border-t-transparent" /></div>;
 
     return (
-        <div className="max-w-4xl mx-auto space-y-10 pb-12">
-            <div>
-                <h1 className="hero-text !text-4xl">{t("profile.title")}</h1>
-                <p className="text-muted-foreground font-medium mt-1">{t("dashboard.subtitle")}</p>
-            </div>
-
-
+        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4">
             {/* Merchant Identity Card */}
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
@@ -202,7 +219,6 @@ function ProfilePageContent() {
                             </div>
                             <p className="text-sm font-black text-bouteek-green mt-1">98% {t("profile.platinum_tier")}</p>
                         </div>
-
                     </div>
 
                     <Link href="/dashboard/settings">
@@ -344,45 +360,6 @@ function ProfilePageContent() {
                             </div>
                         </div>
                     </div>
-
-
-                    {/* Referral Section */}
-                    <div className="bouteek-card p-8 bg-gradient-to-br from-purple-500/10 to-transparent border-purple-500/20">
-                        <div className="flex items-center gap-3 mb-6">
-                            <TicketPercent className="text-purple-600" size={24} />
-                            <h4 className="font-black text-purple-950 dark:text-purple-100">{t("profile.referral_title")}</h4>
-                        </div>
-                        <p className="text-xs text-muted-foreground mb-4">{t("profile.referral_desc")}</p>
-
-                        {merchant?.referral_code ? (
-                            <div className="flex gap-2">
-                                <div className="flex-1 bg-background border rounded-xl flex items-center px-4 font-mono font-bold">
-                                    {merchant.referral_code}
-                                </div>
-                                <Button className="rounded-xl h-11 px-6 bg-purple-600 text-white font-bold" onClick={() => navigator.clipboard.writeText(merchant.referral_code)}>
-                                    {language === 'fr' ? "Copier" : "Copy"}
-                                </Button>
-                            </div>
-                        ) : (
-                            <div className="flex gap-2">
-                                <Input
-                                    placeholder="MYSTORE123"
-                                    className="rounded-xl bg-background border-border/50 h-11 uppercase"
-                                    value={referralCode}
-                                    onChange={(e) => setReferralCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''))}
-                                    maxLength={15}
-                                />
-                                <Button
-                                    className="rounded-xl h-11 px-6 bg-purple-600 text-white font-black uppercase text-[10px] tracking-widest shadow-lg shadow-purple-600/20"
-                                    onClick={handleSaveReferral}
-                                    disabled={isSavingCode || !referralCode}
-                                >
-                                    {isSavingCode ? (language === 'fr' ? "Enregistrement..." : "Saving...") : (language === 'fr' ? "Définir Code" : "Set Code")}
-                                </Button>
-                            </div>
-                        )}
-                    </div>
-
                 </section>
 
                 {/* Social & Support */}
@@ -397,7 +374,7 @@ function ProfilePageContent() {
                         </Button>
                         <Button variant="outline" className="h-auto p-6 rounded-3xl border-border/50 flex flex-col gap-3 group">
                             <div className="p-3 rounded-2xl bg-black/10 text-black dark:text-white group-hover:scale-110 transition-transform">
-                                <Music size={24} />
+                                <Twitter size={24} />
                             </div>
                             <span className="font-bold text-[8px] lg:text-[10px] uppercase tracking-widest">{t("profile.connect_tt")}</span>
                         </Button>
@@ -439,6 +416,207 @@ function ProfilePageContent() {
 
                 </section>
             </div>
+        </div>
+    );
+}
+
+function ReferralsManager() {
+    const { t, language } = useTranslation();
+    const [merchant, setMerchant] = useState<any>(null);
+    const [stats, setStats] = useState({
+        referralCount: 0,
+        pendingEarnings: 0,
+        totalWithdrawn: 0
+    });
+    const [referrals, setReferrals] = useState<any[]>([]);
+    const [referralCode, setReferralCode] = useState("");
+    const [isSavingCode, setIsSavingCode] = useState(false);
+
+    useEffect(() => {
+        fetchReferralData();
+    }, []);
+
+    const fetchReferralData = async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const { data: mData } = await supabase
+            .from('merchants')
+            .select('*')
+            .eq('user_id', user.id)
+            .single();
+
+        if (mData) {
+            setMerchant(mData);
+            if (mData.referral_code) setReferralCode(mData.referral_code);
+
+            // Fetch referrals (where this merchant's referral code was used)
+            const { data: refs, count } = await supabase
+                .from('merchants')
+                .select('id, business_name, created_at, subscription_tier', { count: 'exact' })
+                .eq('referred_by', mData.referral_code);
+
+            if (refs) {
+                setReferrals(refs);
+                setStats(prev => ({ ...prev, referralCount: count || 0 }));
+            }
+
+            // Fetch payout stats
+            const { data: payouts } = await supabase
+                .from('affiliate_payouts')
+                .select('amount, status')
+                .eq('referrer_id', mData.id);
+
+            if (payouts) {
+                const total = payouts.reduce((acc, curr) => acc + (curr.status === 'paid' ? curr.amount : 0), 0);
+                const pending = payouts.reduce((acc, curr) => acc + (curr.status === 'pending' ? curr.amount : 0), 0);
+                setStats(prev => ({ ...prev, pendingEarnings: pending, totalWithdrawn: total }));
+            }
+        }
+    };
+
+    const handleSaveReferral = async () => {
+        if (!merchant) return;
+        setIsSavingCode(true);
+        try {
+            const { error } = await supabase
+                .from('merchants')
+                .update({ referral_code: referralCode })
+                .eq('id', merchant.id);
+            if (error) throw error;
+            fetchReferralData();
+        } catch (error) {
+            console.error(error);
+            alert("Failed to save referral code. It might be taken.");
+        } finally {
+            setIsSavingCode(false);
+        }
+    };
+
+    const copyCode = () => {
+        if (!merchant?.referral_code) return;
+        navigator.clipboard.writeText(merchant.referral_code);
+        // Assuming toast is available or use alert
+        alert("Referral code copied!");
+    };
+    // Lucide icons for ReferralsManager specific
+    const { TrendingUp, Copy, Users, Wallet, Gift, Share2, CheckCircle2 } = require("lucide-react");
+
+    return (
+        <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4">
+            {/* Referral Hero Card */}
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-black text-white rounded-4xl p-8 md:p-12 relative overflow-hidden"
+            >
+                <div className="absolute top-0 right-0 w-96 h-96 bg-bouteek-green/20 blur-3xl rounded-full -mr-32 -mt-32" />
+
+                <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                    <div className="space-y-8">
+                        <div className="inline-flex items-center gap-2 bg-bouteek-green/20 text-bouteek-green px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest">
+                            <TrendingUp size={14} />
+                            Grow Together
+                        </div>
+                        <h2 className="text-4xl md:text-5xl font-black tracking-tighter leading-tight">
+                            Build your empire with <span className="text-bouteek-green">Bouteek.</span>
+                        </h2>
+
+                        <div className="space-y-4">
+                            <p className="text-gray-400 font-bold uppercase text-[10px] tracking-widest">Your Private Referral Code</p>
+                            {merchant?.referral_code ? (
+                                <div className="flex gap-2">
+                                    <div className="flex-1 bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl h-16 flex items-center px-6 font-mono font-black text-2xl tracking-widest">
+                                        {merchant.referral_code}
+                                    </div>
+                                    <Button
+                                        onClick={copyCode}
+                                        className="h-16 w-16 rounded-2xl bg-bouteek-green text-black hover:scale-105 transition-transform"
+                                    >
+                                        <Copy size={24} />
+                                    </Button>
+                                </div>
+                            ) : (
+                                <div className="flex gap-2">
+                                    <Input
+                                        placeholder="MYSTORE123"
+                                        className="flex-1 bg-white/10 backdrop-blur-md border-white/10 rounded-2xl h-16 px-6 font-mono font-black text-2xl tracking-widest uppercase text-white placeholder:text-gray-600"
+                                        value={referralCode}
+                                        onChange={(e) => setReferralCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''))}
+                                        maxLength={15}
+                                    />
+                                    <Button
+                                        className="h-16 px-8 rounded-2xl bg-bouteek-green text-black font-black uppercase tracking-widest hover:scale-105 transition-transform"
+                                        onClick={handleSaveReferral}
+                                        disabled={isSavingCode || !referralCode}
+                                    >
+                                        {isSavingCode ? "..." : "SET"}
+                                    </Button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="bg-white/5 border border-white/10 p-6 rounded-3xl backdrop-blur-sm">
+                            <Users className="text-bouteek-green mb-4" size={24} />
+                            <p className="text-3xl font-black">{stats.referralCount}</p>
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Total Referrals</p>
+                        </div>
+                        <div className="bg-white/5 border border-white/10 p-6 rounded-3xl backdrop-blur-sm">
+                            <Wallet className="text-bouteek-green mb-4" size={24} />
+                            <p className="text-3xl font-black text-bouteek-green">{stats.pendingEarnings.toLocaleString()} <span className="text-[10px] text-white">XOF</span></p>
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Pending Balance</p>
+                        </div>
+                    </div>
+                </div>
+            </motion.div>
+
+            {/* List of Referrals */}
+            <section className="space-y-6">
+                <h3 className="text-xl font-black">Your Referrals</h3>
+                <div className="bouteek-card overflow-hidden">
+                    <table className="w-full text-left">
+                        <thead className="bg-muted/50 border-b">
+                            <tr>
+                                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest">Merchant</th>
+                                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest">Plan</th>
+                                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest">Joined</th>
+                                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-right">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y">
+                            {referrals.length > 0 ? referrals.map((ref) => (
+                                <tr key={ref.id} className="hover:bg-muted/30 transition-colors">
+                                    <td className="px-6 py-4">
+                                        <p className="font-bold">{ref.business_name}</p>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <div className="uppercase text-[10px] font-black px-2 py-1 rounded-full border border-border w-fit">
+                                            {ref.subscription_tier || 'Starter'}
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 text-xs font-medium text-muted-foreground">
+                                        {new Date(ref.created_at).toLocaleDateString()}
+                                    </td>
+                                    <td className="px-6 py-4 text-right">
+                                        <div className="inline-flex items-center gap-1 text-bouteek-green font-bold text-[10px] uppercase">
+                                            <CheckCircle2 size={12} />
+                                            Active
+                                        </div>
+                                    </td>
+                                </tr>
+                            )) : (
+                                <tr>
+                                    <td colSpan={4} className="px-6 py-12 text-center text-muted-foreground font-medium italic">
+                                        You haven't referred any merchants yet. Start sharing your code!
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
         </div>
     );
 }

@@ -13,7 +13,20 @@ const TranslationContext = createContext<TranslationContextType | undefined>(und
 
 export function TranslationProvider({ children }: { children: React.ReactNode }) {
     // Default to 'fr' as requested
-    const [language, setLanguage] = useState<Language>("fr");
+    const [language, setLanguageState] = useState<Language>("fr");
+
+    useEffect(() => {
+        // Check localStorage for saved language preference on mount
+        const saved = localStorage.getItem("bouteek-language") as Language | null;
+        if (saved && (saved === "fr" || saved === "en")) {
+            setLanguageState(saved);
+        }
+    }, []);
+
+    const setLanguage = (lang: Language) => {
+        setLanguageState(lang);
+        localStorage.setItem("bouteek-language", lang);
+    };
 
     const t = (path: string) => {
         const keys = path.split('.');
@@ -21,7 +34,7 @@ export function TranslationProvider({ children }: { children: React.ReactNode })
 
         for (const key of keys) {
             if (current[key] === undefined) {
-                console.warn(`Translation missing for key: ${path}`);
+                // console.warn(`Translation missing for key: ${path}`);
                 return path;
             }
             current = current[key];

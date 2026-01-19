@@ -64,81 +64,51 @@ export default function AppShowcase() {
   const description = language === 'fr' ? currentSlideData.descFr : currentSlideData.descEn;
 
   return (
-    <section className="py-20 bg-black">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            {language === 'fr' ? 'Découvrez l\'Application' : 'Discover the App'}
+    <section className="py-20 bg-[#f5f5f5] overflow-hidden">
+      <div className="container">
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 bg-black text-white px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest mb-4">
+            <Smartphone size={14} />
+            <span>{language === "fr" ? "Mobile First" : "Mobile First"}</span>
+          </div>
+          <h2 className="text-4xl lg:text-6xl font-black text-black mb-4 tracking-tighter">
+            {language === "fr" ? "Découvrez notre solution" : "Discover our solution"}
           </h2>
-          <p className="text-xl text-gray-400">
-            {language === 'fr'
-              ? 'Une plateforme complète pour gérer votre boutique'
-              : 'A complete platform to manage your store'}
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto font-medium">
+            {language === "fr" ? "Gérez votre business depuis votre poche ou votre ordinateur." : "Manage your business from your pocket or your computer."}
           </p>
         </div>
 
-        <div className="flex flex-col lg:flex-row items-center justify-center gap-8 mb-12">
-          {/* Mobile Screenshot */}
-          <div className="flex-shrink-0 w-full lg:w-auto">
-            <div className="relative mx-auto max-w-sm">
-              <img
-                src={currentSlideData.image}
-                alt={title}
-                className="w-full h-auto rounded-3xl shadow-2xl border-4 border-[#00D632]"
-              />
-            </div>
-          </div>
-
-          {/* Feature Description */}
-          <div className="flex-1 text-white">
-            <h3 className="text-3xl md:text-4xl font-bold mb-4">{title}</h3>
-            <p className="text-lg text-gray-300 mb-8">{description}</p>
-
-            {/* Slide Counter */}
-            <div className="mb-8">
-              <div className="text-sm text-gray-400 mb-2">
-                {currentSlide + 1} / {slides.length}
-              </div>
-              <div className="w-full bg-gray-700 rounded-full h-2">
-                <div
-                  className="bg-[#00D632] h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${((currentSlide + 1) / slides.length) * 100}%` }}
-                />
-              </div>
-            </div>
-
-            {/* Navigation Buttons */}
-            <div className="flex gap-4">
-              <button
-                onClick={prevSlide}
-                className="flex items-center justify-center w-12 h-12 rounded-full border-2 border-[#00D632] text-[#00D632] hover:bg-[#00D632] hover:text-black transition-all duration-200"
-              >
-                <ChevronLeft size={24} />
-              </button>
-              <button
-                onClick={nextSlide}
-                className="flex items-center justify-center w-12 h-12 rounded-full bg-[#00D632] text-black hover:bg-[#00B824] transition-all duration-200"
-              >
-                <ChevronRight size={24} />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Slide Indicators */}
-        <div className="flex justify-center gap-2 flex-wrap">
-          {slides.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentSlide(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-200 ${
-                index === currentSlide ? 'bg-[#00D632] w-8' : 'bg-gray-600 hover:bg-gray-500'
-              }`}
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
+        <div className="flex gap-4">
+          <button
+            onClick={prevSlide}
+            className="flex items-center justify-center w-12 h-12 rounded-full border-2 border-[#00D632] text-[#00D632] hover:bg-[#00D632] hover:text-black transition-all duration-200"
+          >
+            <ChevronLeft size={24} />
+          </button>
+          <button
+            onClick={nextSlide}
+            className="flex items-center justify-center w-12 h-12 rounded-full bg-[#00D632] text-black hover:bg-[#00B824] transition-all duration-200"
+          >
+            <ChevronRight size={24} />
+          </button>
         </div>
       </div>
-    </section>
+    </div>
+
+        {/* Slide Indicators */ }
+  <div className="flex justify-center gap-2 flex-wrap">
+    {slides.map((_, index) => (
+      <button
+        key={index}
+        onClick={() => setCurrentSlide(index)}
+        className={`w-3 h-3 rounded-full transition-all duration-200 ${index === currentSlide ? 'bg-[#00D632] w-8' : 'bg-gray-600 hover:bg-gray-500'
+          }`}
+        aria-label={`Go to slide ${index + 1}`}
+      />
+    ))}
+  </div>
+      </div >
+    </section >
   );
 }

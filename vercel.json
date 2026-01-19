@@ -1,5 +1,6 @@
 {
     "framework": "nextjs",
+    "outputDirectory": "apps/web/.next",
     "rewrites": [
         {
             "source": "/api/:path*",

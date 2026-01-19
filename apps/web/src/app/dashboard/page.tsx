@@ -73,90 +73,95 @@ function DashboardHomeContent() {
     }, [timeframe]);
 
     const fetchDashboardData = async (range: string = "30d") => {
+        try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
 
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+            const { data: merchant } = await supabase.from('merchants').select('id, bouteek_cash_balance, subscription_tier, subscription_start, subscription_end').eq('user_id', user.id).single();
+            if (!merchant) return;
 
-        const { data: merchant } = await supabase.from('merchants').select('id, bouteek_cash_balance').eq('user_id', user.id).single();
-        if (!merchant) return;
+            // Fetch Orders for stats
+            const { data: orders } = await supabase
+                .from('orders')
+                .select('status, total, created_at')
+                .eq('merchant_id', merchant.id);
 
-        // Fetch Orders for stats
-        const { data: orders } = await supabase
-            .from('orders')
-            .select('status, total, created_at')
-            .eq('merchant_id', merchant.id);
+            let today = 0, week = 0, month = 0, total = 0;
+            let pending = 0, completed = 0, active = 0, cancelled = 0;
 
-        let today = 0, week = 0, month = 0, total = 0;
-        let pending = 0, completed = 0, active = 0, cancelled = 0;
+            const now = new Date();
+            const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
+            const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-        const now = new Date();
-        const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
-        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+            orders?.forEach(order => {
+                const amount = order.total || 0;
+                const date = new Date(order.created_at);
 
-        orders?.forEach(order => {
-            const amount = order.total || 0;
-            const date = new Date(order.created_at);
+                // Calculate Revenue (Paid or Completed)
+                if (order.status === 'paid' || order.status === 'completed') {
+                    total += amount;
+                    if (date >= startOfDay) today += amount;
+                    if (date >= startOfWeek) week += amount;
+                    if (date >= startOfMonth) month += amount;
+                }
 
-            if (order.status === 'paid' || order.status === 'completed') {
-                total += amount;
-                if (date >= startOfDay) today += amount;
-                if (date >= startOfWeek) week += amount;
-                if (date >= startOfMonth) month += amount;
+                // Count Statuses
+                if (order.status === 'pending') pending++;
+                else if (order.status === 'completed') completed++;
+                else if (order.status === 'active' || order.status === 'paid') active++;
+                else if (order.status === 'cancelled') cancelled++;
+            });
+
+            setStats({
+                todayRevenue: today,
+                weekRevenue: week,
+                monthRevenue: month,
+                totalRevenue: total,
+                pendingOrders: pending,
+                completedOrders: completed,
+                activeOrders: active,
+                cancelledOrders: cancelled,
+                balance: merchant.bouteek_cash_balance || 0,
+                subscription: {
+                    plan: merchant.subscription_tier || "Starter",
+                    start_date: merchant.subscription_start,
+                    end_date: merchant.subscription_end,
+                    percentage: calculateSubscriptionPercentage(merchant.subscription_start, merchant.subscription_end)
+                }
+            });
+
+
+            // 3. Timeframe logic for chart
+            const daysAgo = new Date();
+            let days = 30;
+            if (range === '14d') days = 14;
+            else if (range === '90d') days = 90;
+            else if (range === '1y') days = 365;
+            daysAgo.setDate(daysAgo.getDate() - days);
+
+            const { data: chartOrders } = await supabase
+                .from('orders')
+                .select('created_at, total')
+                .eq('merchant_id', merchant.id)
+                .or('status.eq.paid,status.eq.completed') // Only count valid sales
+                .gte('created_at', daysAgo.toISOString())
+                .order('created_at', { ascending: true });
+
+            if (chartOrders && chartOrders.length > 0) {
+                const grouped = chartOrders.reduce((acc: any, curr: any) => {
+                    const date = new Date(curr.created_at).toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US',
+                        range === '1y' ? { month: 'short' } : { month: 'short', day: 'numeric' }
+                    );
+                    acc[date] = (acc[date] || 0) + (curr.total || 0);
+                    return acc;
+                }, {});
+                setChartData(Object.entries(grouped).map(([name, revenue]) => ({ name, revenue })));
+            } else {
+                setChartData([]);
             }
-
-            if (order.status === 'pending') pending++;
-            else if (order.status === 'completed') completed++;
-            else if (order.status === 'active' || order.status === 'paid') active++;
-            else if (order.status === 'cancelled') cancelled++;
-        });
-
-        setStats({
-            todayRevenue: today,
-            weekRevenue: week,
-            monthRevenue: month,
-            totalRevenue: total,
-            pendingOrders: pending,
-            completedOrders: completed,
-            activeOrders: active,
-            cancelledOrders: cancelled,
-            balance: merchant.bouteek_cash_balance,
-            subscription: {
-                plan: merchant.subscription_tier || "Starter",
-                start_date: merchant.subscription_start,
-                end_date: merchant.subscription_end,
-                percentage: calculateSubscriptionPercentage(merchant.subscription_start, merchant.subscription_end)
-            }
-        });
-
-
-        // 3. Timeframe logic for chart
-        const daysAgo = new Date();
-        let days = 30;
-        if (range === '14d') days = 14;
-        else if (range === '90d') days = 90;
-        else if (range === '1y') days = 365;
-        daysAgo.setDate(daysAgo.getDate() - days);
-
-        const { data: chartOrders } = await supabase
-            .from('orders')
-            .select('created_at, total')
-            .eq('merchant_id', merchant.id)
-            .gte('created_at', daysAgo.toISOString())
-            .order('created_at', { ascending: true });
-
-        if (chartOrders && chartOrders.length > 0) {
-            const grouped = chartOrders.reduce((acc: any, curr: any) => {
-                const date = new Date(curr.created_at).toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US',
-                    range === '1y' ? { month: 'short' } : { month: 'short', day: 'numeric' }
-                );
-                acc[date] = (acc[date] || 0) + (curr.total || 0);
-                return acc;
-            }, {});
-            setChartData(Object.entries(grouped).map(([name, revenue]) => ({ name, revenue })));
-        } else {
-            // Default mock if empty
-            setChartData([]);
+        } catch (e) {
+            console.error("Dashboard fetch error:", e);
         }
     };
 
