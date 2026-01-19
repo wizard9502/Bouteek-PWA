@@ -18,6 +18,8 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 
 // Dynamic import for Recharts components to prevent SSR crashes
+export const dynamic = 'force-dynamic';
+
 const RevenueGrowthChart = dynamic(
     () => import("@/components/admin/AnalyticsCharts").then((mod) => mod.RevenueGrowthChart),
     { ssr: false, loading: () => <div className="w-full h-full animate-pulse bg-gray-100 rounded-xl" /> }
