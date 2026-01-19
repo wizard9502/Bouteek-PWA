@@ -562,7 +562,7 @@ function ReferralsManager() {
                             <p className="text-3xl font-black">{stats.referralCount}</p>
                             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">{t("profile.stats.total")}</p>
                         </div>
-                    </div>
+                    </motion.div>
 
                     {/* List of Referrals */}
                     <section className="space-y-6">
