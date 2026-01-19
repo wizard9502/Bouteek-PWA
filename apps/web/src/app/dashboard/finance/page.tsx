@@ -29,18 +29,18 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { SubscriptionOptimizer } from "@/components/dashboard/SubscriptionOptimizer";
 
-// MVP Prices (Monthly)
-const PRICES = {
-    starter: 2000,
-    launch: 5000,
-    growth: 12500,
-    pro: 20000
-};
-
-
 export default function FinancePage() {
     const { t, language } = useTranslation();
     const [activeTab, setActiveTab] = useState("overview"); // overview, subscription
+    const [plans, setPlans] = useState<any[]>([]);
+
+    useEffect(() => {
+        const fetchPlans = async () => {
+            const { data } = await supabase.from('plans').select('*').order('price', { ascending: true });
+            if (data) setPlans(data);
+        };
+        fetchPlans();
+    }, []);
 
     return (
         <div className="space-y-8 pb-12">
@@ -75,7 +75,7 @@ export default function FinancePage() {
                 </button>
             </div>
 
-            {activeTab === "overview" ? <FinanceOverview /> : <SubscriptionManager />}
+            {activeTab === "overview" ? <FinanceOverview /> : <SubscriptionManager plans={plans} />}
         </div>
     );
 }
@@ -304,12 +304,13 @@ function FinanceOverview() {
     );
 }
 
-function SubscriptionManager() {
+function SubscriptionManager({ plans }: { plans: any[] }) {
     const [loading, setLoading] = useState(true);
     const [processing, setProcessing] = useState(false);
     const [merchant, setMerchant] = useState<any>(null);
-    const [selectedPlan, setSelectedPlan] = useState<string>("starter");
+    const [selectedPlanSlug, setSelectedPlanSlug] = useState<string>("starter");
     const [duration, setDuration] = useState<number>(1); // 1, 3, 6, 12
+    const [autoRenew, setAutoRenew] = useState(false);
     const [autoRenew, setAutoRenew] = useState(false);
 
     useEffect(() => {
@@ -391,8 +392,9 @@ function SubscriptionManager() {
 
     if (loading) return <div className="p-8 flex justify-center"><Loader2 className="animate-spin" /></div>;
 
+    const selectedPlan = plans.find(p => p.slug === selectedPlanSlug) || plans[0];
+    const currentPrice = selectedPlan ? selectedPlan.price : 0;
     const discount = duration === 12 ? 0.2 : duration === 6 ? 0.1 : 0;
-    const currentPrice = PRICES[selectedPlan as keyof typeof PRICES];
     const totalPrice = currentPrice * duration * (1 - discount);
 
     return (
@@ -402,8 +404,7 @@ function SubscriptionManager() {
                 <p className="text-muted-foreground">{t("finance.sub_manager.subtitle")}</p>
             </div>
 
-            {/* Optimizer */}
-            <SubscriptionOptimizer prices={PRICES} onSelectPlan={setSelectedPlan} />
+            {/* Optimizer (Optional: Update to accept dynamic plans if needed, skipping for now) */}
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Duration */}

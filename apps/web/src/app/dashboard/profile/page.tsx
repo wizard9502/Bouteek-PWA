@@ -561,16 +561,12 @@ function ReferralsManager() {
                         <div className="bg-white/5 border border-white/10 p-6 rounded-3xl backdrop-blur-sm">
                             <Users className="text-bouteek-green mb-4" size={24} />
                             <p className="text-3xl font-black">{stats.referralCount}</p>
-                            <div className="bg-white/5 border border-white/10 p-6 rounded-3xl backdrop-blur-sm">
-                                <Users className="text-bouteek-green mb-4" size={24} />
-                                <p className="text-3xl font-black">{stats.referralCount}</p>
-                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">{t("profile.stats.total")}</p>
-                            </div>
-                            <div className="bg-white/5 border border-white/10 p-6 rounded-3xl backdrop-blur-sm">
-                                <Wallet className="text-bouteek-green mb-4" size={24} />
-                                <p className="text-3xl font-black text-bouteek-green">{stats.pendingEarnings.toLocaleString()} <span className="text-[10px] text-white">XOF</span></p>
-                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">{t("profile.stats.pending")}</p>
-                            </div>
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">{t("profile.stats.total")}</p>
+                        </div>
+                        <div className="bg-white/5 border border-white/10 p-6 rounded-3xl backdrop-blur-sm">
+                            <Wallet className="text-bouteek-green mb-4" size={24} />
+                            <p className="text-3xl font-black text-bouteek-green">{stats.pendingEarnings.toLocaleString()} <span className="text-[10px] text-white">XOF</span></p>
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">{t("profile.stats.pending")}</p>
                         </div>
                     </div>
             </motion.div>

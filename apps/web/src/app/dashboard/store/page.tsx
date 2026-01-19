@@ -188,9 +188,24 @@ export default function StorePage() {
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-3 mt-8">
-                                    <Button variant="outline" className="rounded-2xl border-border/50 font-bold text-xs h-11">Edit</Button>
+                                    <Link href={`/dashboard/store/products/edit/${product.id}`}>
+                                        <Button variant="outline" className="rounded-2xl border-border/50 font-bold text-xs h-11 w-full">Edit</Button>
+                                    </Link>
                                     <Button
-                                        className="rounded-2xl bg-muted text-foreground font-bold text-xs h-11 hover:bg-bouteek-green hover:text-white transition-colors"
+                                        className="rounded-2xl bg-muted text-foreground font-bold text-xs h-11 hover:bg-red-500 hover:text-white transition-colors"
+                                        onClick={async () => {
+                                            if (confirm("Are you sure you want to delete this product?")) {
+                                                const { error } = await supabase.from('products').delete().eq('id', product.id);
+                                                if (!error) {
+                                                    setProducts(products.filter(p => p.id !== product.id));
+                                                }
+                                            }
+                                        }}
+                                    >
+                                        Delete
+                                    </Button>
+                                    <Button
+                                        className="col-span-2 rounded-2xl bg-black text-white font-bold text-xs h-11 hover:bg-bouteek-green hover:text-white transition-colors"
                                         onClick={() => window.open(`/store/${merchantSlug}`, '_blank')}
                                     >
                                         View Site

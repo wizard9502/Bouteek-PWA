@@ -96,8 +96,8 @@ export default function AppShowcase() {
       </div>
     </div>
 
-        {/* Slide Indicators */ }
-  <div className="flex justify-center gap-2 flex-wrap">
+      {/* Slide Indicators */ }
+  <div className="flex justify-center gap-2 flex-wrap mt-8">
     {slides.map((_, index) => (
       <button
         key={index}
@@ -108,7 +108,6 @@ export default function AppShowcase() {
       />
     ))}
   </div>
-      </div >
     </section >
   );
 }

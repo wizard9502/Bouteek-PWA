@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
     ChevronLeft,
     Upload,
@@ -10,7 +10,8 @@ import {
     Info,
     Plus,
     X,
-    Check
+    Check,
+    Loader2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,26 +22,64 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { useTranslation } from "@/contexts/TranslationContext";
 import { supabase } from "@/lib/supabaseClient";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { toast } from "sonner";
 
-export default function AddProductPage() {
+export default function EditProductPage() {
     const { t, language } = useTranslation();
     const router = useRouter();
-    const [loading, setLoading] = useState(false);
+    const params = useParams();
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
 
     const [formData, setFormData] = useState({
         name: "",
         description: "",
         price: "",
         stock: "",
-        low_stock: "5",
+        low_stock: "",
         category: "",
         sku: "",
     });
 
     const [images, setImages] = useState<string[]>([]);
     const [isUploading, setIsUploading] = useState(false);
+
+    useEffect(() => {
+        if (params.id) {
+            fetchProduct(params.id as string);
+        }
+    }, [params.id]);
+
+    const fetchProduct = async (id: string) => {
+        try {
+            const { data: product, error } = await supabase
+                .from('products')
+                .select('*')
+                .eq('id', id)
+                .single();
+
+            if (error) throw error;
+            if (product) {
+                setFormData({
+                    name: product.name,
+                    description: product.description || "",
+                    price: product.price.toString(),
+                    stock: product.stock_quantity.toString(),
+                    low_stock: (product.low_stock_threshold || 5).toString(),
+                    category: product.category || "",
+                    sku: product.sku || "",
+                });
+                setImages(product.images || []);
+            }
+        } catch (error) {
+            console.error("Error fetching product:", error);
+            toast.error("Could not load product details");
+            router.push("/dashboard/store");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -73,34 +112,37 @@ export default function AddProductPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setLoading(true);
+        setSaving(true);
 
         try {
-            const { data: { user } } = await supabase.auth.getUser();
-            const { data: merchant } = await supabase.from('merchants').select('id').eq('user_id', user?.id).single();
-
-            const { error } = await supabase.from('products').insert({
-                merchant_id: merchant?.id,
-                name: formData.name,
-                description: formData.description,
-                price: Number(formData.price),
-                stock_quantity: Number(formData.stock),
-                low_stock_threshold: Number(formData.low_stock),
-                category: formData.category,
-                sku: formData.sku,
-                images: images
-            });
+            const { error } = await supabase
+                .from('products')
+                .update({
+                    name: formData.name,
+                    description: formData.description,
+                    price: Number(formData.price),
+                    stock_quantity: Number(formData.stock),
+                    low_stock_threshold: Number(formData.low_stock),
+                    category: formData.category,
+                    sku: formData.sku,
+                    images: images
+                })
+                .eq('id', params.id);
 
             if (error) throw error;
-            toast.success(language === 'fr' ? "Produit ajouté !" : "Product added!");
+            toast.success(language === 'fr' ? "Produit mis à jour !" : "Product updated!");
             router.push("/dashboard/store");
         } catch (error) {
             console.error(error);
-            toast.error("Error saving product");
+            toast.error("Error updating product");
         } finally {
-            setLoading(false);
+            setSaving(false);
         }
     };
+
+    if (loading) {
+        return <div className="flex justify-center p-20"><Loader2 className="animate-spin" /></div>;
+    }
 
     return (
         <div className="max-w-4xl mx-auto space-y-8 pb-12">
@@ -113,8 +155,8 @@ export default function AddProductPage() {
 
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
-                    <h1 className="hero-text !text-4xl">{language === 'fr' ? "Nouveau Produit" : "Add New Product"}</h1>
-                    <p className="text-muted-foreground font-medium mt-1">{language === 'fr' ? "Créez un nouvel article pour votre boutique." : "Create a new item for your storefront."}</p>
+                    <h1 className="hero-text !text-4xl">{language === 'fr' ? "Modifier Produit" : "Edit Product"}</h1>
+                    <p className="text-muted-foreground font-medium mt-1">{language === 'fr' ? "Mettez à jour les détails de votre article." : "Update your item details."}</p>
                 </div>
                 <div className="flex gap-3">
                     <Button variant="outline" className="rounded-xl h-12 px-6 border-border/50 font-bold" onClick={() => router.back()}>
@@ -122,10 +164,10 @@ export default function AddProductPage() {
                     </Button>
                     <Button
                         onClick={handleSubmit}
-                        disabled={loading}
+                        disabled={saving}
                         className="rounded-xl h-12 px-8 bg-bouteek-green text-black font-black"
                     >
-                        {loading ? (language === 'fr' ? "Enregistrement..." : "Saving...") : (language === 'fr' ? "Publier le Produit" : "Publish Product")}
+                        {saving ? (language === 'fr' ? "Enregistrement..." : "Saving...") : (language === 'fr' ? "Mettre à jour" : "Update Product")}
                     </Button>
                 </div>
             </div>
