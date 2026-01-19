@@ -689,165 +689,165 @@ function StoreBuilderContent() {
                                 </div>
                             </div>
                         </div>
-                        </div>
+
                     )}
 
-                {activeTab === "content" && (
-                    <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
-                        <div className="bouteek-card p-6 space-y-4">
-                            <h3 className="font-black text-lg">Section Titles</h3>
-                            <div className="space-y-4">
-                                <div className="space-y-2">
-                                    <Label>Blog Section Title</Label>
-                                    <Input
-                                        value={storeConfig.blogTitle || "Latest from Blog"}
-                                        onChange={(e) => updateConfig('blogTitle', e.target.value)}
-                                        className="rounded-xl"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label>Testimonials Title</Label>
-                                    <Input
-                                        value={storeConfig.testimonialsTitle || "What People Say"}
-                                        onChange={(e) => updateConfig('testimonialsTitle', e.target.value)}
-                                        className="rounded-xl"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label>Testimonial Author</Label>
-                                    <Input
-                                        value={storeConfig.testimonialAuthor || "Jane Doe"}
-                                        onChange={(e) => updateConfig('testimonialAuthor', e.target.value)}
-                                        className="rounded-xl"
-                                    />
+                    {activeTab === "content" && (
+                        <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
+                            <div className="bouteek-card p-6 space-y-4">
+                                <h3 className="font-black text-lg">Section Titles</h3>
+                                <div className="space-y-4">
+                                    <div className="space-y-2">
+                                        <Label>Blog Section Title</Label>
+                                        <Input
+                                            value={storeConfig.blogTitle || "Latest from Blog"}
+                                            onChange={(e) => updateConfig('blogTitle', e.target.value)}
+                                            className="rounded-xl"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Testimonials Title</Label>
+                                        <Input
+                                            value={storeConfig.testimonialsTitle || "What People Say"}
+                                            onChange={(e) => updateConfig('testimonialsTitle', e.target.value)}
+                                            className="rounded-xl"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Testimonial Author</Label>
+                                        <Input
+                                            value={storeConfig.testimonialAuthor || "Jane Doe"}
+                                            onChange={(e) => updateConfig('testimonialAuthor', e.target.value)}
+                                            className="rounded-xl"
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                )}
+                    )}
 
-                {activeTab === "settings" && (
-                    <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
-                        <div className="bouteek-card p-6 space-y-4">
-                            <h3 className="font-black text-lg flex items-center gap-2">
-                                <Globe size={18} />
-                                Custom Domain
-                            </h3>
+                    {activeTab === "settings" && (
+                        <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
+                            <div className="bouteek-card p-6 space-y-4">
+                                <h3 className="font-black text-lg flex items-center gap-2">
+                                    <Globe size={18} />
+                                    Custom Domain
+                                </h3>
 
-                            {subscriptionTier === 'growth' || subscriptionTier === 'pro' ? (
-                                <div className="space-y-6">
-                                    <div className="space-y-2">
-                                        <Label>Domain Name</Label>
-                                        <Input
-                                            placeholder="e.g. mystore.com"
-                                            value={customDomain}
-                                            onChange={(e) => setCustomDomain(e.target.value)}
-                                            className="rounded-xl font-bold"
-                                        />
-                                        <p className="text-xs text-muted-foreground">Enter your domain without http:// or https://</p>
-                                    </div>
-
-                                    <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 space-y-3">
-                                        <div className="flex items-center gap-2 text-blue-800 font-bold text-sm">
-                                            <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                                            DNS Configuration Required
+                                {subscriptionTier === 'growth' || subscriptionTier === 'pro' ? (
+                                    <div className="space-y-6">
+                                        <div className="space-y-2">
+                                            <Label>Domain Name</Label>
+                                            <Input
+                                                placeholder="e.g. mystore.com"
+                                                value={customDomain}
+                                                onChange={(e) => setCustomDomain(e.target.value)}
+                                                className="rounded-xl font-bold"
+                                            />
+                                            <p className="text-xs text-muted-foreground">Enter your domain without http:// or https://</p>
                                         </div>
-                                        <p className="text-xs text-blue-700 leading-relaxed">
-                                            To connect your domain, please add the following record to your domain provider's DNS settings:
-                                        </p>
-                                        <div className="bg-white rounded-lg border border-blue-200 p-3 font-mono text-xs overflow-x-auto">
-                                            <div className="grid grid-cols-[80px_1fr] gap-2">
-                                                <span className="text-muted-foreground">Type:</span>
-                                                <span className="font-bold">CNAME</span>
-                                                <span className="text-muted-foreground">Name:</span>
-                                                <span className="font-bold">@ (or www)</span>
-                                                <span className="text-muted-foreground">Value:</span>
-                                                <span className="text-blue-600 font-bold">connect.bouteek.com</span>
+
+                                        <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 space-y-3">
+                                            <div className="flex items-center gap-2 text-blue-800 font-bold text-sm">
+                                                <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                                                DNS Configuration Required
+                                            </div>
+                                            <p className="text-xs text-blue-700 leading-relaxed">
+                                                To connect your domain, please add the following record to your domain provider's DNS settings:
+                                            </p>
+                                            <div className="bg-white rounded-lg border border-blue-200 p-3 font-mono text-xs overflow-x-auto">
+                                                <div className="grid grid-cols-[80px_1fr] gap-2">
+                                                    <span className="text-muted-foreground">Type:</span>
+                                                    <span className="font-bold">CNAME</span>
+                                                    <span className="text-muted-foreground">Name:</span>
+                                                    <span className="font-bold">@ (or www)</span>
+                                                    <span className="text-muted-foreground">Value:</span>
+                                                    <span className="text-blue-600 font-bold">connect.bouteek.com</span>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    {domainStatus !== 'pending' && (
-                                        <div className={cn(
-                                            "p-4 rounded-xl border flex items-center gap-3",
-                                            domainStatus === 'verified' ? "bg-green-50 border-green-200 text-green-800" : "bg-red-50 border-red-200 text-red-800"
-                                        )}>
-                                            {domainStatus === 'verified' ? <Check size={18} /> : <div className="w-4 h-4 rounded-full border-2 border-red-500 border-t-transparent animate-spin" />}
-                                            <div>
-                                                <p className="text-sm font-bold capitalize">{domainStatus} Status</p>
-                                                <p className="text-xs opacity-80">
-                                                    {domainStatus === 'verified' ? "Your domain is active!" : "We verified your domain settings."}
-                                                </p>
+                                        {domainStatus !== 'pending' && (
+                                            <div className={cn(
+                                                "p-4 rounded-xl border flex items-center gap-3",
+                                                domainStatus === 'verified' ? "bg-green-50 border-green-200 text-green-800" : "bg-red-50 border-red-200 text-red-800"
+                                            )}>
+                                                {domainStatus === 'verified' ? <Check size={18} /> : <div className="w-4 h-4 rounded-full border-2 border-red-500 border-t-transparent animate-spin" />}
+                                                <div>
+                                                    <p className="text-sm font-bold capitalize">{domainStatus} Status</p>
+                                                    <p className="text-xs opacity-80">
+                                                        {domainStatus === 'verified' ? "Your domain is active!" : "We verified your domain settings."}
+                                                    </p>
+                                                </div>
                                             </div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div className="text-center py-8 space-y-4">
+                                        <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto text-muted-foreground">
+                                            <Store size={32} />
                                         </div>
-                                    )}
-                                </div>
-                            ) : (
-                                <div className="text-center py-8 space-y-4">
-                                    <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto text-muted-foreground">
-                                        <Store size={32} />
+                                        <div className="space-y-1">
+                                            <h4 className="font-black text-lg">Upgrade to Connect Domain</h4>
+                                            <p className="text-sm text-muted-foreground max-w-[250px] mx-auto">
+                                                Custom domains are available on Growth and Pro plans.
+                                            </p>
+                                        </div>
+                                        <Button className="rounded-full bg-black text-white font-bold" disabled>
+                                            Upgrade Plan (Coming Soon)
+                                        </Button>
                                     </div>
-                                    <div className="space-y-1">
-                                        <h4 className="font-black text-lg">Upgrade to Connect Domain</h4>
-                                        <p className="text-sm text-muted-foreground max-w-[250px] mx-auto">
-                                            Custom domains are available on Growth and Pro plans.
-                                        </p>
-                                    </div>
-                                    <Button className="rounded-full bg-black text-white font-bold" disabled>
-                                        Upgrade Plan (Coming Soon)
-                                    </Button>
-                                </div>
-                            )}
+                                )}
+                            </div>
                         </div>
-                    </div>
-                )}
-            </div>
-
-            <Button onClick={handleSave} disabled={isLoading} className="w-full h-14 rounded-2xl bg-black text-white font-black text-lg shadow-xl shadow-black/20 mt-auto">
-                <Save className="mr-2" size={20} />
-                {isLoading ? "Saving..." : "Save & Publish"}
-            </Button>
-        </div>
-
-            {/* Right Side: Preview */ }
-    <div className="flex-1 bg-muted/30 rounded-4xl border-2 border-dashed border-border/50 p-8 flex flex-col items-center justify-center relative overflow-hidden transition-all">
-        {/* View Toggles */}
-        <div className="absolute top-6 flex bg-white rounded-full p-1 shadow-sm border border-border/50 z-20">
-            <button
-                onClick={() => setViewMode("mobile")}
-                className={cn("p-2 rounded-full transition-colors", viewMode === "mobile" ? "bg-black text-white" : "text-muted-foreground hover:bg-muted")}
-            >
-                <Smartphone size={20} />
-            </button>
-            <button
-                onClick={() => setViewMode("desktop")}
-                className={cn("p-2 rounded-full transition-colors", viewMode === "desktop" ? "bg-black text-white" : "text-muted-foreground hover:bg-muted")}
-            >
-                <Monitor size={20} />
-            </button>
-        </div>
-
-        {/* Mobile/Desktop Preview Frame */}
-        <motion.div
-            layout
-            className={cn(
-                "bg-white shadow-2xl border-4 border-zinc-900 overflow-hidden relative transition-all duration-500",
-                viewMode === "mobile" ? "w-[375px] h-[750px] rounded-[3rem]" : "w-full h-full rounded-xl max-w-5xl"
-            )}
-        >
-            {/* Mock Browser Header for Desktop / Notch for Mobile */}
-            {viewMode === "mobile" ? (
-                <div className="absolute top-0 left-0 right-0 h-7 bg-black z-50 flex justify-center">
-                    <div className="w-32 h-5 bg-black rounded-b-2xl" />
+                    )}
                 </div>
-            ) : null}
 
-            {/* LIVE Preview Component */}
-            <div className="w-full h-full overflow-y-auto bg-white">
-                <PreviewContent />
+                <Button onClick={handleSave} disabled={isLoading} className="w-full h-14 rounded-2xl bg-black text-white font-black text-lg shadow-xl shadow-black/20 mt-auto">
+                    <Save className="mr-2" size={20} />
+                    {isLoading ? "Saving..." : "Save & Publish"}
+                </Button>
             </div>
-        </motion.div>
-    </div>
+
+            {/* Right Side: Preview */}
+            <div className="flex-1 bg-muted/30 rounded-4xl border-2 border-dashed border-border/50 p-8 flex flex-col items-center justify-center relative overflow-hidden transition-all">
+                {/* View Toggles */}
+                <div className="absolute top-6 flex bg-white rounded-full p-1 shadow-sm border border-border/50 z-20">
+                    <button
+                        onClick={() => setViewMode("mobile")}
+                        className={cn("p-2 rounded-full transition-colors", viewMode === "mobile" ? "bg-black text-white" : "text-muted-foreground hover:bg-muted")}
+                    >
+                        <Smartphone size={20} />
+                    </button>
+                    <button
+                        onClick={() => setViewMode("desktop")}
+                        className={cn("p-2 rounded-full transition-colors", viewMode === "desktop" ? "bg-black text-white" : "text-muted-foreground hover:bg-muted")}
+                    >
+                        <Monitor size={20} />
+                    </button>
+                </div>
+
+                {/* Mobile/Desktop Preview Frame */}
+                <motion.div
+                    layout
+                    className={cn(
+                        "bg-white shadow-2xl border-4 border-zinc-900 overflow-hidden relative transition-all duration-500",
+                        viewMode === "mobile" ? "w-[375px] h-[750px] rounded-[3rem]" : "w-full h-full rounded-xl max-w-5xl"
+                    )}
+                >
+                    {/* Mock Browser Header for Desktop / Notch for Mobile */}
+                    {viewMode === "mobile" ? (
+                        <div className="absolute top-0 left-0 right-0 h-7 bg-black z-50 flex justify-center">
+                            <div className="w-32 h-5 bg-black rounded-b-2xl" />
+                        </div>
+                    ) : null}
+
+                    {/* LIVE Preview Component */}
+                    <div className="w-full h-full overflow-y-auto bg-white">
+                        <PreviewContent />
+                    </div>
+                </motion.div>
+            </div>
         </div >
     );
 }
