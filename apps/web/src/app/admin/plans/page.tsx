@@ -83,11 +83,17 @@ export default function PlansPage() {
     };
 
     const featuresList = [
-        { key: "heatmaps", label: "Heatmaps" },
-        { key: "seo", label: "Advanced SEO" },
-        { key: "team", label: "Team Collaboration" },
+        { key: "basic_stats", label: "Basic Stats" },
+        { key: "standard_seo", label: "Standard SEO" },
+        { key: "customer_reviews", label: "Customer Reviews" },
+        { key: "pdf_csv_reports", label: "PDF/CSV Reports" },
+        { key: "rbac", label: "Team Roles (RBAC)" },
+        { key: "promotions_engine", label: "Promotions Engine" },
+        { key: "receipt_builder", label: "Receipt Builder" },
+        { key: "heatmaps", label: "Performance Heatmaps" },
+        { key: "audit_logs", label: "Audit Logs" },
+        { key: "realtime_collab", label: "Real-time Collaboration" },
         { key: "custom_domain", label: "Custom Domain" },
-        { key: "api_access", label: "API Access" },
     ];
 
     return (
