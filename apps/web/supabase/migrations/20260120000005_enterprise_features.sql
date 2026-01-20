@@ -105,10 +105,10 @@ UPDATE public.plans SET
     limits = jsonb_build_object('products', 25, 'staff', 1, 'modules', 1)
 WHERE slug = 'launch' OR (slug = 'starter' AND price = 0);
 
--- If 'launch' doesn't exist, insert it
+-- Starter: 2,000 XOF (entry level, 1 module)
 INSERT INTO public.plans (name, slug, price, features, limits)
 VALUES (
-    'Launch', 'launch', 2000,
+    'Starter', 'starter', 2000,
     '{"max_modules": 1, "basic_stats": true, "standard_seo": true, "customer_reviews": false, "pdf_csv_reports": false, "team_seats": 0, "rbac": false, "promotions_engine": false, "receipt_builder": false, "heatmaps": false, "audit_logs": false, "realtime_collab": false}'::jsonb,
     '{"products": 25, "staff": 1, "modules": 1}'::jsonb
 )
@@ -117,10 +117,10 @@ ON CONFLICT (slug) DO UPDATE SET
     features = EXCLUDED.features,
     limits = EXCLUDED.limits;
 
--- Starter: 5,000 XOF
+-- Launch: 5,000 XOF (adds reviews, reports)
 INSERT INTO public.plans (name, slug, price, features, limits)
 VALUES (
-    'Starter', 'starter', 5000,
+    'Launch', 'launch', 5000,
     '{"max_modules": 1, "basic_stats": true, "standard_seo": true, "customer_reviews": true, "pdf_csv_reports": true, "team_seats": 0, "rbac": false, "promotions_engine": false, "receipt_builder": false, "heatmaps": false, "audit_logs": false, "realtime_collab": false}'::jsonb,
     '{"products": 50, "staff": 1, "modules": 1}'::jsonb
 )
