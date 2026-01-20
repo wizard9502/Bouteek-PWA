@@ -45,11 +45,11 @@ export default function StorePage({ params }: { params: Promise<{ domain: string
 
             setStore({ ...merchant, ...merchant.storefronts?.[0] }); // Flatten
 
-            // Fetch Products
+            // Fetch Listings (products, rentals, services)
             const { data: prods } = await supabase
-                .from('products')
+                .from('listings')
                 .select('*')
-                .eq('merchant_id', merchant.id)
+                .eq('store_id', merchant.id)
                 .eq('is_active', true);
 
             setProducts(prods || []);

@@ -86,15 +86,18 @@ function DashboardHomeContent() {
                 .select('status, total, created_at')
                 .eq('merchant_id', merchant.id);
 
-            // Fetch Low Stock Products
-            const { data: products } = await supabase
-                .from('products')
-                .select('stock_quantity, low_stock_threshold')
-                .eq('merchant_id', merchant.id);
+            // Fetch Low Stock Listings
+            const { data: listings } = await supabase
+                .from('listings')
+                .select('metadata, module_type')
+                .eq('store_id', merchant.id)
+                .eq('module_type', 'sale');
 
             let lowStock = 0;
-            products?.forEach(p => {
-                if ((p.stock_quantity || 0) <= (p.low_stock_threshold || 5)) {
+            listings?.forEach(l => {
+                const stockLevel = l.metadata?.stock_level || 0;
+                const threshold = l.metadata?.low_stock_threshold || 5;
+                if (stockLevel <= threshold) {
                     lowStock++;
                 }
             });
@@ -367,7 +370,7 @@ function DashboardHomeContent() {
             </div>
 
             {/* Fab Plus Button (Mobile) */}
-            <Link href="/store/products/add">
+            <Link href="/dashboard/listings/new">
                 <button className="md:hidden fixed bottom-24 right-6 w-14 h-14 bg-bouteek-green text-black rounded-full shadow-2xl flex items-center justify-center z-40 active:scale-95 transition-transform">
                     <Plus size={28} />
                 </button>
@@ -379,9 +382,9 @@ function DashboardHomeContent() {
                 <h3 className="text-xl font-black tracking-tight">{language === 'fr' ? "Opérations Rapides" : "Quick Operations"}</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {[
-                        { label: language === 'fr' ? "Nouveau Produit" : "New Product", icon: Plus, href: "/dashboard/store/products/add" },
+                        { label: language === 'fr' ? "Nouveau Listing" : "New Listing", icon: Plus, href: "/dashboard/listings/new" },
                         { label: language === 'fr' ? "Voir Commandes" : "View Orders", icon: ShoppingCart, href: "/dashboard/orders" },
-                        { label: language === 'fr' ? "Params Boutique" : "Store Settings", icon: LayoutGrid, href: "/dashboard/settings" },
+                        { label: language === 'fr' ? "Mes Listings" : "My Listings", icon: LayoutGrid, href: "/dashboard/listings" },
                         { label: language === 'fr' ? "Recharger" : "Top-Up Wallet", icon: Wallet, href: "/dashboard/finance" },
                     ].map((action) => (
                         <Link key={action.label} href={action.href}>
