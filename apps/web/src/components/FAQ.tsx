@@ -119,7 +119,7 @@ export default function FAQ() {
           {currentFAQ.map((item, index) => (
             <div
               key={index}
-              className="border-2 border-gray-200 rounded-xl overflow-hidden hover:border-[#00D632] transition-colors"
+              className="border-2 border-gray-200 rounded-xl overflow-hidden hover:border-[#00FF41] transition-colors"
             >
               <button
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
@@ -128,7 +128,7 @@ export default function FAQ() {
                 <h3 className="text-lg font-bold text-black text-left">{item.question}</h3>
                 <ChevronDown
                   size={24}
-                  className={`text-[#00D632] flex-shrink-0 transition-transform ${openIndex === index ? "rotate-180" : ""
+                  className={`text-[#00FF41] flex-shrink-0 transition-transform ${openIndex === index ? "rotate-180" : ""
                     }`}
                 />
               </button>
@@ -142,7 +142,7 @@ export default function FAQ() {
           ))}
         </div>
 
-        <div className="mt-16 bg-[#00D632] rounded-xl p-8 text-black text-center">
+        <div className="mt-16 bg-[#00FF41] rounded-xl p-8 text-black text-center">
           <h3 className="text-2xl font-bold mb-4">
             {language === "fr" ? "Vous avez d'autres questions?" : "Still have questions?"}
           </h3>
@@ -153,7 +153,7 @@ export default function FAQ() {
           </p>
           <a
             href="mailto:support@bouteek.com"
-            className="inline-block px-8 py-3 bg-black text-[#00D632] font-bold rounded-lg hover:bg-gray-900 transition-colors"
+            className="inline-block px-8 py-3 bg-black text-[#00FF41] font-bold rounded-lg hover:bg-gray-900 transition-colors"
           >
             {language === "fr" ? "Nous Contacter" : "Contact Us"}
           </a>

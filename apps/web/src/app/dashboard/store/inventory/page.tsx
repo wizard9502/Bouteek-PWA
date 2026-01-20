@@ -112,7 +112,13 @@ function InventoryStockManager() {
                         onChange={(e) => setSearch(e.target.value)}
                     />
                 </div>
-                <Button variant="outline" className="h-12 w-12 p-0 rounded-xl"><Filter size={18} /></Button>
+                <Button
+                    variant="outline"
+                    className="h-12 w-12 p-0 rounded-xl"
+                    onClick={() => toast.info('Advanced filtering coming soon')}
+                >
+                    <Filter size={18} />
+                </Button>
             </div>
 
             <div className="bg-white rounded-3xl border border-border/50 overflow-hidden shadow-sm">

@@ -170,7 +170,7 @@ function HomeContent() {
                   EN
                 </button>
               </div>
-              <a href="/auth" className="text-sm font-black text-black hover:text-[#00D632] transition-colors ml-4">
+              <a href="/auth" className="text-sm font-black text-black hover:text-[#00FF41] transition-colors ml-4">
                 {language === "fr" ? "Connexion" : "Log In"}
               </a>
               <Button className="h-11 px-8 rounded-full bg-black text-white font-black text-xs uppercase tracking-widest hover:bg-black/90 shadow-xl transition-all" onClick={() => window.location.href = '/auth'}>
@@ -246,7 +246,7 @@ function HomeContent() {
                 <div className="inline-flex items-center gap-2 bg-black/5 text-black/60 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border border-black/5">
                   <span>Incubated by Ninety5 Ventures</span>
                 </div>
-                <div className="inline-flex items-center gap-2 bg-[#00D632]/10 text-[#00D632] px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest border border-[#00D632]/20">
+                <div className="inline-flex items-center gap-2 bg-[#00FF41]/10 text-[#00FF41] px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest border border-[#00FF41]/20">
                   <Zap size={14} fill="currentColor" />
                   <span>{language === "fr" ? "Nouvelle Génération d'E-commerce" : "Next Gen E-commerce"}</span>
                 </div>
@@ -280,15 +280,15 @@ function HomeContent() {
 
             <div className="flex flex-wrap justify-center gap-10 pt-10 border-t border-gray-100">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-[#00D632]/20 flex items-center justify-center text-[#00D632]"><Check size={20} /></div>
+                <div className="w-8 h-8 rounded-full bg-[#00FF41]/20 flex items-center justify-center text-[#00FF41]"><Check size={20} /></div>
                 <span className="text-sm font-black uppercase tracking-widest text-gray-500">{t_obj.hero.benefit1}</span>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-[#00D632]/20 flex items-center justify-center text-[#00D632]"><Check size={20} /></div>
+                <div className="w-8 h-8 rounded-full bg-[#00FF41]/20 flex items-center justify-center text-[#00FF41]"><Check size={20} /></div>
                 <span className="text-sm font-black uppercase tracking-widest text-gray-500">{t_obj.hero.benefit2}</span>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-[#00D632]/20 flex items-center justify-center text-[#00D632]"><Check size={20} /></div>
+                <div className="w-8 h-8 rounded-full bg-[#00FF41]/20 flex items-center justify-center text-[#00FF41]"><Check size={20} /></div>
                 <span className="text-sm font-black uppercase tracking-widest text-gray-500">{t_obj.hero.benefit3}</span>
               </div>
             </div>
@@ -314,7 +314,7 @@ function HomeContent() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, idx) => (
               <div key={idx} className="bg-[#1a1a1a] rounded-xl p-8 hover:bg-[#252525] transition-colors duration-300 border border-[#333]">
-                <div className="text-[#00D632] mb-4">{feature.icon}</div>
+                <div className="text-[#00FF41] mb-4">{feature.icon}</div>
                 <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
                 <p className="text-gray-400">{feature.description}</p>
               </div>
@@ -337,7 +337,7 @@ function HomeContent() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div className="space-y-8">
-              <div className="bg-[#f5f5f5] rounded-xl p-8 border-l-4 border-[#00D632]">
+              <div className="bg-[#f5f5f5] rounded-xl p-8 border-l-4 border-[#00FF41]">
                 <div className="flex items-start gap-4">
                   <img src="/wave-logo.png" alt="Wave" className="h-16 w-16 rounded-lg flex-shrink-0" />
                   <div>
@@ -356,23 +356,23 @@ function HomeContent() {
                 </div>
               </div>
             </div>
-            <div className="bg-gradient-to-br from-[#00D632] to-[#00a825] rounded-2xl p-12 text-black">
+            <div className="bg-gradient-to-br from-[#00FF41] to-[#00a825] rounded-2xl p-12 text-black">
               <h3 className="text-2xl font-bold mb-6">{t_obj.payments.flowTitle}</h3>
               <div className="space-y-4">
                 <div className="flex items-center gap-4">
-                  <div className="bg-black text-[#00D632] rounded-full w-10 h-10 flex items-center justify-center font-bold text-sm">1</div>
+                  <div className="bg-black text-[#00FF41] rounded-full w-10 h-10 flex items-center justify-center font-bold text-sm">1</div>
                   <p className="font-semibold text-sm">{t_obj.payments.flow1}</p>
                 </div>
                 <div className="flex items-center gap-4">
-                  <div className="bg-black text-[#00D632] rounded-full w-10 h-10 flex items-center justify-center font-bold text-sm">2</div>
+                  <div className="bg-black text-[#00FF41] rounded-full w-10 h-10 flex items-center justify-center font-bold text-sm">2</div>
                   <p className="font-semibold text-sm">{t_obj.payments.flow2}</p>
                 </div>
                 <div className="flex items-center gap-4">
-                  <div className="bg-black text-[#00D632] rounded-full w-10 h-10 flex items-center justify-center font-bold">3</div>
+                  <div className="bg-black text-[#00FF41] rounded-full w-10 h-10 flex items-center justify-center font-bold">3</div>
                   <p className="font-semibold">{t_obj.payments.flow3}</p>
                 </div>
                 <div className="flex items-center gap-4">
-                  <div className="bg-black text-[#00D632] rounded-full w-10 h-10 flex items-center justify-center font-bold">4</div>
+                  <div className="bg-black text-[#00FF41] rounded-full w-10 h-10 flex items-center justify-center font-bold">4</div>
                   <p className="font-semibold">{t_obj.payments.flow4}</p>
                 </div>
               </div>
@@ -392,7 +392,7 @@ function HomeContent() {
             {testimonials.map((testimonial, idx) => (
               <div key={idx} className="bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow">
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="w-12 h-12 bg-[#00D632] rounded-full flex items-center justify-center text-white font-bold text-lg">{testimonial.name.charAt(0)}</div>
+                  <div className="w-12 h-12 bg-[#00FF41] rounded-full flex items-center justify-center text-white font-bold text-lg">{testimonial.name.charAt(0)}</div>
                   <div>
                     <p className="font-bold text-black">{testimonial.name}</p>
                     <p className="text-sm text-gray-600">{testimonial.role}</p>
@@ -416,7 +416,7 @@ function HomeContent() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {pricingPlans.map((plan, idx) => (
-              <div key={idx} className={`rounded-xl p-8 transition-all ${plan.highlighted ? "bg-[#00D632] text-black scale-105 shadow-2xl" : "bg-[#f5f5f5] text-black border-2 border-gray-200"}`}>
+              <div key={idx} className={`rounded-xl p-8 transition-all ${plan.highlighted ? "bg-[#00FF41] text-black scale-105 shadow-2xl" : "bg-[#f5f5f5] text-black border-2 border-gray-200"}`}>
                 <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
                 <p className={`text-sm mb-4 ${plan.highlighted ? "text-black/80" : "text-gray-600"}`}>{plan.description}</p>
                 <div className="mb-6">
@@ -424,7 +424,7 @@ function HomeContent() {
                   <span className="text-sm ml-2">{t_obj.pricing.perMonth}</span>
                 </div>
                 <button
-                  className={`w-full font-black py-4 rounded-2xl mb-6 transition-all uppercase tracking-widest text-xs shadow-lg hover:scale-105 active:scale-95 ${plan.highlighted ? "bg-black text-[#00D632]" : "bg-black text-white text-white"}`}
+                  className={`w-full font-black py-4 rounded-2xl mb-6 transition-all uppercase tracking-widest text-xs shadow-lg hover:scale-105 active:scale-95 ${plan.highlighted ? "bg-black text-[#00FF41]" : "bg-black text-white text-white"}`}
                   onClick={() => window.location.href = '/auth'}
                 >
                   {t_obj.pricing.getStartedBtn}
@@ -433,7 +433,7 @@ function HomeContent() {
                 <ul className="space-y-3">
                   {plan.features.map((feature, fidx) => (
                     <li key={fidx} className="flex items-center gap-2">
-                      <Check size={20} className={plan.highlighted ? "text-black" : "text-[#00D632]"} />
+                      <Check size={20} className={plan.highlighted ? "text-black" : "text-[#00FF41]"} />
                       <span className="text-sm">{feature}</span>
                     </li>
                   ))}
@@ -446,13 +446,13 @@ function HomeContent() {
       <MerchantMetrics />
 
       {/* CTA Section */}
-      <section className="py-20 bg-[#00D632] text-black">       <div className="container text-center">
+      <section className="py-20 bg-[#00FF41] text-black">       <div className="container text-center">
         <h2 className="text-4xl lg:text-5xl font-bold mb-6">{t_obj.cta.title}</h2>
         <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
           {t_obj.cta.subtitle}
         </p>
         <button
-          className="h-16 px-12 rounded-2xl bg-black text-[#00D632] font-black text-xl uppercase tracking-widest hover:scale-105 transition-all shadow-2xl flex items-center justify-center gap-2 mx-auto"
+          className="h-16 px-12 rounded-2xl bg-black text-[#00FF41] font-black text-xl uppercase tracking-widest hover:scale-105 transition-all shadow-2xl flex items-center justify-center gap-2 mx-auto"
           onClick={() => window.location.href = '/auth'}
         >
           {t_obj.cta.button} <ArrowRight size={24} />
@@ -463,7 +463,7 @@ function HomeContent() {
       </section>
 
       {/* Referral Section */}
-      <section className="py-20 bg-black border-t border-b border-[#00D632]/30">
+      <section className="py-20 bg-black border-t border-b border-[#00FF41]/30">
         <div className="container">
           <div className="max-w-4xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -477,26 +477,26 @@ function HomeContent() {
                 </p>
                 <div className="space-y-4 mb-8">
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-[#00D632] flex items-center justify-center flex-shrink-0 mt-1">
+                    <div className="w-6 h-6 rounded-full bg-[#00FF41] flex items-center justify-center flex-shrink-0 mt-1">
                       <Check size={16} className="text-black" />
                     </div>
                     <span className="text-gray-300">{t_obj.referral.benefit1}</span>
                   </div>
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-[#00D632] flex items-center justify-center flex-shrink-0 mt-1">
+                    <div className="w-6 h-6 rounded-full bg-[#00FF41] flex items-center justify-center flex-shrink-0 mt-1">
                       <Check size={16} className="text-black" />
                     </div>
                     <span className="text-gray-300">{t_obj.referral.benefit2}</span>
                   </div>
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-[#00D632] flex items-center justify-center flex-shrink-0 mt-1">
+                    <div className="w-6 h-6 rounded-full bg-[#00FF41] flex items-center justify-center flex-shrink-0 mt-1">
                       <Check size={16} className="text-black" />
                     </div>
                     <span className="text-gray-300">{t_obj.referral.benefit3}</span>
                   </div>
                 </div>
                 <button
-                  className="h-16 px-12 rounded-2xl bg-[#00D632] text-black font-black text-lg uppercase tracking-widest hover:scale-105 transition-all shadow-xl flex items-center gap-2"
+                  className="h-16 px-12 rounded-2xl bg-[#00FF41] text-black font-black text-lg uppercase tracking-widest hover:scale-105 transition-all shadow-xl flex items-center gap-2"
                   onClick={() => window.location.href = '/auth'}
                 >
                   {t_obj.referral.cta}
@@ -506,18 +506,18 @@ function HomeContent() {
               </div>
 
               {/* Right side - Visual */}
-              <div className="bg-gradient-to-br from-[#00D632]/30 to-[#00D632]/10 rounded-2xl p-8 border border-[#00D632]/50 shadow-lg shadow-[#00D632]/20">
+              <div className="bg-gradient-to-br from-[#00FF41]/30 to-[#00FF41]/10 rounded-2xl p-8 border border-[#00FF41]/50 shadow-lg shadow-[#00FF41]/20">
                 <div className="space-y-6">
                   <div className="text-center">
-                    <div className="text-5xl font-bold text-[#00D632] mb-2">20%</div>
+                    <div className="text-5xl font-bold text-[#00FF41] mb-2">20%</div>
                     <div className="text-gray-300">{language === "fr" ? "Commission" : "Commission"}</div>
                   </div>
-                  <div className="h-px bg-gradient-to-r from-transparent via-[#00D632] to-transparent"></div>
+                  <div className="h-px bg-gradient-to-r from-transparent via-[#00FF41] to-transparent"></div>
                   <div className="text-center">
                     <div className="text-2xl font-bold text-white mb-2">∞</div>
                     <div className="text-gray-300">{language === "fr" ? "À vie" : "For Life"}</div>
                   </div>
-                  <div className="h-px bg-gradient-to-r from-transparent via-[#00D632] to-transparent"></div>
+                  <div className="h-px bg-gradient-to-r from-transparent via-[#00FF41] to-transparent"></div>
                   <p className="text-center text-gray-400 text-sm">
                     {t_obj.referral.description}
                   </p>
@@ -547,7 +547,7 @@ function HomeContent() {
               e.currentTarget.src = "https://ui-avatars.com/api/?name=Mohamed+Sow&background=000&color=fff";
             }} />
             <h3 className="text-2xl font-bold text-black">Mohamed Sow</h3>
-            <p className="text-[#00D632] font-black uppercase tracking-widest text-xs">Founder & CEO</p>
+            <p className="text-[#00FF41] font-black uppercase tracking-widest text-xs">Founder & CEO</p>
           </div>
           <p className="text-xl text-gray-700 italic leading-relaxed">
             "{language === "fr"
@@ -570,26 +570,26 @@ function HomeContent() {
             <div>
               <h4 className="font-bold text-white mb-4">{t_obj.footer.product}</h4>
               <ul className="space-y-2 text-sm">
-                <li><a href="#" className="hover:text-[#00D632] transition-colors">{t_obj.nav.features}</a></li>
-                <li><a href="#" className="hover:text-[#00D632] transition-colors">{t_obj.nav.pricing}</a></li>
-                <li><a href="#" className="hover:text-[#00D632] transition-colors">{language === "fr" ? "Sécurité" : "Security"}</a></li>
+                <li><a href="#" className="hover:text-[#00FF41] transition-colors">{t_obj.nav.features}</a></li>
+                <li><a href="#" className="hover:text-[#00FF41] transition-colors">{t_obj.nav.pricing}</a></li>
+                <li><a href="#" className="hover:text-[#00FF41] transition-colors">{language === "fr" ? "Sécurité" : "Security"}</a></li>
               </ul>
             </div>
             <div>
               <h4 className="font-bold text-white mb-4">{t_obj.footer.company}</h4>
               <ul className="space-y-2 text-sm">
-                <li><a href="#" className="hover:text-[#00D632] transition-colors">{t_obj.footer.about}</a></li>
-                <li><a href="#" className="hover:text-[#00D632] transition-colors">{t_obj.footer.blog}</a></li>
-                <li><a href="#" className="hover:text-[#00D632] transition-colors">{t_obj.footer.contact}</a></li>
+                <li><a href="#" className="hover:text-[#00FF41] transition-colors">{t_obj.footer.about}</a></li>
+                <li><a href="#" className="hover:text-[#00FF41] transition-colors">{t_obj.footer.blog}</a></li>
+                <li><a href="#" className="hover:text-[#00FF41] transition-colors">{t_obj.footer.contact}</a></li>
               </ul>
             </div>
             <div>
               <h4 className="font-bold text-white mb-4">{t_obj.footer.legal}</h4>
               <ul className="space-y-2 text-sm">
-                <li><a href="/security" className="hover:text-[#00D632] transition-colors">{language === "fr" ? "Sécurité" : "Security"}</a></li>
-                <li><a href="/privacy" className="hover:text-[#00D632] transition-colors">{t_obj.footer.privacy}</a></li>
-                <li><a href="/terms" className="hover:text-[#00D632] transition-colors">{t_obj.footer.terms}</a></li>
-                <li><a href="/cookies" className="hover:text-[#00D632] transition-colors">{t_obj.footer.cookies}</a></li>
+                <li><a href="/security" className="hover:text-[#00FF41] transition-colors">{language === "fr" ? "Sécurité" : "Security"}</a></li>
+                <li><a href="/privacy" className="hover:text-[#00FF41] transition-colors">{t_obj.footer.privacy}</a></li>
+                <li><a href="/terms" className="hover:text-[#00FF41] transition-colors">{t_obj.footer.terms}</a></li>
+                <li><a href="/cookies" className="hover:text-[#00FF41] transition-colors">{t_obj.footer.cookies}</a></li>
               </ul>
             </div>
           </div>
@@ -597,12 +597,12 @@ function HomeContent() {
             <p className="text-sm">&copy; 2025 Bouteek. {t_obj.footer.copyright}</p>
             <div className="flex gap-6 mt-4 md:mt-0">
               <a href="https://instagram.com/bouteek.shop" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity" title="Instagram">
-                <Instagram size={24} className="text-gray-400 hover:text-[#00D632]" />
+                <Instagram size={24} className="text-gray-400 hover:text-[#00FF41]" />
               </a>
-              <a href="https://snapchat.com/add/bouteek.shop" target="_blank" rel="noopener noreferrer" className="hover:text-[#00D632] transition-colors text-gray-400 font-bold text-sm" title="Snapchat">
+              <a href="https://snapchat.com/add/bouteek.shop" target="_blank" rel="noopener noreferrer" className="hover:text-[#00FF41] transition-colors text-gray-400 font-bold text-sm" title="Snapchat">
                 Snapchat
               </a>
-              <a href="https://tiktok.com/@bouteek.shop" target="_blank" rel="noopener noreferrer" className="hover:text-[#00D632] transition-colors text-gray-400 font-bold text-sm" title="TikTok">
+              <a href="https://tiktok.com/@bouteek.shop" target="_blank" rel="noopener noreferrer" className="hover:text-[#00FF41] transition-colors text-gray-400 font-bold text-sm" title="TikTok">
                 TikTok
               </a>
             </div>

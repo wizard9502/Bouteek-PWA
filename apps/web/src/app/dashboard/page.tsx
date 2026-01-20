@@ -367,7 +367,7 @@ function DashboardHomeContent() {
             </div>
 
             {/* Fab Plus Button (Mobile) */}
-            <Link href="/dashboard/store/products/add">
+            <Link href="/store/products/add">
                 <button className="md:hidden fixed bottom-24 right-6 w-14 h-14 bg-bouteek-green text-black rounded-full shadow-2xl flex items-center justify-center z-40 active:scale-95 transition-transform">
                     <Plus size={28} />
                 </button>

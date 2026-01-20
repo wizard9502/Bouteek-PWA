@@ -56,12 +56,12 @@ export default function MerchantMetrics() {
   ];
 
   return (
-    <section className="py-16 bg-black border-t border-b border-[#00D632]/30">
+    <section className="py-16 bg-black border-t border-b border-[#00FF41]/30">
       <div className="container">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {displayMetrics.map((metric, idx) => (
             <div key={idx} className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-[#00D632] mb-2">
+              <div className="text-3xl md:text-4xl font-bold text-[#00FF41] mb-2">
                 {metric.value}
               </div>
               <div className="text-sm md:text-base text-gray-300">

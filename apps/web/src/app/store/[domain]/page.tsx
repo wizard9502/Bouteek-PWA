@@ -110,7 +110,7 @@ export default function StorePage({ params }: { params: Promise<{ domain: string
                 <Button variant="outline" className="relative" onClick={() => setIsCartOpen(true)}>
                     <ShoppingCart size={20} />
                     {cart.length > 0 && (
-                        <span className="absolute -top-2 -right-2 bg-[#00D632] text-black text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                        <span className="absolute -top-2 -right-2 bg-[#00FF41] text-black text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
                             {cart.reduce((a, b) => a + b.quantity, 0)}
                         </span>
                     )}
@@ -176,7 +176,7 @@ export default function StorePage({ params }: { params: Promise<{ domain: string
                                 <span>Total</span>
                                 <span>{totalAmount} XOF</span>
                             </div>
-                            <Button className="w-full bg-[#00D632] text-black font-bold h-12" onClick={proceedToCheckout}>
+                            <Button className="w-full bg-[#00FF41] text-black font-bold h-12" onClick={proceedToCheckout}>
                                 Proceed to Checkout
                             </Button>
                         </div>

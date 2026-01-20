@@ -30,6 +30,7 @@ import { useRouter } from "next/navigation";
 
 import Link from "next/link";
 import { TranslationProvider, useTranslation } from "@/contexts/TranslationContext";
+import { toast } from "sonner";
 
 export default function ProfilePage() {
     return (
@@ -215,7 +216,7 @@ function ProfileSettings({ theme, setTheme }: { theme: string | undefined, setTh
                         </div>
                     </div>
 
-                    <Link href="/dashboard/settings">
+                    <Link href="/settings">
                         <Button variant="outline" className="rounded-2xl h-12 px-6 border-border/50 font-bold hidden md:flex">
                             {t("profile.edit_profile")}
                         </Button>
@@ -360,19 +361,31 @@ function ProfileSettings({ theme, setTheme }: { theme: string | undefined, setTh
                 <section className="space-y-6">
                     <h3 className="text-xl font-black tracking-tight">{t("profile.social_support")}</h3>
                     <div className="grid grid-cols-2 gap-4">
-                        <Button variant="outline" className="h-auto p-6 rounded-3xl border-border/50 flex flex-col gap-3 group">
+                        <Button
+                            variant="outline"
+                            className="h-auto p-6 rounded-3xl border-border/50 flex flex-col gap-3 group"
+                            onClick={() => toast.info(language === 'fr' ? 'Connexion Instagram bientôt disponible' : 'Instagram connection coming soon')}
+                        >
                             <div className="p-3 rounded-2xl bg-pink-500/10 text-pink-500 group-hover:scale-110 transition-transform">
                                 <Instagram size={24} />
                             </div>
                             <span className="font-bold text-[8px] lg:text-[10px] uppercase tracking-widest">{t("profile.connect_ig")}</span>
                         </Button>
-                        <Button variant="outline" className="h-auto p-6 rounded-3xl border-border/50 flex flex-col gap-3 group">
+                        <Button
+                            variant="outline"
+                            className="h-auto p-6 rounded-3xl border-border/50 flex flex-col gap-3 group"
+                            onClick={() => toast.info(language === 'fr' ? 'Connexion Twitter bientôt disponible' : 'Twitter connection coming soon')}
+                        >
                             <div className="p-3 rounded-2xl bg-black/10 text-black dark:text-white group-hover:scale-110 transition-transform">
                                 <Twitter size={24} />
                             </div>
                             <span className="font-bold text-[8px] lg:text-[10px] uppercase tracking-widest">{t("profile.connect_tt")}</span>
                         </Button>
-                        <Button variant="outline" className="h-auto p-6 rounded-3xl border-border/50 flex flex-col gap-3 group">
+                        <Button
+                            variant="outline"
+                            className="h-auto p-6 rounded-3xl border-border/50 flex flex-col gap-3 group"
+                            onClick={() => toast.info(language === 'fr' ? 'Connexion Snapchat bientôt disponible' : 'Snapchat connection coming soon')}
+                        >
                             <div className="p-3 rounded-2xl bg-yellow-500/10 text-yellow-500 group-hover:scale-110 transition-transform">
                                 <Smartphone size={24} />
                             </div>

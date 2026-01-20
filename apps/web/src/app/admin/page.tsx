@@ -9,9 +9,11 @@ import {
     TrendingUp,
     Search,
     Filter,
-    MoreHorizontal
+    MoreHorizontal,
+    ArrowUpRight
 } from "lucide-react";
 import { getAdminKPIs, getSubscriptionDistribution, getRecentMerchants, getRevenueGrowthData } from "@/lib/adminData";
+import { toast } from "sonner";
 
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -89,10 +91,17 @@ export default function AdminDashboard() {
                     <p className="text-muted-foreground font-medium mt-1">Platform health at a glance.</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <Button variant="outline" className="rounded-xl font-bold">
+                    <Button
+                        variant="outline"
+                        className="rounded-xl font-bold"
+                        onClick={() => toast.info('Advanced filtering coming soon')}
+                    >
                         <Filter className="mr-2 w-4 h-4" /> Filter
                     </Button>
-                    <Button className="rounded-xl font-bold bg-black text-white">
+                    <Button
+                        className="rounded-xl font-bold bg-black text-white"
+                        onClick={() => toast.info('Report download feature coming soon')}
+                    >
                         Download Report
                     </Button>
                 </div>
@@ -196,7 +205,11 @@ export default function AdminDashboard() {
             <div className="bg-white p-8 rounded-3xl border border-border/50 shadow-sm">
                 <div className="flex items-center justify-between mb-6">
                     <h3 className="text-xl font-black text-gray-900">Recent Merchants</h3>
-                    <Button variant="ghost" className="text-sm font-bold text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-xl">
+                    <Button
+                        variant="ghost"
+                        className="text-sm font-bold text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-xl"
+                        onClick={() => window.location.href = '/merchants'}
+                    >
                         View All <ArrowUpRight className="ml-1 w-4 h-4" />
                     </Button>
                 </div>
@@ -245,7 +258,12 @@ export default function AdminDashboard() {
                                         {new Date(merchant.created_at).toLocaleDateString()}
                                     </td>
                                     <td className="py-4 px-4 text-right">
-                                        <Button variant="ghost" size="icon" className="rounded-xl">
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="rounded-xl"
+                                            onClick={() => toast.info('Merchant actions menu coming soon')}
+                                        >
                                             <MoreHorizontal size={18} />
                                         </Button>
                                     </td>

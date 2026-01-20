@@ -134,7 +134,7 @@ export function DashboardRevenueChart({ data }: DashboardBarChartProps) {
             {
                 label: 'Revenue',
                 data: data.map(d => d.revenue),
-                backgroundColor: '#00D632',
+                backgroundColor: '#00FF41',
                 borderRadius: 4,
             }
         ]

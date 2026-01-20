@@ -138,7 +138,7 @@ export default function ProductsPage() {
                 <h2 className="text-3xl font-bold">Products</h2>
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
-                        <Button className="bg-[#00D632] hover:bg-[#00b829] text-black">
+                        <Button className="bg-[#00FF41] hover:bg-[#00b829] text-black">
                             <Plus className="mr-2 h-4 w-4" /> Add Product
                         </Button>
                     </DialogTrigger>
@@ -169,7 +169,7 @@ export default function ProductsPage() {
                                 <Label htmlFor="image">Image</Label>
                                 <Input id="image" type="file" accept="image/*" onChange={e => setImageFile(e.target.files?.[0] || null)} />
                             </div>
-                            <Button type="submit" className="w-full bg-[#00D632] text-black" disabled={saving}>
+                            <Button type="submit" className="w-full bg-[#00FF41] text-black" disabled={saving}>
                                 {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                 Create Product
                             </Button>

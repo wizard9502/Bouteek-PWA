@@ -335,7 +335,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
             {/* Global FAB (Mobile) */}
             < Button
                 className="md:hidden fixed bottom-24 right-6 w-14 h-14 rounded-full bg-bouteek-green shadow-xl shadow-bouteek-green/40 flex items-center justify-center text-white z-40 transition-transform active:scale-95"
-                onClick={() => router.push("/dashboard/store/new")
+                onClick={() => router.push("/store/new")
                 }
             >
                 <Plus size={28} />

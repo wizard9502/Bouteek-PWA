@@ -32,7 +32,7 @@ export default function ReceiptBuilderPage() {
         showQRCode: true,
         showSocial: true,
         customMessage: "Merci de votre achat !",
-        accentColor: "#00D632"
+        accentColor: "#00FF41"
     });
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
@@ -141,7 +141,7 @@ export default function ReceiptBuilderPage() {
                         <section className="space-y-6">
                             <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground">Accent Color</h3>
                             <div className="flex gap-4">
-                                {["#00D632", "#000000", "#FF4B4B", "#4B77FF"].map((color) => (
+                                {["#00FF41", "#000000", "#FF4B4B", "#4B77FF"].map((color) => (
                                     <button
                                         key={color}
                                         onClick={() => setConfig({ ...config, accentColor: color })}
@@ -161,7 +161,7 @@ export default function ReceiptBuilderPage() {
                         {/* Mock Receipt Content */}
                         <div className="flex flex-col items-center text-center space-y-4">
                             {config.showLogo && (
-                                <div className="w-16 h-16 rounded-2xl bg-[#00D632] flex items-center justify-center p-2">
+                                <div className="w-16 h-16 rounded-2xl bg-[#00FF41] flex items-center justify-center p-2">
                                     <img src="/bouteek-logo.jpg" className="w-full h-full object-contain" />
                                 </div>
                             )}
@@ -211,7 +211,7 @@ export default function ReceiptBuilderPage() {
                             <p className="text-[8px] font-bold text-gray-300 uppercase tracking-[0.2em]">Thank you for shopping local</p>
                             <div className="flex items-center justify-center gap-1 mt-2">
                                 <span className="text-[10px] font-black italic">Bouteek</span>
-                                <div className="w-1 h-1 rounded-full bg-[#00D632]" />
+                                <div className="w-1 h-1 rounded-full bg-[#00FF41]" />
                                 <span className="text-[10px] font-bold">Payments</span>
                             </div>
                         </div>

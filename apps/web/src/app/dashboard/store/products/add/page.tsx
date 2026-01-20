@@ -93,7 +93,7 @@ export default function AddProductPage() {
 
             if (error) throw error;
             toast.success(language === 'fr' ? "Produit ajouté !" : "Product added!");
-            router.push("/dashboard/store");
+            router.push("/store");
         } catch (error) {
             console.error(error);
             toast.error("Error saving product");
@@ -104,7 +104,7 @@ export default function AddProductPage() {
 
     return (
         <div className="max-w-4xl mx-auto space-y-8 pb-12">
-            <Link href="/dashboard/store">
+            <Link href="/store">
                 <Button variant="ghost" className="rounded-xl flex items-center gap-2 text-muted-foreground hover:text-foreground">
                     <ChevronLeft size={16} />
                     {language === 'fr' ? "Retour à l'inventaire" : "Back to Inventory"}

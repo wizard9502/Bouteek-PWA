@@ -88,7 +88,7 @@ export default function StorePage() {
                     <p className="text-muted-foreground font-medium mt-1">{t("store.subtitle")}</p>
                 </div>
                 <div className="flex gap-3">
-                    <Link href="/dashboard/store/products/add">
+                    <Link href="/store/products/add">
                         <Button className="rounded-2xl bg-bouteek-green text-black font-bold h-12 px-6 shadow-lg shadow-bouteek-green/20">
                             <Plus className="mr-2" size={20} />
                             {t("store.add_product")}
@@ -140,7 +140,12 @@ export default function StorePage() {
                             />
                         </div>
 
-                        <Button variant="outline" size="icon" className="rounded-xl h-10 w-10 border-border/50">
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            className="rounded-xl h-10 w-10 border-border/50"
+                            onClick={() => toast.info('Advanced filtering coming soon')}
+                        >
                             <Filter size={18} />
                         </Button>
                     </div>
@@ -226,10 +231,12 @@ export default function StorePage() {
                         <h4 className="text-xl font-black">Want deeper insights?</h4>
                         <p className="text-muted-foreground mt-2 max-w-md font-medium">Use performance heatmaps to see exactly where your customers are clicking on your storefront.</p>
                     </div>
-                    <Button className="rounded-2xl bg-black text-white px-8 h-12 font-bold shadow-xl shadow-black/20">
-                        Launch Heatmaps
-                        <ChevronRight className="ml-2" size={18} />
-                    </Button>
+                    <Link href="/store/heatmaps">
+                        <Button className="rounded-2xl bg-black text-white px-8 h-12 font-bold shadow-xl shadow-black/20">
+                            Launch Heatmaps
+                            <ChevronRight className="ml-2" size={18} />
+                        </Button>
+                    </Link>
                 </div>
                 <Flame className="absolute -right-10 -bottom-10 text-bouteek-green/10 w-48 h-48 -rotate-12" />
             </div>

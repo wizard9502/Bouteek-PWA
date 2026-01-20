@@ -86,10 +86,11 @@ function FinanceOverview() {
     const [showTopUp, setShowTopUp] = useState(false);
     const [balance, setBalance] = useState(0);
     const [transactions, setTransactions] = useState<any[]>([]);
+    const [showAllTransactions, setShowAllTransactions] = useState(false);
 
     useEffect(() => {
         fetchFinanceData();
-    }, []);
+    }, [showAllTransactions]);
 
     const fetchFinanceData = async () => {
         const { data: { user } } = await supabase.auth.getUser();
@@ -104,7 +105,7 @@ function FinanceOverview() {
                 .select('*')
                 .eq('merchant_id', merchant.id)
                 .order('created_at', { ascending: false })
-                .limit(10);
+                .limit(showAllTransactions ? 100 : 10);
 
             if (txs) {
                 setTransactions(txs.map(tx => ({
@@ -209,11 +210,12 @@ function FinanceOverview() {
                         </h2>
 
                         <div className="flex gap-4 mt-12 w-full max-w-sm">
-                            <Button variant="outline" className="flex-1 rounded-2xl h-14 font-bold border-border/50">
+                            <Button
+                                variant="outline"
+                                className="w-full rounded-2xl h-14 font-bold border-border/50"
+                                onClick={() => toast.info(language === 'fr' ? 'Analytiques détaillées bientôt disponibles' : 'Detailed analytics coming soon')}
+                            >
                                 {t("finance.analytics")}
-                            </Button>
-                            <Button className="flex-1 rounded-2xl h-14 font-bold bg-black text-white shadow-xl shadow-black/20">
-                                {t("finance.transfer")}
                             </Button>
                         </div>
 
@@ -227,8 +229,12 @@ function FinanceOverview() {
                             <History size={24} />
                             {t("finance.history_title")}
                         </h3>
-                        <Button variant="ghost" className="text-sm font-bold text-bouteek-green">
-                            {t("finance.see_all")}
+                        <Button
+                            variant="ghost"
+                            className="text-sm font-bold text-bouteek-green"
+                            onClick={() => setShowAllTransactions(!showAllTransactions)}
+                        >
+                            {showAllTransactions ? (language === 'fr' ? 'Moins' : 'Show Less') : t("finance.see_all")}
                         </Button>
                     </div>
 
@@ -509,7 +515,7 @@ function SubscriptionManager({ plans }: { plans: any[] }) {
                         </CardContent>
                         <CardFooter>
                             <Button
-                                className="w-full h-14 text-lg font-black bg-[#00D632] hover:bg-[#00b829] text-black"
+                                className="w-full h-14 text-lg font-black bg-[#00FF41] hover:bg-[#00b829] text-black"
                                 onClick={handleSubscribe}
                                 disabled={processing}
                             >

@@ -206,7 +206,7 @@ export default function AuthPage() {
                                 />
                             </div>
 
-                            <Button type="submit" className="w-full bg-[#00D632] hover:bg-[#00b829] text-black font-bold" disabled={loading}>
+                            <Button type="submit" className="w-full bg-[#00FF41] hover:bg-[#00b829] text-black font-bold" disabled={loading}>
                                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                 Sign In
                             </Button>

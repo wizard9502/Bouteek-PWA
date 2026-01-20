@@ -82,13 +82,13 @@ export default function AppShowcase() {
         <div className="flex gap-4">
           <button
             onClick={prevSlide}
-            className="flex items-center justify-center w-12 h-12 rounded-full border-2 border-[#00D632] text-[#00D632] hover:bg-[#00D632] hover:text-black transition-all duration-200"
+            className="flex items-center justify-center w-12 h-12 rounded-full border-2 border-[#00FF41] text-[#00FF41] hover:bg-[#00FF41] hover:text-black transition-all duration-200"
           >
             <ChevronLeft size={24} />
           </button>
           <button
             onClick={nextSlide}
-            className="flex items-center justify-center w-12 h-12 rounded-full bg-[#00D632] text-black hover:bg-[#00B824] transition-all duration-200"
+            className="flex items-center justify-center w-12 h-12 rounded-full bg-[#00FF41] text-black hover:bg-[#00B824] transition-all duration-200"
           >
             <ChevronRight size={24} />
           </button>
@@ -101,7 +101,7 @@ export default function AppShowcase() {
           <button
             key={index}
             onClick={() => setCurrentSlide(index)}
-            className={`w-3 h-3 rounded-full transition-all duration-200 ${index === currentSlide ? 'bg-[#00D632] w-8' : 'bg-gray-600 hover:bg-gray-500'
+            className={`w-3 h-3 rounded-full transition-all duration-200 ${index === currentSlide ? 'bg-[#00FF41] w-8' : 'bg-gray-600 hover:bg-gray-500'
               }`}
             aria-label={`Go to slide ${index + 1}`}
           />

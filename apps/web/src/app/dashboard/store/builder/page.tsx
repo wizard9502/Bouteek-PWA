@@ -58,7 +58,7 @@ function StoreBuilderContent() {
     const [storeConfig, setStoreConfig] = useState<any>({
         primaryColor: "#050505",
         secondaryColor: "#ffffff",
-        accentColor: "#00D632",
+        accentColor: "#00FF41",
         fontFamily: "Inter",
         heroTitle: "New Arrivals",
         heroSubtitle: "Discover our latest collection",
@@ -166,7 +166,7 @@ function StoreBuilderContent() {
             id: "modern_minimal",
             name: "Modern Ecommerce",
             description: "Clean lines, whitespace, and focus on product photography.",
-            defaultColors: { primary: "#000000", accent: "#00D632" },
+            defaultColors: { primary: "#000000", accent: "#00FF41" },
             image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2000&auto=format&fit=crop"
         },
         {
