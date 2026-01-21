@@ -90,6 +90,24 @@ export default function FAQ() {
         question: "Can I cancel my subscription anytime?",
         answer: "Yes, you can cancel your subscription anytime without penalty. However, commenced subscription months and consumed Bouteek Cash balance are non-refundable."
       }
+    ],
+    wo: [
+      {
+        question: "Bari na paas bi ci Bouteek?",
+        answer: "Bouteek dafa am ñenti xajat yu fés: Starter (2,000 XOF/wér), Launch (5,000 XOF/wér), Growth (12,500 XOF/wér) ak Pro (20,000 XOF/wér). Plan bu nekk dafa am kers bu néew. Amul fay yu la nax."
+      },
+      {
+        question: "Waqtu bu tollu ban laa soxla pour tabax sam butik?",
+        answer: "Mën nga tabax sa butik ci lu néew 10 minutes. Duggu rek, defal sa liggéey yi ak naka ngay fayé. Sa butik mu ngi ci biir internet léegi."
+      },
+      {
+        question: "Ban fay yi ngay nangu?",
+        answer: "Waaw, Wave ak Orange Money. Kiliyã yi mën nañu fay ci sen téléfoon bopp, xaalis bi di ñëw fite ci sa compte. Amul kénn ci biir."
+      },
+      {
+        question: "Waqtu bu tollu ban laay am sam fay?",
+        answer: "Fay bi mu ngi ñëw léegi ci sa compte Wave wala Orange Money. Xaalis bi dang koy giss fite kiliyã bi payé rek. Amul xaar."
+      }
     ]
   };
 
@@ -101,6 +119,10 @@ export default function FAQ() {
     en: {
       title: "Frequently Asked Questions",
       subtitle: "Find answers to the most common questions from Bouteek merchants."
+    },
+    wo: {
+      title: "Laaj yu Bari",
+      subtitle: "Seetal tontu yu bari Marcand yu Bouteek yi di laaj."
     }
   };
 
@@ -155,7 +177,7 @@ export default function FAQ() {
             href="mailto:support@bouteek.com"
             className="inline-block px-8 py-3 bg-black text-[#00FF41] font-bold rounded-lg hover:bg-gray-900 transition-colors"
           >
-            {language === "fr" ? "Nous Contacter" : "Contact Us"}
+            {language === "wo" ? "Woxal ñun" : language === "fr" ? "Nous Contacter" : "Contact Us"}
           </a>
         </div>
       </div>

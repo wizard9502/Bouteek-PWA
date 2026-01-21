@@ -38,12 +38,14 @@ export default function AppStoreButtons() {
         <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50 pointer-events-none">
           <div className="bg-white rounded-xl p-8 text-center shadow-2xl animate-in fade-in zoom-in duration-300">
             <p className="text-2xl font-bold text-black mb-2">
-              {language === "fr" ? "Bientôt disponible" : "Coming Soon"}
+              {language === "wo" ? "Mu ngi ñëw léegi" : language === "fr" ? "Bientôt disponible" : "Coming Soon"}
             </p>
             <p className="text-gray-600">
-              {language === "fr"
-                ? "L'application mobile sera bientôt disponible"
-                : "The mobile app will be available soon"}
+              {language === "wo"
+                ? "App mobile bi mu ngi ñëw léegi"
+                : language === "fr"
+                  ? "L'application mobile sera bientôt disponible"
+                  : "The mobile app will be available soon"}
             </p>
           </div>
         </div>

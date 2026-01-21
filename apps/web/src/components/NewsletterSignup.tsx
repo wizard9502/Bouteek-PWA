@@ -16,7 +16,7 @@ export default function NewsletterSignup() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setStatus("error");
-      setMessage(language === "fr" ? "Veuillez entrer une adresse email valide" : "Please enter a valid email address");
+      setMessage(language === "wo" ? "Dugalal email bu baax" : language === "fr" ? "Veuillez entrer une adresse email valide" : "Please enter a valid email address");
       return;
     }
 
@@ -43,7 +43,7 @@ export default function NewsletterSignup() {
       }
 
       setStatus("success");
-      setMessage(language === "fr" ? "Merci de vous être inscrit!" : "Thank you for subscribing!");
+      setMessage(language === "wo" ? "Jërëjëf ci sa duggu!" : language === "fr" ? "Merci de vous être inscrit!" : "Thank you for subscribing!");
       setEmail("");
 
       // Reset after 3 seconds
@@ -63,7 +63,7 @@ export default function NewsletterSignup() {
       // (Or show error if strict) -> Let's show success with fallback
       console.log("Fallback to local storage due to error");
       setStatus("success");
-      setMessage(language === "fr" ? "Merci de vous être inscrit!" : "Thank you for subscribing!");
+      setMessage(language === "wo" ? "Jërëjëf ci sa duggu!" : language === "fr" ? "Merci de vous être inscrit!" : "Thank you for subscribing!");
       setEmail("");
       setTimeout(() => { setStatus("idle"); setMessage(""); }, 3000);
     }
@@ -80,6 +80,12 @@ export default function NewsletterSignup() {
       title: "Stay Updated",
       subtitle: "Get the latest news and updates from Bouteek delivered to your inbox.",
       placeholder: "Your email address",
+      button: "Subscribe"
+    },
+    wo: {
+      title: "Xabaar yi",
+      subtitle: "Deglul xabaar yi ak soppi yu bees yu Bouteek fite ci sa boîte mail.",
+      placeholder: "Sa adresse email",
       button: "Subscribe"
     }
   };

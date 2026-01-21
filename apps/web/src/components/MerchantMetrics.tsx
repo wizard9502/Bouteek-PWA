@@ -39,19 +39,19 @@ export default function MerchantMetrics() {
   const displayMetrics = [
     {
       value: metrics.merchants,
-      label: language === "fr" ? "Marchands Actifs" : "Active Merchants"
+      label: language === "wo" ? "Marcand yu bari" : language === "fr" ? "Marchands Actifs" : "Active Merchants"
     },
     {
-      value: metrics.volume, // Kept static for performance/privacy on public landing
-      label: language === "fr" ? "XOF Traités" : "XOF Processed"
+      value: metrics.volume,
+      label: language === "wo" ? "XOF yi jaar fi" : language === "fr" ? "XOF Traités" : "XOF Processed"
     },
     {
       value: metrics.orders,
-      label: language === "fr" ? "Commandes" : "Orders"
+      label: language === "wo" ? "Njay yi" : language === "fr" ? "Commandes" : "Orders"
     },
     {
       value: metrics.satisfaction,
-      label: language === "fr" ? "Satisfaction" : "Satisfaction"
+      label: language === "wo" ? "Contant" : language === "fr" ? "Satisfaction" : "Satisfaction"
     }
   ];
 

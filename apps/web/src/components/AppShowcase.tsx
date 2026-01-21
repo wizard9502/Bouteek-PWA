@@ -60,8 +60,8 @@ export default function AppShowcase() {
   };
 
   const currentSlideData = slides[currentSlide];
-  const title = language === 'fr' ? currentSlideData.titleFr : currentSlideData.titleEn;
-  const description = language === 'fr' ? currentSlideData.descFr : currentSlideData.descEn;
+  const title = language === 'wo' ? currentSlideData.titleEn : language === 'fr' ? currentSlideData.titleFr : currentSlideData.titleEn;
+  const description = language === 'wo' ? currentSlideData.descEn : language === 'fr' ? currentSlideData.descFr : currentSlideData.descEn;
 
   return (
     <section className="py-20 bg-[#f5f5f5] overflow-hidden">
@@ -69,13 +69,13 @@ export default function AppShowcase() {
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 bg-black text-white px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest mb-4">
             <Smartphone size={14} />
-            <span>{language === "fr" ? "Mobile First" : "Mobile First"}</span>
+            <span>{language === "wo" ? "Mobile First" : language === "fr" ? "Mobile First" : "Mobile First"}</span>
           </div>
           <h2 className="text-4xl lg:text-6xl font-black text-black mb-4 tracking-tighter">
-            {language === "fr" ? "Découvrez notre solution" : "Discover our solution"}
+            {language === "wo" ? "Seetal sunu solution" : language === "fr" ? "Découvrez notre solution" : "Discover our solution"}
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto font-medium">
-            {language === "fr" ? "Gérez votre business depuis votre poche ou votre ordinateur." : "Manage your business from your pocket or your computer."}
+            {language === "wo" ? "Saytul sa njay ci sa poos wala ci sa ordinateur." : language === "fr" ? "Gérez votre business depuis votre poche ou votre ordinateur." : "Manage your business from your pocket or your computer."}
           </p>
         </div>
 
