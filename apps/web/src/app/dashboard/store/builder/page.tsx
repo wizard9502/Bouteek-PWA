@@ -33,6 +33,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function StoreBuilderPage() {
     return (
@@ -42,8 +44,9 @@ export default function StoreBuilderPage() {
 
 function StoreBuilderContent() {
     const { t } = useTranslation();
-    const [activeTab, setActiveTab] = useState("templates"); // templates, modules, design, content
+    const [activeTab, setActiveTab] = useState("branding"); // branding, content, design, modules, settings
     const [selectedTemplate, setSelectedTemplate] = useState("modern_minimal");
+    const [isThemeModalOpen, setIsThemeModalOpen] = useState(false);
     const [viewMode, setViewMode] = useState("mobile"); // mobile, desktop
 
     // Module States
@@ -695,20 +698,19 @@ function StoreBuilderContent() {
                 </div>
 
                 {/* Tabs */}
-                <div className="flex bg-muted p-1 rounded-2xl">
+                <div className="flex bg-muted p-1 rounded-2xl overflow-x-auto">
                     {[
-                        { id: "templates", icon: LayoutGrid, label: "Templates" },
-                        { id: "modules", icon: Layers, label: "Modules" },
-                        { id: "branding", icon: ImageIcon, label: "Branding" },
+                        { id: "branding", icon: Store, label: "Identity" },
+                        { id: "content", icon: Type, label: "Content" },
                         { id: "design", icon: Palette, label: "Design" },
-                        { id: "content", icon: Type, label: "Content" }, // Added Content tab
+                        { id: "modules", icon: Layers, label: "Modules" },
                         { id: "settings", icon: Globe, label: "Settings" },
                     ].map((tab) => (
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
                             className={cn(
-                                "flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-black uppercase tracking-wider transition-all",
+                                "flex-1 flex items-center justify-center gap-2 py-3 px-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all whitespace-nowrap",
                                 activeTab === tab.id ? "bg-white shadow-sm text-black" : "text-muted-foreground hover:text-foreground"
                             )}
                         >
@@ -790,41 +792,7 @@ function StoreBuilderContent() {
                         </div>
                     )}
 
-                    {activeTab === "templates" && (
-                        <div className="space-y-4">
-                            {templates.map((template) => (
-                                <div
-                                    key={template.id}
-                                    onClick={() => {
-                                        setSelectedTemplate(template.id);
-                                        // Auto-apply defaults
-                                        setStoreConfig(prev => ({ ...prev, primaryColor: template.defaultColors.primary, accentColor: template.defaultColors.accent }));
-                                        toast.success("Theme selected: " + template.name);
-                                    }}
-                                    className={cn(
-                                        "p-4 rounded-3xl border-2 cursor-pointer transition-all hover:scale-[1.02]",
-                                        selectedTemplate === template.id ? "border-bouteek-green bg-bouteek-green/5" : "border-border/50 bg-card"
-                                    )}
-                                >
-                                    <div className="flex items-center gap-4">
-                                        {/* Use generated image thumbnail */}
-                                        <div className="w-16 h-16 rounded-2xl flex-shrink-0 bg-muted overflow-hidden">
-                                            <img src={template.image} className="w-full h-full object-cover" alt={template.name} />
-                                        </div>
-                                        <div>
-                                            <h3 className="font-black text-lg">{template.name}</h3>
-                                            <p className="text-xs text-muted-foreground line-clamp-2">{template.description}</p>
-                                        </div>
-                                        {selectedTemplate === template.id && (
-                                            <div className="ml-auto bg-bouteek-green text-black rounded-full p-1">
-                                                <Check size={16} />
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
+
 
                     {activeTab === "modules" && (
                         <div className="space-y-6">
@@ -876,53 +844,185 @@ function StoreBuilderContent() {
 
                     {activeTab === "design" && (
                         <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
+
+                            {/* Theme Selection */}
+                            <div className="bouteek-card p-6 flex flex-col gap-4">
+                                <div>
+                                    <h3 className="font-black text-lg">Active Theme</h3>
+                                    <p className="text-sm text-muted-foreground">Select the baseline look for your store.</p>
+                                </div>
+                                <Button
+                                    onClick={() => setIsThemeModalOpen(true)}
+                                    className="w-full h-12 bg-black hover:bg-zinc-800 text-white rounded-xl font-bold flex items-center justify-between px-4"
+                                >
+                                    <span className="flex items-center gap-2">
+                                        <LayoutGrid size={18} />
+                                        {templates.find(t => t.id === selectedTemplate)?.name || "Select Theme"}
+                                    </span>
+                                    <span className="bg-white/20 px-2 py-1 rounded text-xs text-white">Change</span>
+                                </Button>
+                            </div>
+
+                            {/* Colors */}
                             <div className="bouteek-card p-6 space-y-4">
-                                <h3 className="font-black text-lg">Branding & Colors</h3>
+                                <h3 className="font-black text-lg">Brand Colors</h3>
                                 <div className="grid gap-4">
                                     <div className="space-y-2">
                                         <Label>Primary Color</Label>
                                         <div className="flex gap-2">
+                                            <div className="relative w-12 h-12 rounded-xl overflow-hidden shadow-sm border border-border">
+                                                <input
+                                                    type="color"
+                                                    className="absolute inset-0 w-full h-full p-0 border-0 opacity-0 cursor-pointer"
+                                                    value={storeConfig.primaryColor}
+                                                    onChange={(e) => updateConfig('primaryColor', e.target.value)}
+                                                />
+                                                <div className="w-full h-full" style={{ backgroundColor: storeConfig.primaryColor }} />
+                                            </div>
                                             <Input
-                                                type="color"
-                                                className="w-12 h-12 p-1 rounded-xl cursor-pointer"
                                                 value={storeConfig.primaryColor}
                                                 onChange={(e) => updateConfig('primaryColor', e.target.value)}
-                                            />
-                                            <Input
-                                                value={storeConfig.primaryColor}
-                                                onChange={(e) => updateConfig('primaryColor', e.target.value)}
-                                                className="flex-1 rounded-xl"
+                                                className="flex-1 rounded-xl font-mono uppercase"
                                             />
                                         </div>
                                     </div>
                                     <div className="space-y-2">
                                         <Label>Accent Color</Label>
                                         <div className="flex gap-2">
+                                            <div className="relative w-12 h-12 rounded-xl overflow-hidden shadow-sm border border-border">
+                                                <input
+                                                    type="color"
+                                                    className="absolute inset-0 w-full h-full p-0 border-0 opacity-0 cursor-pointer"
+                                                    value={storeConfig.accentColor}
+                                                    onChange={(e) => updateConfig('accentColor', e.target.value)}
+                                                />
+                                                <div className="w-full h-full" style={{ backgroundColor: storeConfig.accentColor }} />
+                                            </div>
                                             <Input
-                                                type="color"
-                                                className="w-12 h-12 p-1 rounded-xl cursor-pointer"
                                                 value={storeConfig.accentColor}
                                                 onChange={(e) => updateConfig('accentColor', e.target.value)}
-                                            />
-                                            <Input
-                                                value={storeConfig.accentColor}
-                                                onChange={(e) => updateConfig('accentColor', e.target.value)}
-                                                className="flex-1 rounded-xl"
+                                                className="flex-1 rounded-xl font-mono uppercase"
                                             />
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
+                            {/* Typography */}
                             <div className="bouteek-card p-6 space-y-4">
-                                <h3 className="font-black text-lg">Hero Content</h3>
+                                <h3 className="font-black text-lg">Typography</h3>
                                 <div className="space-y-4">
+                                    <div className="space-y-2">
+                                        <Label>Font Family</Label>
+                                        <Select
+                                            value={storeConfig.fontFamily}
+                                            onValueChange={(val) => updateConfig('fontFamily', val)}
+                                        >
+                                            <SelectTrigger className="w-full h-12 rounded-xl bg-background border px-3">
+                                                <SelectValue placeholder="Select Font" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="Inter">Inter (Clean Sans)</SelectItem>
+                                                <SelectItem value="Roboto">Roboto (Neutral)</SelectItem>
+                                                <SelectItem value="Poppins">Poppins (Geometric)</SelectItem>
+                                                <SelectItem value="Playfair Display">Playfair Display (Serif)</SelectItem>
+                                                <SelectItem value="Courier Prime">Courier Prime (Tech/Mono)</SelectItem>
+                                                <SelectItem value="Outfit">Outfit (Modern)</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Base Font Size</Label>
+                                        <div className="flex items-center gap-4 border border-input rounded-xl p-3 bg-background">
+                                            <span className="text-sm font-bold w-6">{parseInt(storeConfig.fontSize)}</span>
+                                            <input
+                                                type="range"
+                                                min="12"
+                                                max="20"
+                                                step="1"
+                                                value={parseInt(storeConfig.fontSize)}
+                                                onChange={(e) => updateConfig('fontSize', `${e.target.value}px`)}
+                                                className="flex-1 accent-black h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                                            />
+                                            <span className="text-xs text-muted-foreground">px</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Theme Picker Modal */}
+                            <Dialog open={isThemeModalOpen} onOpenChange={setIsThemeModalOpen}>
+                                <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto w-full">
+                                    <DialogHeader>
+                                        <DialogTitle>Select a Theme</DialogTitle>
+                                        <DialogDescription>Choose a starting point for your store's design.</DialogDescription>
+                                    </DialogHeader>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+                                        {templates.map((template) => (
+                                            <div
+                                                key={template.id}
+                                                onClick={() => {
+                                                    setSelectedTemplate(template.id);
+                                                    setStoreConfig(prev => ({
+                                                        ...prev,
+                                                        primaryColor: template.defaultColors.primary,
+                                                        accentColor: template.defaultColors.accent
+                                                    }));
+                                                    setIsThemeModalOpen(false);
+                                                    toast.success(`Theme switched to ${template.name}`);
+                                                }}
+                                                className={cn(
+                                                    "relative group cursor-pointer border-2 rounded-xl overflow-hidden transition-all hover:scale-105 active:scale-95",
+                                                    selectedTemplate === template.id ? "border-green-500 ring-2 ring-green-500/20" : "border-transparent"
+                                                )}
+                                            >
+                                                <div className="aspect-video bg-muted relative">
+                                                    <img src={template.image} alt={template.name} className="w-full h-full object-cover" />
+                                                    {selectedTemplate === template.id && (
+                                                        <div className="absolute top-2 right-2 bg-green-500 text-white p-1 rounded-full shadow-lg">
+                                                            <Check size={14} />
+                                                        </div>
+                                                    )}
+                                                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                        <span className="bg-white text-black px-4 py-2 rounded-full font-bold text-sm">Select</span>
+                                                    </div>
+                                                </div>
+                                                <div className="p-3 bg-card">
+                                                    <h4 className="font-bold text-sm">{template.name}</h4>
+                                                    <p className="text-xs text-muted-foreground line-clamp-1">{template.description}</p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </DialogContent>
+                            </Dialog>
+                        </div>
+                    )}
+
+                    {activeTab === "content" && (
+                        <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
+
+                            {/* Hero Section - MOVED HERE */}
+                            <div className="bouteek-card p-6 space-y-4">
+                                <div className="flex items-center gap-2">
+                                    <div className="p-2 bg-blue-100 text-blue-600 rounded-lg"><ImageIcon size={18} /></div>
+                                    <h3 className="font-black text-lg">Hero Section</h3>
+                                </div>
+                                <div className="space-y-4">
+                                    <ImageUpload
+                                        label="Background Image"
+                                        currentImage={storeConfig.heroImage}
+                                        onImageChange={(url) => updateConfig('heroImage', url)}
+                                        maxSizeMB={5}
+                                    />
                                     <div className="space-y-2">
                                         <Label>Headline</Label>
                                         <Input
                                             value={storeConfig.heroTitle}
                                             onChange={(e) => updateConfig('heroTitle', e.target.value)}
                                             className="rounded-xl font-bold"
+                                            placeholder="e.g., New Arrivals"
                                         />
                                     </div>
                                     <div className="space-y-2">
@@ -931,6 +1031,7 @@ function StoreBuilderContent() {
                                             value={storeConfig.heroSubtitle}
                                             onChange={(e) => updateConfig('heroSubtitle', e.target.value)}
                                             className="rounded-xl"
+                                            placeholder="e.g., Discover our latest collection"
                                         />
                                     </div>
                                     <div className="space-y-2">
@@ -939,16 +1040,12 @@ function StoreBuilderContent() {
                                             value={storeConfig.buttonText}
                                             onChange={(e) => updateConfig('buttonText', e.target.value)}
                                             className="rounded-xl"
+                                            placeholder="e.g., Shop Now"
                                         />
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                    )}
-
-                    {activeTab === "content" && (
-                        <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
                             <div className="bouteek-card p-6 space-y-4">
                                 <h3 className="font-black text-lg">About Us Section</h3>
                                 <div className="space-y-4">
