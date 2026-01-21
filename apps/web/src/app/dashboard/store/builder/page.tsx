@@ -31,6 +31,8 @@ import { cn } from "@/lib/utils";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ImageUpload } from "@/components/ui/image-upload";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 
 export default function StoreBuilderPage() {
     return (
@@ -61,15 +63,36 @@ function StoreBuilderContent() {
 
     // Customization State
     const [storeConfig, setStoreConfig] = useState<any>({
+        // Branding
+        logo: "",
+        businessName: "",
+        tagline: "",
+
+        // Colors & Typography
         primaryColor: "#050505",
         secondaryColor: "#ffffff",
         accentColor: "#00FF41",
         fontFamily: "Inter",
         fontSize: "16px",
+
+        // Hero Section
         heroTitle: "New Arrivals",
         heroSubtitle: "Discover our latest collection",
         buttonText: "Shop Now",
         heroImage: "https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=2070&auto=format&fit=crop",
+
+        // About Us Section
+        aboutTitle: "About Us",
+        aboutContent: "We are passionate about bringing you the best products at great prices. Our mission is to make shopping easy and enjoyable.",
+        aboutImage: "",
+
+        // Footer
+        footerTagline: "Your trusted online store",
+        footerAddress: "Dakar, Senegal",
+        footerEmail: "contact@yourstore.com",
+        footerPhone: "+221 77 000 00 00",
+
+        // Other sections
         blogTitle: "Latest from Blog",
         testimonialsTitle: "What People Say",
         testimonialAuthor: "Jane Doe",
@@ -407,9 +430,26 @@ function StoreBuilderContent() {
             <div className="w-full min-h-full bg-white text-foreground" style={containerStyle}>
                 {/* Header */}
                 <header className="px-6 py-4 flex items-center justify-between sticky top-0 bg-white/80 backdrop-blur-md z-10 border-b border-border/10">
-                    <div className="font-black text-xl tracking-tighter" style={{ color: storeConfig.primaryColor }}>LOGO</div>
-                    <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
-                        <ShoppingBag size={14} />
+                    <div className="flex items-center gap-3">
+                        {storeConfig.logo ? (
+                            <img src={storeConfig.logo} alt="Logo" className="h-8 w-auto object-contain" />
+                        ) : (
+                            <div className="font-black text-xl tracking-tighter" style={{ color: storeConfig.primaryColor }}>
+                                {storeConfig.businessName || "LOGO"}
+                            </div>
+                        )}
+                    </div>
+                    <div className="flex items-center gap-4">
+                        <nav className="hidden md:flex gap-6 text-sm font-medium opacity-70">
+                            <span>Home</span>
+                            <span>Shop</span>
+                            {modules.blog && <span>Blog</span>}
+                            <span>About</span>
+                        </nav>
+                        <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center relative">
+                            <ShoppingBag size={14} />
+                            <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white" />
+                        </div>
                     </div>
                 </header>
 
@@ -560,49 +600,82 @@ function StoreBuilderContent() {
 
                 </div>
 
+
+                {/* About Us Section */}
+                {storeConfig.aboutTitle && (
+                    <section className="py-16 px-6 bg-muted/20">
+                        <div className="max-w-4xl mx-auto flex flex-col md:flex-row gap-10 items-center">
+                            <div className="flex-1 space-y-4 text-center md:text-left">
+                                <h2 className="text-3xl font-black" style={{ color: storeConfig.primaryColor }}>{storeConfig.aboutTitle}</h2>
+                                <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">{storeConfig.aboutContent}</p>
+                            </div>
+                            {storeConfig.aboutImage && (
+                                <div className="flex-1 w-full max-w-sm">
+                                    <div className="aspect-[4/5] rounded-3xl overflow-hidden shadow-xl rotate-3 bg-white p-2">
+                                        <img src={storeConfig.aboutImage} alt="About" className="w-full h-full object-cover rounded-2xl" />
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </section>
+                )}
+
                 {/* Footer */}
                 <footer className="bg-black text-white p-10 mt-10">
+                    <div className="grid md:grid-cols-4 gap-8 mb-12">
+                        <div className="md:col-span-2 space-y-4">
+                            {storeConfig.logo ? (
+                                <img src={storeConfig.logo} alt="Logo" className="h-8 w-auto object-contain brightness-0 invert" />
+                            ) : (
+                                <div className="font-black text-2xl tracking-tighter">{storeConfig.businessName || "My Store"}</div>
+                            )}
+                            <p className="opacity-60 text-sm max-w-sm">{storeConfig.footerTagline}</p>
+                        </div>
+
+                        <div>
+                            <h5 className="font-bold mb-4">Contact</h5>
+                            <div className="space-y-2 text-sm opacity-60">
+                                <p>{storeConfig.footerAddress}</p>
+                                <p>{storeConfig.footerEmail}</p>
+                                <p>{storeConfig.footerPhone}</p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h5 className="font-bold mb-4">Links</h5>
+                            <div className="space-y-2 text-sm opacity-60">
+                                <p>Shop All</p>
+                                <p>About Us</p>
+                                <p>Contact</p>
+                            </div>
+                        </div>
+                    </div>
+
                     {/* Social Icons */}
                     {(socialLinks.instagram || socialLinks.snapchat || socialLinks.tiktok) && (
-                        <div className="flex justify-center gap-6 mb-8">
+                        <div className="flex gap-6 mb-8 pt-8 border-t border-white/10">
                             {socialLinks.instagram && (
                                 <a href={socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="opacity-60 hover:opacity-100 transition-opacity">
-                                    <svg viewBox="0 0 24 24" className="w-6 h-6 fill-current"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" /></svg>
+                                    <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" /></svg>
                                 </a>
                             )}
                             {socialLinks.snapchat && (
                                 <a href={socialLinks.snapchat} target="_blank" rel="noopener noreferrer" className="opacity-60 hover:opacity-100 transition-opacity">
-                                    <svg viewBox="0 0 24 24" className="w-6 h-6 fill-current"><path d="M12.206.793c.99 0 4.347.276 5.93 3.821.529 1.193.403 3.219.299 4.847l-.003.06c-.012.18-.022.345-.03.51.075.045.203.09.401.09.3-.016.659-.12 1.033-.301.165-.088.344-.104.464-.104.182 0 .359.029.509.09.45.149.734.479.734.838.015.449-.39.839-1.213 1.168-.089.029-.209.075-.344.119-.45.135-1.139.36-1.333.81-.09.224-.061.524.12.868l.015.015c.06.136 1.526 3.475 4.791 4.014.255.044.435.27.42.509 0 .075-.015.149-.045.225-.24.569-1.273.988-3.146 1.271-.059.091-.12.375-.164.57-.029.179-.074.36-.134.553-.076.271-.27.405-.555.405h-.03c-.135 0-.313-.031-.538-.076-.375-.089-.883-.194-1.513-.194-.6 0-1.05.074-1.336.138-.27.074-.51.18-.72.273-.585.27-1.094.496-2.057.496-1.008 0-1.517-.24-2.057-.496-.21-.104-.449-.198-.72-.273-.285-.064-.735-.138-1.335-.138-.63 0-1.14.105-1.515.194-.225.045-.4.076-.536.076-.33 0-.525-.15-.585-.4-.061-.195-.105-.376-.135-.556-.044-.195-.104-.479-.164-.57-1.87-.283-2.904-.702-3.144-1.271-.03-.076-.046-.15-.046-.225-.015-.24.166-.465.42-.509 3.264-.54 4.73-3.879 4.791-4.02l.016-.029c.18-.345.224-.645.119-.869-.195-.434-.884-.658-1.332-.809-.121-.044-.242-.09-.346-.119-.825-.329-1.228-.719-1.228-1.168 0-.36.284-.689.735-.838.15-.061.328-.09.509-.09.121 0 .3.015.465.104.359.179.715.301.959.301.271 0 .389-.09.445-.119l-.016-.06c-.104-1.627-.225-3.654.3-4.847C7.711 1.069 11.084.793 12.086.793h.12z" /></svg>
+                                    <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M12.206.793c.99 0 4.347.276 5.93 3.821.529 1.193.403 3.219.299 4.847l-.003.06c-.012.18-.022.345-.03.51.075.045.203.09.401.09.3-.016.659-.12 1.033-.301.165-.088.344-.104.464-.104.182 0 .359.029.509.09.45.149.734.479.734.838.015.449-.39.839-1.213 1.168-.089.029-.209.075-.344.119-.45.135-1.139.36-1.333.81-.09.224-.061.524.12.868l.015.015c.06.136 1.526 3.475 4.791 4.014.255.044.435.27.42.509 0 .075-.015.149-.045.225-.24.569-1.273.988-3.146 1.271-.059.091-.12.375-.164.57-.029.179-.074.36-.134.553-.076.271-.27.405-.555.405h-.03c-.135 0-.313-.031-.538-.076-.375-.089-.883-.194-1.513-.194-.6 0-1.05.074-1.336.138-.27.074-.51.18-.72.273-.585.27-1.094.496-2.057.496-1.008 0-1.517-.24-2.057-.496-.21-.104-.449-.198-.72-.273-.285-.064-.735-.138-1.335-.138-.63 0-1.14.105-1.515.194-.225.045-.4.076-.536.076-.33 0-.525-.15-.585-.4-.061-.195-.105-.376-.135-.556-.044-.195-.104-.479-.164-.57-1.87-.283-2.904-.702-3.144-1.271-.03-.076-.046-.15-.046-.225-.015-.24.166-.465.42-.509 3.264-.54 4.73-3.879 4.791-4.02l.016-.029c.18-.345.224-.645.119-.869-.195-.434-.884-.658-1.332-.809-.121-.044-.242-.09-.346-.119-.825-.329-1.228-.719-1.228-1.168 0-.36.284-.689.735-.838.15-.061.328-.09.509-.09.121 0 .3.015.465.104.359.179.715.301.959.301.271 0 .389-.09.445-.119l-.016-.06c-.104-1.627-.225-3.654.3-4.847C7.711 1.069 11.084.793 12.086.793h.12z" /></svg>
                                 </a>
                             )}
                             {socialLinks.tiktok && (
                                 <a href={socialLinks.tiktok} target="_blank" rel="noopener noreferrer" className="opacity-60 hover:opacity-100 transition-opacity">
-                                    <svg viewBox="0 0 24 24" className="w-6 h-6 fill-current"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z" /></svg>
+                                    <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z" /></svg>
                                 </a>
                             )}
                         </div>
                     )}
-                    <div className="grid grid-cols-2 gap-8 mb-8">
-                        <div>
-                            <h5 className="font-bold mb-4">Shop</h5>
-                            <div className="space-y-2 text-sm opacity-60">
-                                <p>All Products</p>
-                                <p>New Arrivals</p>
-                                <p>Featured</p>
-                            </div>
-                        </div>
-                        <div>
-                            <h5 className="font-bold mb-4">Support</h5>
-                            <div className="space-y-2 text-sm opacity-60">
-                                <p>FAQ</p>
-                                <p>Shipping</p>
-                                <p>Returns</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="pt-8 border-t border-white/10 text-center">
-                        <a href="https://bouteek.shop" target="_blank" rel="noopener noreferrer" className="text-xs opacity-40 hover:opacity-70 transition-opacity">
-                            Powered by <span className="font-bold" style={{ color: storeConfig.accentColor }}>Bouteek</span>
+
+                    <div className="pt-8 border-t border-white/10 text-center flex flex-col md:flex-row items-center justify-between gap-4">
+                        <p className="text-xs opacity-40">© {new Date().getFullYear()} {storeConfig.businessName || "My Store"}. All rights reserved.</p>
+                        <a href="https://bouteek.shop" target="_blank" rel="noopener noreferrer" className="text-xs opacity-40 hover:opacity-70 transition-opacity flex items-center gap-1">
+                            Powered by <span className="font-bold">Bouteek</span>
                         </a>
                     </div>
                 </footer>
@@ -626,6 +699,7 @@ function StoreBuilderContent() {
                     {[
                         { id: "templates", icon: LayoutGrid, label: "Templates" },
                         { id: "modules", icon: Layers, label: "Modules" },
+                        { id: "branding", icon: ImageIcon, label: "Branding" },
                         { id: "design", icon: Palette, label: "Design" },
                         { id: "content", icon: Type, label: "Content" }, // Added Content tab
                         { id: "settings", icon: Globe, label: "Settings" },
@@ -646,6 +720,76 @@ function StoreBuilderContent() {
 
                 {/* Content Area Based on Tab */}
                 <div className="flex-1 space-y-6">
+                    {activeTab === "branding" && (
+                        <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
+                            <div className="bouteek-card p-6 space-y-4">
+                                <h3 className="font-black text-lg">Identity</h3>
+                                <div className="space-y-4">
+                                    <ImageUpload
+                                        label="Store Logo"
+                                        currentImage={storeConfig.logo}
+                                        onImageChange={(url) => updateConfig('logo', url)}
+                                        aspectRatio="aspect-square w-24"
+                                    />
+                                    <div className="space-y-2">
+                                        <Label>Business Name</Label>
+                                        <Input
+                                            value={storeConfig.businessName}
+                                            onChange={(e) => updateConfig('businessName', e.target.value)}
+                                            placeholder="My Awesome Store"
+                                            className="rounded-xl font-bold"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Tagline</Label>
+                                        <Input
+                                            value={storeConfig.tagline}
+                                            onChange={(e) => updateConfig('tagline', e.target.value)}
+                                            placeholder="Best products in town"
+                                            className="rounded-xl"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="bouteek-card p-6 space-y-4">
+                                <h3 className="font-black text-lg">Hero Section</h3>
+                                <div className="space-y-4">
+                                    <ImageUpload
+                                        label="Hero Background Image"
+                                        currentImage={storeConfig.heroImage}
+                                        onImageChange={(url) => updateConfig('heroImage', url)}
+                                        maxSizeMB={5}
+                                    />
+                                    <div className="space-y-2">
+                                        <Label>Headline</Label>
+                                        <Input
+                                            value={storeConfig.heroTitle}
+                                            onChange={(e) => updateConfig('heroTitle', e.target.value)}
+                                            className="rounded-xl font-bold"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Subtitle</Label>
+                                        <Input
+                                            value={storeConfig.heroSubtitle}
+                                            onChange={(e) => updateConfig('heroSubtitle', e.target.value)}
+                                            className="rounded-xl"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Button Text</Label>
+                                        <Input
+                                            value={storeConfig.buttonText}
+                                            onChange={(e) => updateConfig('buttonText', e.target.value)}
+                                            className="rounded-xl"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     {activeTab === "templates" && (
                         <div className="space-y-4">
                             {templates.map((template) => (
@@ -806,6 +950,71 @@ function StoreBuilderContent() {
                     {activeTab === "content" && (
                         <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
                             <div className="bouteek-card p-6 space-y-4">
+                                <h3 className="font-black text-lg">About Us Section</h3>
+                                <div className="space-y-4">
+                                    <div className="space-y-2">
+                                        <Label>Section Title</Label>
+                                        <Input
+                                            value={storeConfig.aboutTitle}
+                                            onChange={(e) => updateConfig('aboutTitle', e.target.value)}
+                                            className="rounded-xl"
+                                        />
+                                    </div>
+                                    <RichTextEditor
+                                        label="Content"
+                                        value={storeConfig.aboutContent}
+                                        onChange={(val) => updateConfig('aboutContent', val)}
+                                        placeholder="Tell your story..."
+                                    />
+                                    <ImageUpload
+                                        label="About Image (Optional)"
+                                        currentImage={storeConfig.aboutImage}
+                                        onImageChange={(url) => updateConfig('aboutImage', url)}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="bouteek-card p-6 space-y-4">
+                                <h3 className="font-black text-lg">Footer Content</h3>
+                                <div className="space-y-4">
+                                    <div className="space-y-2">
+                                        <Label>Footer Tagline</Label>
+                                        <Input
+                                            value={storeConfig.footerTagline}
+                                            onChange={(e) => updateConfig('footerTagline', e.target.value)}
+                                            className="rounded-xl"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Address</Label>
+                                        <Input
+                                            value={storeConfig.footerAddress}
+                                            onChange={(e) => updateConfig('footerAddress', e.target.value)}
+                                            className="rounded-xl"
+                                        />
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <Label>Email</Label>
+                                            <Input
+                                                value={storeConfig.footerEmail}
+                                                onChange={(e) => updateConfig('footerEmail', e.target.value)}
+                                                className="rounded-xl"
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>Phone</Label>
+                                            <Input
+                                                value={storeConfig.footerPhone}
+                                                onChange={(e) => updateConfig('footerPhone', e.target.value)}
+                                                className="rounded-xl"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="bouteek-card p-6 space-y-4">
                                 <h3 className="font-black text-lg">Section Titles</h3>
                                 <div className="space-y-4">
                                     <div className="space-y-2">
@@ -821,14 +1030,6 @@ function StoreBuilderContent() {
                                         <Input
                                             value={storeConfig.testimonialsTitle || "What People Say"}
                                             onChange={(e) => updateConfig('testimonialsTitle', e.target.value)}
-                                            className="rounded-xl"
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label>Testimonial Author</Label>
-                                        <Input
-                                            value={storeConfig.testimonialAuthor || "Jane Doe"}
-                                            onChange={(e) => updateConfig('testimonialAuthor', e.target.value)}
                                             className="rounded-xl"
                                         />
                                     </div>
