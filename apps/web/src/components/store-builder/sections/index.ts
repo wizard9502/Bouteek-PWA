@@ -9,13 +9,23 @@ import './FeaturesSection';
 import './CTABannerSection';
 import './VideoSection';
 import './TextBlockSection';
+import './FAQSection';
+import './NewsletterSection';
+import './InstagramFeed';
+import './CountdownTimer';
+import './ContactForm';
 
 // Re-export for direct imports
 export { HeroSection } from './HeroSection';
-export { ListingGrid } from './ListingGrid';
-export { BookingWidget } from './BookingWidget';
-export { TestimonialsSection } from './TestimonialsSection';
 export { FeaturesSection } from './FeaturesSection';
+export { ListingGrid } from './ListingGrid';
+export { TestimonialsSection } from './TestimonialsSection';
 export { CTABannerSection } from './CTABannerSection';
-export { VideoSection } from './VideoSection';
 export { TextBlockSection } from './TextBlockSection';
+export { VideoSection } from './VideoSection';
+export { BookingWidget } from './BookingWidget';
+export { FAQSection } from './FAQSection';
+export { NewsletterSection } from './NewsletterSection';
+export { InstagramFeed } from './InstagramFeed';
+export { CountdownTimer } from './CountdownTimer';
+export { ContactForm } from './ContactForm';

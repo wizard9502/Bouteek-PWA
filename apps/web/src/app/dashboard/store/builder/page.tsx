@@ -50,7 +50,12 @@ function StoreBuilderContent() {
         rentals: false,
         services: false,
         testimonials: false,
-        blog: false
+        blog: false,
+        faq: false,
+        newsletter: false,
+        instagram: false,
+        countdown: false,
+        contact: false
     });
 
 
@@ -60,13 +65,19 @@ function StoreBuilderContent() {
         secondaryColor: "#ffffff",
         accentColor: "#00FF41",
         fontFamily: "Inter",
+        fontSize: "16px",
         heroTitle: "New Arrivals",
         heroSubtitle: "Discover our latest collection",
         buttonText: "Shop Now",
         heroImage: "https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=2070&auto=format&fit=crop",
         blogTitle: "Latest from Blog",
         testimonialsTitle: "What People Say",
-        testimonialAuthor: "Jane Doe"
+        testimonialAuthor: "Jane Doe",
+        faqTitle: "Frequently Asked Questions",
+        newsletterTitle: "Stay Updated",
+        instagramUsername: "@yourstore",
+        countdownTitle: "Limited Time Offer",
+        contactTitle: "Get In Touch"
     });
 
     const [isLoading, setIsLoading] = useState(true);
