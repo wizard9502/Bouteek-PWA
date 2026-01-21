@@ -92,6 +92,8 @@ function StoreBuilderContent() {
         tiktok: ""
     });
 
+    const [merchantProducts, setMerchantProducts] = useState<any[]>([]);
+
     useEffect(() => {
         loadStoreData();
     }, []);
@@ -127,6 +129,18 @@ function StoreBuilderContent() {
                         : storefront.social_links;
                     setSocialLinks(prev => ({ ...prev, ...links }));
                 }
+            }
+
+            // Fetch merchant's actual products
+            if (merchant.id) {
+                const { data: products } = await supabase
+                    .from('listings')
+                    .select('*')
+                    .eq('store_id', merchant.id)
+                    .eq('is_active', true)
+                    .limit(8);
+
+                setMerchantProducts(products || []);
             }
         } catch (error) {
             console.error("Error loading store data:", error);
@@ -438,15 +452,36 @@ function StoreBuilderContent() {
                                 "grid gap-4",
                                 selectedTemplate === 'grid_masonry' ? "grid-cols-2" : "grid-cols-2 md:grid-cols-4"
                             )}>
-                                {[1, 2, 3, 4].map(i => (
-                                    <div key={i} className="group cursor-pointer">
-                                        <div className="aspect-[3/4] bg-muted rounded-2xl mb-3 overflow-hidden">
-                                            <div className="w-full h-full bg-gray-100 group-hover:scale-105 transition-transform duration-500" />
+                                {merchantProducts.length > 0 ? (
+                                    merchantProducts.slice(0, 4).map(product => (
+                                        <div key={product.id} className="group cursor-pointer">
+                                            <div className="aspect-[3/4] bg-muted rounded-2xl mb-3 overflow-hidden">
+                                                {product.images && product.images.length > 0 ? (
+                                                    <img
+                                                        src={product.images[0]}
+                                                        alt={product.name}
+                                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                                    />
+                                                ) : (
+                                                    <div className="w-full h-full bg-gray-100 group-hover:scale-105 transition-transform duration-500" />
+                                                )}
+                                            </div>
+                                            <h4 className="font-bold text-sm truncate">{product.name}</h4>
+                                            <p className="text-xs opacity-60">{product.price?.toLocaleString()} XOF</p>
                                         </div>
-                                        <h4 className="font-bold text-sm truncate">Product Name {i}</h4>
-                                        <p className="text-xs opacity-60">15,000 XOF</p>
-                                    </div>
-                                ))}
+                                    ))
+                                ) : (
+                                    // Fallback to placeholders if no products
+                                    [1, 2, 3, 4].map(i => (
+                                        <div key={i} className="group cursor-pointer">
+                                            <div className="aspect-[3/4] bg-muted rounded-2xl mb-3 overflow-hidden">
+                                                <div className="w-full h-full bg-gray-100 group-hover:scale-105 transition-transform duration-500" />
+                                            </div>
+                                            <h4 className="font-bold text-sm truncate">Product Name {i}</h4>
+                                            <p className="text-xs opacity-60">15,000 XOF</p>
+                                        </div>
+                                    ))
+                                )}
                             </div>
                         </section>
                     )}
