@@ -235,15 +235,15 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
                         size="icon"
                         className="rounded-full bg-muted/50 transition-colors"
                         onClick={async () => {
-                            const modes = ['light', 'dark', 'pink', 'purple', 'ocean', 'luxury', 'sunset'];
-                            const next = modes[(modes.indexOf(theme || 'light') + 1) % modes.length];
-                            setTheme(next);
+                            // Only toggle between light and dark
+                            const newTheme = theme === 'dark' ? 'light' : 'dark';
+                            setTheme(newTheme);
                             if (user?.id) {
-                                await supabase.from('merchants').update({ preferred_theme: next }).eq('id', user.id);
+                                await supabase.from('merchants').update({ preferred_theme: newTheme }).eq('id', user.id);
                             }
                         }}
                     >
-                        {theme === "dark" || theme === "luxury" ? <Sun size={20} /> : <Moon size={20} />}
+                        {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
                     </Button>
                     <Button variant="ghost" size="icon" className="rounded-full bg-muted/50">
                         <Bell size={20} />

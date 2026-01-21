@@ -1,2 +1,10 @@
 node_modules
 .vercel
+.env*.local
+.turbo
+dist
+build
+.next
+out
+*.log
+.DS_Store

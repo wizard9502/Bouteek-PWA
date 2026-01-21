@@ -89,7 +89,7 @@ export default function SettingsPage() {
             }
         } catch (error: any) {
             console.error('Error fetching profile:', error);
-            toast.error("Failed to load profile");
+            toast.error(t("finance.load_error") || "Failed to load profile");
         } finally {
             setLoading(false);
         }
@@ -129,7 +129,7 @@ export default function SettingsPage() {
             const cleanSlug = slug.toLowerCase().trim();
 
             if (reservedSlugs.includes(cleanSlug)) {
-                toast.error("This store URL is reserved. Please choose another one.");
+                toast.error(t("settings.url_reserved"));
                 setSaving(false);
                 return;
             }
@@ -209,10 +209,10 @@ export default function SettingsPage() {
                 if (pmError) throw pmError;
             }
 
-            toast.success(t("settings.save_changes") + " ✅");
+            toast.success(t("settings.save_success") + " ✅");
         } catch (error: any) {
             console.error(error);
-            toast.error(error.message || "Failed to save settings");
+            toast.error(error.message || t("settings.save_error"));
         } finally {
             setSaving(false);
         }
@@ -252,7 +252,7 @@ export default function SettingsPage() {
                                     value={slug}
                                     onChange={e => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
                                     className="border-none bg-transparent h-10 font-bold focus-visible:ring-0 px-0 w-full text-right"
-                                    placeholder="your-store"
+                                    placeholder={t("settings.placeholder_slug")}
                                     required
                                 />
                                 <span className="text-muted-foreground text-xs font-bold pr-3">.bouteek.shop</span>
@@ -319,7 +319,7 @@ export default function SettingsPage() {
                         <div className="space-y-4">
                             <Label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest">
                                 <Instagram size={18} className="text-pink-500" />
-                                Instagram Handle
+                                {t("settings.instagram")}
                             </Label>
                             <Input
                                 value={instagram}
@@ -332,7 +332,7 @@ export default function SettingsPage() {
                         <div className="space-y-4">
                             <Label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest">
                                 <Music size={18} className="text-black dark:text-white" />
-                                TikTok Handle
+                                {t("settings.tiktok")}
                             </Label>
                             <Input
                                 value={tiktok}
@@ -345,7 +345,7 @@ export default function SettingsPage() {
                         <div className="space-y-4">
                             <Label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest">
                                 <Smartphone size={18} className="text-yellow-500" />
-                                Snapchat Handle
+                                {t("settings.snapchat")}
                             </Label>
                             <Input
                                 value={snapchat}

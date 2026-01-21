@@ -3,13 +3,20 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 
+export interface Section {
+    id: string;
+    type: string;
+    enabled: boolean;
+    settings: any;
+}
+
 export interface StorefrontData {
     id: string;
     slug: string;
     name: string;
     description?: string;
     live_layout: {
-        sections: any[];
+        sections: Section[];
         theme_settings: any;
         published_at: string;
     } | null;
@@ -21,7 +28,7 @@ export interface StorefrontData {
         contact_phone?: string;
         whatsapp?: string;
     };
-    listings: any[];
+    listings: any[]; // Already used in many places, keeping for now but could be typed later
     payment_methods: any[];
 }
 

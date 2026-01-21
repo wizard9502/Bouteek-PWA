@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { ShoppingCart, Instagram, Star, MapPin, Phone, Clock } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { useTranslation } from "@/contexts/TranslationContext";
 
 interface Listing {
     id: string;
@@ -50,6 +51,7 @@ interface Props {
 }
 
 export default function StorefrontView({ storefront }: Props) {
+    const { t, language, setLanguage } = useTranslation();
     const [listings, setListings] = useState<Listing[]>([]);
     const [selectedItem, setSelectedItem] = useState<Listing | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -141,7 +143,7 @@ export default function StorefrontView({ storefront }: Props) {
                     )}
                     <span className="flex items-center gap-1">
                         <Clock size={14} />
-                        Open Now
+                        {language === 'wo' ? "Ubbi na" : language === 'fr' ? "Ouvert" : "Open Now"}
                     </span>
                 </div>
 
@@ -163,7 +165,7 @@ export default function StorefrontView({ storefront }: Props) {
             {/* Products Grid */}
             <div className="p-4">
                 <h2 className="text-lg font-bold mb-4">
-                    Products ({listings.length})
+                    {t("storefront.success.items")} ({listings.length})
                 </h2>
 
                 {isLoading ? (
@@ -175,7 +177,7 @@ export default function StorefrontView({ storefront }: Props) {
                 ) : listings.length === 0 ? (
                     <div className="text-center py-12 text-gray-500">
                         <ShoppingCart className="mx-auto mb-2 opacity-30" size={48} />
-                        <p>No products available yet</p>
+                        <p>{t("common.empty_inventory")}</p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-2 gap-3">
@@ -261,7 +263,7 @@ export default function StorefrontView({ storefront }: Props) {
 
                                 {/* Payment Options */}
                                 <div className="space-y-3 pt-4 border-t">
-                                    <p className="text-sm font-semibold text-gray-600">Pay with Mobile Money</p>
+                                    <p className="text-sm font-semibold text-gray-600">{t("storefront.checkout.payment")}</p>
 
                                     {storefront.payment_methods?.orange_money?.enabled && (
                                         <div className="flex items-center gap-3 p-3 bg-orange-50 rounded-xl border border-orange-100">
@@ -296,7 +298,7 @@ export default function StorefrontView({ storefront }: Props) {
                                         className="block w-full py-4 rounded-xl text-center font-black text-white"
                                         style={{ backgroundColor: primaryColor }}
                                     >
-                                        Buy Now
+                                        {t("storefront.checkout.checkout")}
                                     </Link>
                                 </div>
                             </div>
@@ -305,10 +307,9 @@ export default function StorefrontView({ storefront }: Props) {
                 )}
             </AnimatePresence>
 
-            {/* Footer */}
             <div className="py-8 px-4 text-center text-sm text-gray-400 border-t mt-8">
                 <p>
-                    Powered by{" "}
+                    {t("storefront.success.powered_by")}{" "}
                     <a
                         href="https://bouteek.shop"
                         className="text-gray-600 hover:text-black transition-colors"
@@ -316,6 +317,30 @@ export default function StorefrontView({ storefront }: Props) {
                         Bouteek
                     </a>
                 </p>
+            </div>
+
+            {/* Language Toggle for Customers */}
+            <div className="fixed bottom-6 right-6 z-[60]">
+                <div className="flex bg-white/80 backdrop-blur-md p-1 rounded-full border shadow-2xl scale-90 md:scale-100">
+                    <button
+                        onClick={() => setLanguage("fr")}
+                        className={cn("px-3 py-1.5 rounded-full text-[10px] font-black transition-all", language === "fr" ? "bg-black text-white" : "text-gray-400")}
+                    >
+                        FR
+                    </button>
+                    <button
+                        onClick={() => setLanguage("en")}
+                        className={cn("px-3 py-1.5 rounded-full text-[10px] font-black transition-all", language === "en" ? "bg-black text-white" : "text-gray-400")}
+                    >
+                        EN
+                    </button>
+                    <button
+                        onClick={() => setLanguage("wo")}
+                        className={cn("px-3 py-1.5 rounded-full text-[10px] font-black transition-all", language === "wo" ? "bg-black text-white" : "text-gray-400")}
+                    >
+                        WO
+                    </button>
+                </div>
             </div>
         </div>
     );

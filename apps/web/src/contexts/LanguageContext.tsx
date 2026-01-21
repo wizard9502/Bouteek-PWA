@@ -3,7 +3,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { translations } from "../lib/translations";
 
-type Language = "fr" | "en";
+type Language = "fr" | "en" | "wo";
 
 interface LanguageContextType {
   language: Language;
@@ -19,7 +19,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Check localStorage for saved language preference
     const saved = localStorage.getItem("bouteek-language") as Language | null;
-    if (saved && (saved === "fr" || saved === "en")) {
+    if (saved && (saved === "fr" || saved === "en" || saved === "wo")) {
       setLanguageState(saved);
     }
   }, []);

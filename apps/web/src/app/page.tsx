@@ -136,7 +136,7 @@ function HomeContent() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 animate-in fade-in duration-300">
           <div className="bg-white rounded-xl p-8 shadow-2xl text-center animate-in scale-in duration-300">
             <h3 className="text-2xl font-bold text-black mb-2">{t_obj.appStore.comingSoon}</h3>
-            <p className="text-gray-600">{language === "fr" ? "Les applications mobiles seront bientôt disponibles." : "Mobile apps will be available soon."}</p>
+            <p className="text-gray-600">{t_obj.landing.mobile_apps_notice}</p>
           </div>
         </div>
       )}
@@ -169,9 +169,15 @@ function HomeContent() {
                 >
                   EN
                 </button>
+                <button
+                  onClick={() => setLanguage("wo")}
+                  className={`px-3 py-1 rounded-full text-[10px] font-black tracking-widest transition-all ${language === "wo" ? "bg-white shadow-sm text-black" : "text-gray-400 hover:text-gray-600"}`}
+                >
+                  WO
+                </button>
               </div>
               <a href="/auth" className="text-sm font-black text-black hover:text-[#00FF41] transition-colors ml-4">
-                {language === "fr" ? "Connexion" : "Log In"}
+                {t_obj.landing.login}
               </a>
               <Button className="h-11 px-8 rounded-full bg-black text-white font-black text-xs uppercase tracking-widest hover:bg-black/90 shadow-xl transition-all" onClick={() => window.location.href = '/auth'}>
                 {t_obj.nav.getStarted}
@@ -193,6 +199,12 @@ function HomeContent() {
                 className={`px-3 py-1 rounded-full text-[10px] font-black transition-all ${language === "en" ? "bg-white shadow-sm text-black" : "text-gray-400"}`}
               >
                 EN
+              </button>
+              <button
+                onClick={() => setLanguage("wo")}
+                className={`px-3 py-1 rounded-full text-[10px] font-black transition-all ${language === "wo" ? "bg-white shadow-sm text-black" : "text-gray-400"}`}
+              >
+                WO
               </button>
             </div>
             <button
@@ -224,7 +236,7 @@ function HomeContent() {
                   {t_obj.nav.getStarted}
                 </Button>
                 <Button variant="outline" className="w-full h-14 rounded-2xl font-black uppercase tracking-widest text-sm" onClick={() => window.location.href = '/auth'}>
-                  {language === "fr" ? "Connexion" : "Log In"}
+                  {t_obj.landing.login}
                 </Button>
               </div>
             </motion.div>
@@ -248,7 +260,7 @@ function HomeContent() {
                 </div>
                 <div className="inline-flex items-center gap-2 bg-[#00FF41]/10 text-[#00FF41] px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest border border-[#00FF41]/20">
                   <Zap size={14} fill="currentColor" />
-                  <span>{language === "fr" ? "Nouvelle Génération d'E-commerce" : "Next Gen E-commerce"}</span>
+                  <span>{t_obj.landing.next_gen}</span>
                 </div>
               </div>
               <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-black mb-8 leading-[0.9] tracking-tighter">
@@ -510,12 +522,12 @@ function HomeContent() {
                 <div className="space-y-6">
                   <div className="text-center">
                     <div className="text-5xl font-bold text-[#00FF41] mb-2">20%</div>
-                    <div className="text-gray-300">{language === "fr" ? "Commission" : "Commission"}</div>
+                    <div className="text-gray-300">{language === 'wo' ? "Komisiõ" : language === "fr" ? "Commission" : "Commission"}</div>
                   </div>
                   <div className="h-px bg-gradient-to-r from-transparent via-[#00FF41] to-transparent"></div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-white mb-2">∞</div>
-                    <div className="text-gray-300">{language === "fr" ? "À vie" : "For Life"}</div>
+                    <div className="text-2xl font-bold text-white mb-2">{language === 'wo' ? "Ba dax" : "∞"}</div>
+                    <div className="text-gray-300">{language === 'wo' ? "Sa dax" : language === "fr" ? "À vie" : "For Life"}</div>
                   </div>
                   <div className="h-px bg-gradient-to-r from-transparent via-[#00FF41] to-transparent"></div>
                   <p className="text-center text-gray-400 text-sm">
@@ -550,9 +562,7 @@ function HomeContent() {
             <p className="text-[#00FF41] font-black uppercase tracking-widest text-xs">Founder & CEO</p>
           </div>
           <p className="text-xl text-gray-700 italic leading-relaxed">
-            "{language === "fr"
-              ? "Notre mission est de donner aux entrepreneurs africains les outils de classe mondiale qu'ils méritent. Bouteek n'est pas juste une application, c'est votre partenaire de croissance."
-              : "Our mission is to empower African entrepreneurs with the world-class tools they deserve. Bouteek is not just an app, it's your growth partner."}"
+            "{t_obj.landing.founder_quote}"
           </p>
         </div>
       </section>
@@ -572,7 +582,7 @@ function HomeContent() {
               <ul className="space-y-2 text-sm">
                 <li><a href="#" className="hover:text-[#00FF41] transition-colors">{t_obj.nav.features}</a></li>
                 <li><a href="#" className="hover:text-[#00FF41] transition-colors">{t_obj.nav.pricing}</a></li>
-                <li><a href="#" className="hover:text-[#00FF41] transition-colors">{language === "fr" ? "Sécurité" : "Security"}</a></li>
+                <li><a href="/security" className="hover:text-[#00FF41] transition-colors">{t_obj.landing.security}</a></li>
               </ul>
             </div>
             <div>

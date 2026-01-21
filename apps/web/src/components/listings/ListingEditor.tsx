@@ -31,6 +31,7 @@ import {
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "@/contexts/TranslationContext";
 
 interface ListingEditorProps {
     listingId?: string;
@@ -38,13 +39,14 @@ interface ListingEditorProps {
 }
 
 const STEP_TITLES = [
-    "Select Type",
-    "Add Media",
-    "Details",
-    "Review"
+    "steps.type",
+    "steps.media",
+    "steps.details",
+    "steps.review"
 ];
 
 export function ListingEditor({ listingId, onComplete }: ListingEditorProps) {
+    const { t } = useTranslation();
     const router = useRouter();
     const [showDraftPrompt, setShowDraftPrompt] = useState(false);
 
@@ -91,7 +93,7 @@ export function ListingEditor({ listingId, onComplete }: ListingEditorProps) {
                     updateField(key as keyof typeof state, value);
                 }
             });
-            toast.success('Draft restored!');
+            toast.success(t("listings.editor.draft_restored"));
         },
     });
 
@@ -143,9 +145,9 @@ export function ListingEditor({ listingId, onComplete }: ListingEditorProps) {
                         <div className="flex items-start gap-3">
                             <Cloud className="text-amber-500 shrink-0 mt-0.5" />
                             <div className="flex-1">
-                                <p className="font-bold text-sm">Draft Found</p>
+                                <p className="font-bold text-sm">{t("listings.editor.draft_found")}</p>
                                 <p className="text-xs text-muted-foreground mt-1">
-                                    You have an unsaved listing from {formatSavedTime()}
+                                    {t("listings.editor.draft_desc")} {formatSavedTime()}
                                 </p>
                                 <div className="flex gap-2 mt-3">
                                     <Button
@@ -153,7 +155,7 @@ export function ListingEditor({ listingId, onComplete }: ListingEditorProps) {
                                         onClick={handleRestoreDraft}
                                         className="rounded-xl bg-amber-500 text-black font-bold"
                                     >
-                                        Restore Draft
+                                        {t("listings.editor.restore_draft")}
                                     </Button>
                                     <Button
                                         size="sm"
@@ -161,7 +163,7 @@ export function ListingEditor({ listingId, onComplete }: ListingEditorProps) {
                                         onClick={handleDiscardDraft}
                                         className="rounded-xl"
                                     >
-                                        Start Fresh
+                                        {t("listings.editor.start_fresh")}
                                     </Button>
                                 </div>
                             </div>
@@ -199,7 +201,7 @@ export function ListingEditor({ listingId, onComplete }: ListingEditorProps) {
                                     "text-[10px] font-bold uppercase tracking-wider",
                                     isActive ? "text-bouteek-green" : "text-muted-foreground"
                                 )}>
-                                    {title}
+                                    {t(`listings.editor.${title}`)}
                                 </span>
                             </button>
                         );
@@ -249,12 +251,12 @@ export function ListingEditor({ listingId, onComplete }: ListingEditorProps) {
                             <div className="space-y-4">
                                 <div className="space-y-2">
                                     <Label className="text-xs font-black uppercase tracking-widest">
-                                        Title
+                                        {t("listings.editor.title")}
                                     </Label>
                                     <Input
                                         value={state.title}
                                         onChange={(e) => updateField('title', e.target.value)}
-                                        placeholder="Give your listing a catchy title"
+                                        placeholder={t("listings.editor.title_placeholder")}
                                         className="h-14 rounded-2xl bg-muted/30 text-lg font-bold"
                                     />
                                     {getFieldError('title') && (
@@ -264,24 +266,24 @@ export function ListingEditor({ listingId, onComplete }: ListingEditorProps) {
 
                                 <div className="space-y-2">
                                     <Label className="text-xs font-black uppercase tracking-widest">
-                                        Description
+                                        {t("listings.editor.description")}
                                     </Label>
                                     <Textarea
                                         value={state.description}
                                         onChange={(e) => updateField('description', e.target.value)}
-                                        placeholder="Describe your listing..."
+                                        placeholder={t("listings.editor.description_placeholder")}
                                         className="min-h-[120px] rounded-2xl bg-muted/30"
                                     />
                                 </div>
 
                                 <div className="space-y-2">
                                     <Label className="text-xs font-black uppercase tracking-widest">
-                                        Category
+                                        {t("listings.editor.category")}
                                     </Label>
                                     <Input
                                         value={state.category}
                                         onChange={(e) => updateField('category', e.target.value)}
-                                        placeholder="e.g. Fashion, Beauty, Electronics"
+                                        placeholder={t("listings.editor.category_placeholder")}
                                         className="h-12 rounded-xl bg-muted/30"
                                     />
                                 </div>
@@ -323,9 +325,9 @@ export function ListingEditor({ listingId, onComplete }: ListingEditorProps) {
                     {currentStep === 4 && (
                         <div className="space-y-6">
                             <div className="text-center space-y-2">
-                                <h2 className="text-2xl font-black">Review & Publish</h2>
+                                <h2 className="text-2xl font-black">{t("listings.editor.review_title")}</h2>
                                 <p className="text-muted-foreground text-sm">
-                                    Make sure everything looks good before publishing
+                                    {t("listings.editor.review_subtitle")}
                                 </p>
                             </div>
 
@@ -341,7 +343,7 @@ export function ListingEditor({ listingId, onComplete }: ListingEditorProps) {
                                         />
                                         {state.media_urls.length > 1 && (
                                             <div className="absolute bottom-3 right-3 px-2 py-1 bg-black/70 rounded-full text-xs text-white font-bold">
-                                                +{state.media_urls.length - 1} more
+                                                +{state.media_urls.length - 1} {t("listings.editor.more_media")}
                                             </div>
                                         )}
                                     </div>
@@ -358,7 +360,7 @@ export function ListingEditor({ listingId, onComplete }: ListingEditorProps) {
                                         {state.module_type}
                                     </span>
 
-                                    <h3 className="text-2xl font-black">{state.title || "Untitled"}</h3>
+                                    <h3 className="text-2xl font-black">{state.title || t("common.untitled")}</h3>
 
                                     {state.description && (
                                         <p className="text-muted-foreground text-sm line-clamp-2">
@@ -400,7 +402,7 @@ export function ListingEditor({ listingId, onComplete }: ListingEditorProps) {
                                                 Deposit: <strong>{(state.metadata as RentalMetadata).deposit_amount.toLocaleString()} XOF</strong>
                                             </span>
                                             {(state.metadata as RentalMetadata).require_id_verification && (
-                                                <span className="text-amber-500 font-bold">🪪 ID Required</span>
+                                                <span className="text-amber-500 font-bold">🪪 {t("common.id_required")}</span>
                                             )}
                                         </div>
                                     )}
@@ -429,8 +431,8 @@ export function ListingEditor({ listingId, onComplete }: ListingEditorProps) {
                                             : "border-border/50"
                                     )}
                                 >
-                                    <p className="font-bold text-sm">Active</p>
-                                    <p className="text-xs text-muted-foreground">Visible to customers</p>
+                                    <p className="font-bold text-sm">{t("common.active")}</p>
+                                    <p className="text-xs text-muted-foreground">{t("store.status_active") || "Visible to customers"}</p>
                                 </button>
 
                                 <button
@@ -443,8 +445,8 @@ export function ListingEditor({ listingId, onComplete }: ListingEditorProps) {
                                             : "border-border/50"
                                     )}
                                 >
-                                    <p className="font-bold text-sm">⭐ Featured</p>
-                                    <p className="text-xs text-muted-foreground">Highlight in store</p>
+                                    <p className="font-bold text-sm">⭐ {t("common.featured") || "Featured"}</p>
+                                    <p className="text-xs text-muted-foreground">{t("store.status_featured") || "Highlight in store"}</p>
                                 </button>
                             </div>
                         </div>
@@ -462,7 +464,7 @@ export function ListingEditor({ listingId, onComplete }: ListingEditorProps) {
                             className="rounded-xl h-12 px-6 font-bold"
                         >
                             <ChevronLeft size={18} className="mr-1" />
-                            Back
+                            {t("common.back")}
                         </Button>
                     )}
 
@@ -471,7 +473,7 @@ export function ListingEditor({ listingId, onComplete }: ListingEditorProps) {
                     {/* Draft indicator */}
                     {isDirty && (
                         <span className="text-xs text-muted-foreground flex items-center gap-1">
-                            <Cloud size={12} /> Draft saved
+                            <Cloud size={12} /> {t("listings.editor.draft_saved")}
                         </span>
                     )}
 
@@ -481,7 +483,7 @@ export function ListingEditor({ listingId, onComplete }: ListingEditorProps) {
                             disabled={!isStepValid}
                             className="rounded-xl h-12 px-8 bg-bouteek-green text-black font-black"
                         >
-                            Next
+                            {t("common.next")}
                             <ChevronRight size={18} className="ml-1" />
                         </Button>
                     ) : (
@@ -493,12 +495,12 @@ export function ListingEditor({ listingId, onComplete }: ListingEditorProps) {
                             {saving ? (
                                 <>
                                     <Loader2 size={18} className="mr-2 animate-spin" />
-                                    Publishing...
+                                    {t("listings.editor.publishing")}
                                 </>
                             ) : (
                                 <>
                                     <Sparkles size={18} className="mr-2" />
-                                    Publish Listing
+                                    {t("listings.editor.publish_listing")}
                                 </>
                             )}
                         </Button>

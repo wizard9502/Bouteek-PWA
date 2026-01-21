@@ -1,4 +1,4 @@
-export type Language = 'en' | 'fr';
+export type Language = 'en' | 'fr' | 'wo';
 
 export const translations = {
   fr: {
@@ -17,6 +17,34 @@ export const translations = {
         today: "Aujourd'hui",
         week: "Cette Semaine",
         month: "Ce Mois"
+      }
+    },
+    common: {
+      total: "Total",
+      save: "Enregistrer",
+      cancel: "Annuler",
+      back: "Retour",
+      search: "Rechercher",
+      loading: "Chargement...",
+      error: "Erreur",
+      delete: "Supprimer",
+      edit: "Modifier",
+      view_site: "Voir le site",
+      in_stock: "En Stock",
+      out_of_stock: "Rupture de Stock",
+      units: "unités",
+      confirm_delete: "Êtes-vous sûr de vouloir supprimer cet élément ?",
+      empty_inventory: "Aucun produit trouvé. Ajoutez votre premier article pour commencer à vendre !",
+      untitled: "Sans Titre",
+      id_required: "ID Requis",
+      active: "Actif",
+      featured: "Mis en Avant",
+      next: "Suivant",
+      charts: {
+        subscriptions: "Abonnements",
+        commissions: "Commissions",
+        merchants_count: "# de Marchands",
+        revenue: "Revenu"
       }
     },
     sidebar: {
@@ -40,7 +68,43 @@ export const translations = {
         all: "Toutes",
         pending: "En Attente",
         paid: "Payées",
-        completed: "Terminées"
+        completed: "Terminées",
+        pending_verification: "Attente Vérification",
+        processing: "En Traitement"
+      },
+      syncing: "Synchronisation des commandes...",
+      no_orders: "Aucune commande trouvée.",
+      new_orders_desc: "Les nouvelles commandes apparaîtront ici automatiquement.",
+      new_order_toast: "Nouvelle commande reçue !",
+      load_error: "Échec du chargement des commandes",
+      status_marked: "Commande marquée comme",
+      guest: "Invité",
+      no_phone: "Pas de téléphone",
+      transaction_id: "ID de Transaction",
+      detail: {
+        customer_info: "Informations Client",
+        address_copied: "Adresse copiée !",
+        phone_copied: "Téléphone copié !",
+        items: "Articles de la Commande",
+        payment_proof: "Preuve de Paiement",
+        approved_success: "Paiement approuvé !",
+        approve_error: "Échec de l'approbation",
+        rejected_success: "Commande rejetée",
+        reject_error: "Échec du rejet",
+        approve_payment: "Approuver le Paiement",
+        reject_payment: "Rejeter le Paiement",
+        mark_completed: "Marquer comme Terminé",
+        rejection_modal: {
+          title: "Motif du Rejet",
+          subtitle: "Sélectionnez un motif pour rejeter ce paiement :",
+          reasons: {
+            incorrect_id: "ID de Transaction Incorrect",
+            amount_mismatch: "Écart de Montant",
+            duplicate: "Paiement en Double",
+            fraud: "Transaction Frauduleuse",
+            customer_request: "Demande du Client"
+          }
+        }
       }
     },
     store: {
@@ -48,7 +112,49 @@ export const translations = {
       subtitle: "Gérez vos produits et votre inventaire.",
       add_product: "Ajouter Produit",
       inventory: "Inventaire",
-      growth_tools: "Outils de Croissance"
+      growth_tools: "Outils de Croissance",
+      search_products: "Rechercher produits...",
+      advanced_filter_coming: "Filtrage avancé bientôt disponible"
+    },
+    storefront: {
+      not_found: "Boutique non trouvée",
+      cart: {
+        title: "Votre Panier",
+        empty: "Votre panier est vide",
+        checkout: "Passer à la caisse"
+      },
+      checkout: {
+        title: "Paiement pour",
+        summary: "Résumé de la commande",
+        details: "Vos Informations",
+        name: "Nom Complet",
+        phone: "Numéro de Téléphone",
+        address: "Adresse de Livraison",
+        payment: "Paiement",
+        payment_instruction: "Envoyez l'argent au numéro vérifié du marchand ci-dessous, puis entrez l'ID de transaction.",
+        no_payment_methods: "Le marchand n'a pas activé les paiements.",
+        transaction_id: "ID de Transaction (Requis)",
+        transaction_placeholder: "Collez le contenu du SMS ou l'ID de transaction ici",
+        transaction_example: "Exemple : 'Trans: 123456... Paiement à Bouteek'",
+        confirm_payment: "Confirmer le Paiement",
+        success_toast: "Commande passée avec succès !",
+        error_tx_id: "Veuillez entrer l'ID de transaction",
+        error_failed: "Échec : ",
+        back_to_store: "Retour à la boutique"
+      },
+      success: {
+        title: "Confirmation de Commande",
+        placed_title: "Commande Passée ! 🎉",
+        placed_desc: "Merci pour votre achat. Le marchand vérifiera votre paiement et traitera votre commande.",
+        order_number: "Numéro de Commande",
+        status: "Statut",
+        items: "Articles",
+        contact_merchant: "Contacter le Marchand",
+        call: "Appeler",
+        whatsapp: "WhatsApp",
+        continue_shopping: "Continuer mes achats",
+        powered_by: "Propulsé par"
+      }
     },
     finance: {
       title: "Finance & Abonnements",
@@ -56,8 +162,6 @@ export const translations = {
       top_up: "Recharger",
       withdraw: "Retirer",
       transactions: "Transactions Récentes",
-      plans: "Abonnements",
-      plans: "Abonnements",
       plans: "Abonnements",
       current_plan: "Plan Actuel",
       optimizer: {
@@ -134,6 +238,14 @@ export const translations = {
       platinum_tier: "Palier Platinum",
       verified: "Vérifié",
       edit_profile: "Modifier Profil",
+      referral_redeem_success: "Code de parrainage utilisé avec succès !",
+      referral_redeem_error: "Erreur lors de l'utilisation du code.",
+      promo_applied: "Code promo appliqué !",
+      chat_loading: "Le chat se charge...",
+      merchant_name_placeholder: "Nom du Marchand",
+      online: "En Ligne",
+      offline: "Hors Ligne",
+      copy_code_success: "Code de parrainage copié !",
       tabs: {
         profile: "Profil & Préférences",
         referrals: "Parrainage"
@@ -173,7 +285,41 @@ export const translations = {
       social_links: "Réseaux Sociaux",
       social_desc: "Liez vos comptes pour augmenter votre visibilité.",
       save_changes: "Enregistrer les Modifications",
-      saving: "Enregistrement..."
+      saving: "Enregistrement...",
+      url_reserved: "Cette URL est réservée. Veuillez en choisir une autre.",
+      placeholder_slug: "votre-boutique",
+      save_success: "Paramètres enregistrés !",
+      save_error: "Échec de l'enregistrement des paramètres",
+      instagram: "Compte Instagram",
+      tiktok: "Compte TikTok",
+      snapchat: "Compte Snapchat"
+    },
+    listings: {
+      editor: {
+        steps: {
+          type: "Type",
+          media: "Média",
+          details: "Détails",
+          review: "Aperçu"
+        },
+        draft_found: "Brouillon Trouvé",
+        draft_desc: "Vous avez une annonce non enregistrée de",
+        restore_draft: "Restaurer le Brouillon",
+        start_fresh: "Recommencer",
+        draft_restored: "Brouillon restauré !",
+        title: "Titre",
+        title_placeholder: "Donnez un titre accrocheur",
+        description: "Description",
+        description_placeholder: "Décrivez votre annonce...",
+        category: "Catégorie",
+        category_placeholder: "ex: Mode, Beauté, Électronique",
+        review_title: "Réviser & Publier",
+        review_subtitle: "Vérifiez que tout est correct avant de publier",
+        more_media: "en plus",
+        publishing: "Publication...",
+        publish_listing: "Publier l'Annonce",
+        draft_saved: "Brouillon enregistré"
+      }
     },
     growth: {
       title: "Outils de Croissance",
@@ -296,6 +442,33 @@ export const translations = {
       terms: "Conditions",
       cookies: "Cookies",
       copyright: "Tous droits réservés."
+    },
+    admin: {
+      audit: {
+        title: "Logs d'Audit",
+        subtitle: "Sécurité du système et historique des actions.",
+        table: {
+          admin: "Admin",
+          action: "Action",
+          target: "Cible",
+          details: "Détails",
+          time: "Temps"
+        },
+        loading: "Chargement des logs d'audit...",
+        no_logs: "Aucun log trouvé."
+      }
+    },
+    store_home: {
+      welcome: "Bienvenue sur Bouteek",
+      tagline: "Le moyen le plus simple de vendre en ligne au Sénégal",
+      not_found: "Boutique non trouvée | Bouteek"
+    },
+    landing: {
+      login: "Connexion",
+      mobile_apps_notice: "Les applications mobiles seront bientôt disponibles.",
+      next_gen: "Nouvelle Génération d'E-commerce",
+      security: "Sécurité",
+      founder_quote: "Notre mission est de donner aux entrepreneurs africains les outils de classe mondiale qu'ils méritent. Bouteek n'est pas juste une application, c'est votre partenaire de croissance."
     }
   },
   en: {
@@ -314,6 +487,34 @@ export const translations = {
         today: "Today",
         week: "This Week",
         month: "This Month"
+      }
+    },
+    common: {
+      total: "Total",
+      save: "Save",
+      cancel: "Cancel",
+      back: "Back",
+      search: "Search",
+      loading: "Loading...",
+      error: "Error",
+      delete: "Delete",
+      edit: "Edit",
+      view_site: "View Site",
+      in_stock: "In Stock",
+      out_of_stock: "Out of Stock",
+      units: "units",
+      confirm_delete: "Are you sure you want to delete this item?",
+      empty_inventory: "No products found. Add your first item to start selling!",
+      untitled: "Untitled",
+      id_required: "ID Required",
+      active: "Active",
+      featured: "Featured",
+      next: "Next",
+      charts: {
+        subscriptions: "Subscriptions",
+        commissions: "Commissions",
+        merchants_count: "# of Merchants",
+        revenue: "Revenue"
       }
     },
     sidebar: {
@@ -337,7 +538,43 @@ export const translations = {
         all: "All",
         pending: "Pending",
         paid: "Paid",
-        completed: "Completed"
+        completed: "Completed",
+        pending_verification: "Pending Verification",
+        processing: "Processing"
+      },
+      syncing: "Syncing Orders...",
+      no_orders: "No orders found.",
+      new_orders_desc: "New orders will appear here automatically.",
+      new_order_toast: "New order received!",
+      load_error: "Failed to load orders",
+      status_marked: "Order marked as",
+      guest: "Guest",
+      no_phone: "No phone",
+      transaction_id: "Transaction ID",
+      detail: {
+        customer_info: "Customer Information",
+        address_copied: "Address copied!",
+        phone_copied: "Phone copied!",
+        items: "Order Items",
+        payment_proof: "Payment Proof",
+        approved_success: "Payment approved!",
+        approve_error: "Failed to approve payment",
+        rejected_success: "Order rejected",
+        reject_error: "Failed to reject order",
+        approve_payment: "Approve Payment",
+        reject_payment: "Reject Payment",
+        mark_completed: "Mark as Completed",
+        rejection_modal: {
+          title: "Rejection Reason",
+          subtitle: "Select a reason for rejecting this payment:",
+          reasons: {
+            incorrect_id: "Incorrect Transaction ID",
+            amount_mismatch: "Amount Mismatch",
+            duplicate: "Duplicate Payment",
+            fraud: "Fraudulent Transaction",
+            customer_request: "Customer Request"
+          }
+        }
       }
     },
     store: {
@@ -345,7 +582,49 @@ export const translations = {
       subtitle: "Manage your products and inventory.",
       add_product: "Add Product",
       inventory: "Inventory",
-      growth_tools: "Growth Tools"
+      growth_tools: "Growth Tools",
+      search_products: "Search products...",
+      advanced_filter_coming: "Advanced filtering coming soon"
+    },
+    storefront: {
+      not_found: "Store not found",
+      cart: {
+        title: "Your Cart",
+        empty: "Your cart is empty",
+        checkout: "Checkout"
+      },
+      checkout: {
+        title: "Checkout for",
+        summary: "Order Summary",
+        details: "Your Details",
+        name: "Full Name",
+        phone: "Phone Number",
+        address: "Delivery Address",
+        payment: "Payment",
+        payment_instruction: "Send money to the verified merchant number below, then enter the Transaction ID.",
+        no_payment_methods: "Merchant has not enabled payments.",
+        transaction_id: "Transaction ID (Required)",
+        transaction_placeholder: "Paste SMS content or Trans ID here",
+        transaction_example: "Example: 'Trans: 123456... Payment to Bouteek'",
+        confirm_payment: "Confirm Payment",
+        success_toast: "Order placed successfully!",
+        error_tx_id: "Please enter the Transaction ID",
+        error_failed: "Failed: ",
+        back_to_store: "Back to Store"
+      },
+      success: {
+        title: "Order Confirmation",
+        placed_title: "Order Placed! 🎉",
+        placed_desc: "Thank you for your purchase. The merchant will verify your payment and process your order.",
+        order_number: "Order Number",
+        status: "Status",
+        items: "Items",
+        contact_merchant: "Contact Merchant",
+        call: "Call",
+        whatsapp: "WhatsApp",
+        continue_shopping: "Continue Shopping",
+        powered_by: "Powered by"
+      }
     },
     finance: {
       title: "Finance & Subscriptions",
@@ -353,8 +632,6 @@ export const translations = {
       top_up: "Top Up",
       withdraw: "Withdraw",
       transactions: "Recent Transactions",
-      plans: "Plans",
-      plans: "Plans",
       plans: "Plans",
       current_plan: "Current Plan",
       optimizer: {
@@ -431,6 +708,14 @@ export const translations = {
       platinum_tier: "Platinum Tier",
       verified: "Verified",
       edit_profile: "Edit Profile",
+      referral_redeem_success: "Referral code redeemed successfully!",
+      referral_redeem_error: "Error redeeming code.",
+      promo_applied: "Promo code applied!",
+      chat_loading: "Chat is loading...",
+      merchant_name_placeholder: "Merchant Name",
+      online: "Online",
+      offline: "Offline",
+      copy_code_success: "Referral code copied!",
       tabs: {
         profile: "Profile & Settings",
         referrals: "Referrals"
@@ -469,7 +754,41 @@ export const translations = {
       social_links: "Social Links",
       social_desc: "Link your accounts to increase visibility.",
       save_changes: "Save Changes",
-      saving: "Saving..."
+      saving: "Saving...",
+      url_reserved: "This store URL is reserved. Please choose another one.",
+      placeholder_slug: "your-store",
+      save_success: "Settings saved!",
+      save_error: "Failed to save settings",
+      instagram: "Instagram Handle",
+      tiktok: "TikTok Handle",
+      snapchat: "Snapchat Handle"
+    },
+    listings: {
+      editor: {
+        steps: {
+          type: "Select Type",
+          media: "Add Media",
+          details: "Details",
+          review: "Review"
+        },
+        draft_found: "Draft Found",
+        draft_desc: "You have an unsaved listing from",
+        restore_draft: "Restore Draft",
+        start_fresh: "Start Fresh",
+        draft_restored: "Draft restored!",
+        title: "Title",
+        title_placeholder: "Give your listing a catchy title",
+        description: "Description",
+        description_placeholder: "Describe your listing...",
+        category: "Category",
+        category_placeholder: "e.g. Fashion, Beauty, Electronics",
+        review_title: "Review & Publish",
+        review_subtitle: "Make sure everything looks good before publishing",
+        more_media: "more",
+        publishing: "Publishing...",
+        publish_listing: "Publish Listing",
+        draft_saved: "Draft saved"
+      }
     },
     growth: {
       title: "Growth Tools",
@@ -592,6 +911,499 @@ export const translations = {
       terms: "Terms",
       cookies: "Cookies",
       copyright: "All rights reserved."
+    },
+    admin: {
+      audit: {
+        title: "Audit Logs",
+        subtitle: "System security and action trail.",
+        table: {
+          admin: "Admin",
+          action: "Action",
+          target: "Target",
+          details: "Details",
+          time: "Time"
+        },
+        loading: "Loading audit logs...",
+        no_logs: "No logs found."
+      }
+    },
+    store_home: {
+      welcome: "Welcome to Bouteek",
+      tagline: "The easiest way to sell online in Senegal",
+      not_found: "Store Not Found | Bouteek"
+    },
+    landing: {
+      login: "Log In",
+      mobile_apps_notice: "Mobile apps will be available soon.",
+      next_gen: "Next Gen E-commerce",
+      security: "Security",
+      founder_quote: "Our mission is to empower African entrepreneurs with the world-class tools they deserve. Bouteek is not just an app, it's your growth partner."
+    }
+  },
+  wo: {
+    dashboard: {
+      title: "Xibaaru Butik",
+      hello_merchant: "Salaamaleikum, Marcand bi 👋",
+      subtitle: "Li mu ngi xéw ci sa butik tay ji.",
+      search_placeholder: "Seet ndimbal, liggéey...",
+      quick_operations: "Liggéey yu gaaw",
+      revenue_card: {
+        total_revenue: "Lépp lu mu indi",
+        withdraw: "Jële xaalis",
+        balance: "Sa xaalis"
+      },
+      stats: {
+        today: "Tay",
+        week: "Seméen bi",
+        month: "Wér wi"
+      }
+    },
+    common: {
+      total: "Lépp",
+      save: "Samm",
+      cancel: "Bàyyi",
+      back: "Dellu gannaaw",
+      search: "Seet",
+      loading: "Mu ngi ñëw...",
+      error: "Njuumte",
+      delete: "Far",
+      edit: "Soppi",
+      view_site: "Seet butik bi",
+      in_stock: "Am na",
+      out_of_stock: "Jeex na",
+      units: "unités",
+      confirm_delete: "Ndax dëgg la nga bëgg far li ?",
+      empty_inventory: "Amul leneen. Dugalal sa bu jëkk !",
+      untitled: "Amul tur",
+      id_required: "ID laaj na",
+      active: "Mu ngi dox",
+      featured: "Li gën",
+      next: "Kananam",
+      charts: {
+        subscriptions: "Abonnement",
+        commissions: "Commission",
+        merchants_count: "# Marcand",
+        revenue: "Xaalis"
+      }
+    },
+    sidebar: {
+      dashboard: "Xibaaru Butik",
+      store: "Butik",
+      orders: "Ndimbal",
+      finance: "Xaalis",
+      profile: "Profil",
+      subscription: "Abonnement",
+      settings: "Melo",
+      referrals: "Parrainage",
+      logout: "Génn",
+      storage: "Suqaliku"
+    },
+    orders: {
+      title: "Ndimbal yi",
+      subtitle: "Saytul sa ndimbal kiliyã yi.",
+      tabs: {
+        all: "Lépp",
+        pending: "Mu ngi xaar",
+        paid: "Fay na",
+        completed: "Pare na",
+        pending_verification: "Saytu bi",
+        processing: "Mu ngi dox"
+      },
+      syncing: "Mu ngi may xaar...",
+      no_orders: "Gisu ma ndimbal.",
+      new_orders_desc: "Ndimbal yu bees yi fi lañuy ñëw.",
+      new_order_toast: "Ndimbal bu bees ñëw na!",
+      load_error: "Manoon mako giss",
+      status_marked: "Ndimbal bi pare na ni",
+      guest: "Gan",
+      no_phone: "Amul téléfoon",
+      transaction_id: "Nimaro natt bi",
+      detail: {
+        customer_info: "Xibaaru kiliyã bi",
+        address_copied: "Adrees bi copi na!",
+        phone_copied: "Téléfoon bi copi na!",
+        items: "Li nga jënd",
+        payment_proof: "Natt bi",
+        approved_success: "Fay bi nangu na!",
+        approve_error: "Manoon mako nangu",
+        rejected_success: "Bañ na ndimbal bi",
+        reject_error: "Manoon mako bañ",
+        approve_payment: "Nangu fay bi",
+        reject_payment: "Bañ fay bi",
+        mark_completed: "Pare na",
+        rejection_modal: {
+          title: "Lu tax nga bañ",
+          subtitle: "Tannal lu tax nga bañ fay bi :",
+          reasons: {
+            incorrect_id: "Nimaro natt bi baaxul",
+            amount_mismatch: "Xaalis bi eméwul",
+            duplicate: "Fay bi ñaar la",
+            fraud: "Nax la",
+            customer_request: "Kiliyã bi ko laaj"
+          }
+        }
+      }
+    },
+    store: {
+      title: "Saytul Butik bi",
+      subtitle: "Saytul sa liggéey ak sa stock.",
+      add_product: "Dugal liggéey",
+      inventory: "Stock",
+      growth_tools: "Liggéey yu koy magal",
+      search_products: "Seet liggéey...",
+      advanced_filter_coming: "Seet bu gën mu ngi ñëw"
+    },
+    storefront: {
+      not_found: "Butik bi gisu ma ko",
+      cart: {
+        title: "Sa sàqu",
+        empty: "Sa sàqu fëssul",
+        checkout: "Fay dëggu"
+      },
+      checkout: {
+        title: "Fay pour",
+        summary: "Li nga jënd",
+        details: "Sa xibaar",
+        name: "Sa tur lépp",
+        phone: "Sa téléfoon",
+        address: "Fi ñu koy yóobbu",
+        payment: "Fay bi",
+        payment_instruction: "Yóonéel xaalis bi ci nimaro bi, ba pare dugal nimaro natt bi.",
+        no_payment_methods: "Marcand bi itéulul fay bi.",
+        transaction_id: "Nimaro natt bi (laaj na)",
+        transaction_placeholder: "Dugalal nimaro natt bi fi",
+        transaction_example: "Misal : 'Trans: 123456...'",
+        confirm_payment: "Barkéel fay bi",
+        success_toast: "Ndimbal bi dem na!",
+        error_tx_id: "Dugalal nimaro natt bi",
+        error_failed: "Demul : ",
+        back_to_store: "Dellu ci butik bi"
+      },
+      success: {
+        title: "Ndimbal bi baax na",
+        placed_title: "Baax na! 🎉",
+        placed_desc: "Jërëjëf. Marcand bi dana saytu sa fay bi.",
+        order_number: "Nimaro ndimbal",
+        status: "Melo",
+        items: "Liggéey yi",
+        contact_merchant: "Woxal marcand bi",
+        call: "Wox",
+        whatsapp: "WhatsApp",
+        continue_shopping: "Dellu jëndaat",
+        powered_by: "Ligéeyu"
+      }
+    },
+    finance: {
+      title: "Xaalis ak Abonnement",
+      available_balance: "Xaalis bi nga am",
+      top_up: "Dugal xaalis",
+      withdraw: "Jële xaalis",
+      transactions: "Liggéey yu mujj",
+      plans: "Abonnement",
+      current_plan: "Li nga am nii",
+      optimizer: {
+        title: "Seet sa magal",
+        subtitle: "Gëstayal sa volume de vente (V)",
+        est_cost: "Li mu lay jar lépp",
+        save: "Economisé",
+        base: "Base",
+        comm: "Comm.",
+        best_value: "Lu gën",
+        month: "wér"
+      },
+      tabs: {
+        overview: "Lépp",
+        subscription: "Abonnement"
+      },
+      analytics: "Analytique",
+      transfer: "Transfert",
+      history_title: "Historique",
+      see_all: "Seet lépp",
+      paydunya: "PayDunya",
+      amount_topup: "Montant",
+      pay: "Fay",
+      sub_manager: {
+        title: "Tannal Plan",
+        subtitle: "Tannal plan bu gën pour sa butik.",
+        configure: "Ligallaat",
+        cycle: "Facturation",
+        month: "Wér",
+        months: "Wér",
+        save: "Economisé",
+        auto_renew: "Renouvellement Auto",
+        auto_renew_desc: "Dina fay boppam pour butik bi bañu taxaw.",
+        current_balance: "Sa xaalis tay",
+        order_summary: "Résumé",
+        discount: "Réduction",
+        total: "Lépp",
+        confirm: "Nangu Abonnement",
+        insufficient: "Sa xaalis eméwul.",
+        success: "Abonnement baax na!"
+      }
+    },
+    profile: {
+      title: "Profil Marcand",
+      preferences: "Lu la gënël",
+      dark_mode: "Melo mu gudd",
+      language: "Lakk",
+      support: "Ndimbal",
+      notifications: "Notes",
+      appearance: "Melo",
+      themes: {
+        light: "Leer",
+        dark: "Lëndëm",
+        pink: "Bouteek Pink",
+        purple: "Royal",
+        ocean: "Géej",
+        luxury: "Luxe",
+        sunset: "Sunset"
+      },
+      referral_title: "Parrainage",
+      referral_desc: "Defal sa code pour invité ñéneen.",
+      redeem_referral: "Utilisé Code Parrainage",
+      promo_code: "Code Promo",
+      promo_desc: "Dugalal code promo pour réduction.",
+      social_support: "Social & Ndimbal",
+      connect_ig: "Instagram",
+      connect_tt: "TikTok",
+      connect_sc: "Snapchat",
+      live_chat: "Chat",
+      live_chat_desc: "Woxal ak ñun léegi.",
+      start_chat: "Dóore wox bi",
+      sign_out: "Génn",
+      trust_score: "Score de Confiance",
+      platinum_tier: "Palier Platinum",
+      verified: "Vérifié",
+      edit_profile: "Soppi Profil",
+      referral_redeem_success: "Code bi baax na!",
+      referral_redeem_error: "Code bi baaxul.",
+      promo_applied: "Promo code baax na!",
+      chat_loading: "Chat bi mu ngi ñëw...",
+      merchant_name_placeholder: "Tur Marcand bi",
+      online: "Mu ngi ci nekk",
+      offline: "Nekkul ci nekk",
+      copy_code_success: "Code bi né na copi!",
+      tabs: {
+        profile: "Profil & Melo",
+        referrals: "Parrainage"
+      },
+      referral_hero: {
+        grow: "Magal Ànd",
+        title: "Tabaxal sa empire ak",
+        code_label: "Sa Code Parrainage",
+        set_btn: "DEFAL"
+      },
+      stats: {
+        total: "Lépp Parrainage",
+        pending: "Xaalis bi ci kanamam"
+      },
+      table: {
+        title: "Sa Filleul yi",
+        merchant: "Marcand",
+        plan: "Plan",
+        joined: "Duggu na",
+        status: "Melo",
+        active: "Dox na",
+        empty: "Amul kénn. Partagéel sa code !"
+      }
+    },
+    settings: {
+      title: "Melo Butik",
+      general: "Xibaaru Butik",
+      business_name: "Tur Butik bi",
+      store_slug: "Lien Butik bi",
+      referral_code: "Code Parrainage",
+      referral_desc: "Partagéel code bi pour am 20% commission.",
+      payment_methods: "Fay bi",
+      payments_desc: "Dugalal nimaro yi pour fay bi.",
+      wave_number: "Nimaro Wave",
+      om_number: "Nimaro Orange Money",
+      social_links: "Lien Social",
+      social_desc: "Defal sa lien pour ñu gën la giss.",
+      save_changes: "Samm soppi yi",
+      saving: "Mu ngi samm...",
+      url_reserved: "Lien bi am na ko. Tannal leneen.",
+      placeholder_slug: "sa-butik",
+      save_success: "Samm na ko!",
+      save_error: "Samm bi demul",
+      instagram: "Instagram",
+      tiktok: "TikTok",
+      snapchat: "Snapchat"
+    },
+    listings: {
+      editor: {
+        steps: {
+          type: "Tannal",
+          media: "Média",
+          details: "Details",
+          review: "Aperçu"
+        },
+        draft_found: "Brouillon am na",
+        draft_desc: "Am nga liggéey bu mu ngi fi :",
+        restore_draft: "Dellusi Brouillon",
+        start_fresh: "Dóoraat",
+        draft_restored: "Dellusi na!",
+        title: "Tur",
+        title_placeholder: "Defal tur bu neex",
+        description: "Description",
+        description_placeholder: "Woxal li nga bëgg jaay...",
+        category: "Catégorie",
+        category_placeholder: "ex: Mode, Beauté...",
+        review_title: "Saytu & Publié",
+        review_subtitle: "Seetal ndax lépp baax na",
+        more_media: "en plus",
+        publishing: "Publication...",
+        publish_listing: "Publié Liggéey bi",
+        draft_saved: "Brouillon samm na"
+      }
+    },
+    growth: {
+      title: "Liggéeyu Magal",
+      seo: "SEO",
+      seo_desc: "Saytul meta tags.",
+      heatmaps: "Heatmaps",
+      heatmaps_desc: "Analytique visuelle.",
+      collaboration: "Collaboration",
+      collaboration_desc: "Saytul sa personnel.",
+      builder: "Constructeur",
+      builder_desc: "Personnalisé sa butik.",
+      inventory_sync: "Sync Stock",
+      inventory_sync_desc: "Sync multi-canaux.",
+      promotions: "Promotions",
+      promotions_desc: "Saytul sa campagne yi.",
+      reviews: "Avis Kiliyã",
+      reviews_desc: "Woyal sa kiliyã yi.",
+      receipts: "Reçu Numérique",
+      receipts_desc: "Defal sa reçu yi."
+    },
+    nav: {
+      features: "Melo",
+      payments: "Fay bi",
+      pricing: "Prix",
+      getStarted: "Dóore"
+    },
+    hero: {
+      title: "Jaayal gën ak Bouteek",
+      subtitle: "Liggéey lépp-ci-biir pour saytul sa njay léegi. Fay Wave ak Orange Money mu ngi ci biir.",
+      cta1: "Tabax sa butik",
+      cta2: "Seet démo",
+      benefit1: "2 minutes lépp pare",
+      benefit2: "Fay Wave & OM",
+      benefit3: "Amul frais ñuy la nax"
+    },
+    features: {
+      title: "Lépp lu nga laaj",
+      subtitle: "Liggéey yu néex pour saytul sa liggéey lépp.",
+      feature1: { title: "Site E-commerce", desc: "Sa site bopp mu ngi ñëw boppam." },
+      feature2: { title: "Analytique", desc: "Suital sa kiliyã yi." },
+      feature3: { title: "Gaaw", desc: "Liggéey bu gaaw ci téléfoon." },
+      feature4: { title: "Sécurisé", desc: "Sa xibaar samm na." },
+      feature5: { title: "Néex", desc: "Lépp néex na, amul technique." },
+      feature6: { title: "Ndimbal 24/7", desc: "Ñu ngi fi pour ndimbal." }
+    },
+    testimonials: {
+      title: "Gëm nañuñu",
+      subtitle: "Seetal li marcand yi wox.",
+      name1: "Fatou Diop",
+      role1: "Vendeuse de Mode",
+      testimonial1: "Bouteek soppi na samm liggéey. Mana nangu Wave dëggu!",
+      name2: "Amadou Sow",
+      role2: "Restaurateur",
+      testimonial2: "Saytu ndimbal yi néex na trop. Ma ngi leen di nuyu.",
+      name3: "Aissa Thiam",
+      role3: "Cosmétique Bio",
+      testimonial3: "Samm kiliyã yi bëgg nañu samm site. Jërëjëf Bouteek!"
+    },
+    pricing: {
+      title: "Prix yu leer",
+      subtitle: "Tannal plan bi lay gënële.",
+      starter: "Dóore",
+      starterDesc: "Pour dóore ndank.",
+      launch: "Lancement",
+      launchDesc: "Pour butik yi mag.",
+      growth: "Croissance",
+      growthDesc: "Pour liggéey yu taxaw.",
+      pro: "Pro",
+      proDesc: "Pour liggéey yu bari.",
+      perMonth: "/wér",
+      getStartedBtn: "Tannal plan bi",
+      features: {
+        starter: ["10 liggéey", "Site web basique", "Fay mobile"],
+        launch: ["50 liggéey", "Personnalisation", "Analytique", "Ndimbal email"],
+        growth: ["Liggéey lépp", "Tur butik gratis", "Analytique bu gën", "Support prioritaire"],
+        pro: ["Lépp illimité", "API access", "Gestionnaire bopp", "Support 24/7"]
+      }
+    },
+    payments: {
+      title: "Fay yu néex",
+      subtitle: "Nangu lépp fay local amul problème.",
+      wave: "Wave",
+      waveDesc: "Fay gaaw dëggu.",
+      orange: "Orange Money",
+      orangeDesc: "Nangu OM yi néex na.",
+      flowTitle: "Naka lay doxé ?",
+      flow1: "Kiliyã bi jënd na",
+      flow2: "Mu tann Wave wala OM",
+      flow3: "Nga am sa xaalis",
+      flow4: "Nga yóobbu liggéey bi"
+    },
+    cta: {
+      title: "Ndax pare nga ?",
+      subtitle: "Àndal ak marcand yu beuri yi jaay néex ak Bouteek.",
+      button: "Defal sa compte gratis",
+      note: "Carte bancaire laajul"
+    },
+    referral: {
+      title: "Programme Parrainage",
+      subtitle: "Amal xaalis li nga invité ñéneen.",
+      benefit1: "Commission yi muy dinka",
+      benefit2: "Fay wér wu nekk",
+      benefit3: "Dashboard bopp",
+      cta: "Ànd ak ñun",
+      description: "Invitéél marcand yi, am 20% ci li ñuy fay à vie."
+    },
+    appStore: {
+      comingSoon: "Mu ngi ñëw léegi"
+    },
+    footer: {
+      tagline: "Lépp pour commerce ci Afrique.",
+      product: "Liggéey",
+      company: "Société",
+      legal: "Légal",
+      about: "Ci ñun",
+      blog: "Blog",
+      contact: "Woxal ñun",
+      privacy: "Confidentialité",
+      terms: "Conditions",
+      cookies: "Cookies",
+      copyright: "Lépp samm na."
+    },
+    admin: {
+      audit: {
+        title: "Logs d'Audit",
+        subtitle: "Sécurité ak historique.",
+        table: {
+          admin: "Admin",
+          action: "Liggéey",
+          target: "Ci kanam",
+          details: "Détails",
+          time: "Waqtu"
+        },
+        loading: "Mu ngi may xaar...",
+        no_logs: "Gisu ma logs."
+      }
+    },
+    store_home: {
+      welcome: "Dalal jàmm ci Bouteek",
+      tagline: "Bi gën pour jaay ci internet ci Sénégal",
+      not_found: "Butik bi gisu ma ko | Bouteek"
+    },
+    landing: {
+      login: "Duggu",
+      mobile_apps_notice: "App mobile yi ñu ngi ñëw léegi.",
+      next_gen: "Liggéeyu jaay yu bees",
+      security: "Kàrrange",
+      founder_quote: "Sunu yéene mooy jox marcand yu Afrique yi liggéey yu kotté yu ñu yelloo. Bouteek du app rek, sa àndandoo magal la."
     }
   }
 };

@@ -114,11 +114,11 @@ function ProfileSettings({ theme, setTheme }: { theme: string | undefined, setTh
                 data: { referral_code_used: redeemCode }
             });
             if (error) throw error;
-            toast.success(language === 'fr' ? "Code de parrainage utilisé avec succès !" : "Referral code redeemed successfully!");
+            toast.success(t("profile.referral_redeem_success"));
             setRedeemCode("");
         } catch (error) {
             console.error(error);
-            toast.error("Error redeeming code.");
+            toast.error(t("profile.referral_redeem_error"));
         } finally {
             setIsRedeeming(false);
         }
@@ -126,7 +126,7 @@ function ProfileSettings({ theme, setTheme }: { theme: string | undefined, setTh
 
     const handleApplyPromo = async () => {
         if (!promoCode) return;
-        toast.success(language === 'fr' ? "Code promo appliqué !" : "Promo code applied!");
+        toast.success(t("profile.promo_applied"));
         setPromoCode("");
     };
 
@@ -134,7 +134,7 @@ function ProfileSettings({ theme, setTheme }: { theme: string | undefined, setTh
         if ((window as any).Tawk_API && (window as any).Tawk_API.maximize) {
             (window as any).Tawk_API.maximize();
         } else {
-            toast.info(language === 'fr' ? "Le chat se charge..." : "Chat is loading...");
+            toast.info(t("profile.chat_loading"));
         }
     };
 
@@ -180,13 +180,13 @@ function ProfileSettings({ theme, setTheme }: { theme: string | undefined, setTh
                         </div>
                         <div className="absolute -bottom-4 -right-4 bg-bouteek-green text-black px-4 py-2 rounded-2xl font-black text-xs shadow-xl flex items-center gap-2">
                             <ShieldCheck size={16} />
-                            Verified
+                            {t("profile.verified")}
                         </div>
                     </div>
 
                     <div className="text-center md:text-left flex-1">
                         <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 mb-3">
-                            <h2 className="text-3xl font-black tracking-tight">{merchant?.business_name || "Merchant Name"}</h2>
+                            <h2 className="text-3xl font-black tracking-tight">{merchant?.business_name || t("profile.merchant_name_placeholder")}</h2>
                             <div className="flex items-center gap-1 text-amber-500 bg-amber-500/10 px-3 py-1 rounded-full text-[10px] font-black uppercase mx-auto md:mx-0">
                                 <Star size={12} strokeWidth={3} />
                                 4.9 Rating
@@ -199,7 +199,7 @@ function ProfileSettings({ theme, setTheme }: { theme: string | undefined, setTh
                             </div>
                             <div className="flex items-center gap-2">
                                 <div className="w-2 h-2 rounded-full bg-bouteek-green animate-pulse" />
-                                {language === 'fr' ? "En Ligne" : "Online"}
+                                {t("profile.online")}
                             </div>
                         </div>
 
@@ -252,6 +252,13 @@ function ProfileSettings({ theme, setTheme }: { theme: string | undefined, setTh
                                     className={cn("h-8 rounded-lg px-3 text-[10px] font-black uppercase transition-all", language === 'fr' ? "bg-white shadow-sm text-black" : "text-muted-foreground")}
                                 >
                                     FR
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    onClick={() => setLanguage('wo')}
+                                    className={cn("h-8 rounded-lg px-3 text-[10px] font-black uppercase transition-all", language === 'wo' ? "bg-white shadow-sm text-black" : "text-muted-foreground")}
+                                >
+                                    WO
                                 </Button>
                             </div>
                         </div>
@@ -503,7 +510,7 @@ function ReferralsManager() {
     const copyCode = () => {
         if (!merchant?.referral_code) return;
         navigator.clipboard.writeText(merchant.referral_code);
-        toast.success("Referral code copied!");
+        toast.success(t("profile.copy_code_success"));
     };
     // Lucide icons for ReferralsManager specific
     const { TrendingUp, Copy, Users, Wallet, Gift, Share2, CheckCircle2 } = require("lucide-react");

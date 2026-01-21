@@ -6,9 +6,19 @@ import { supabase } from "@/lib/supabaseClient";
 import { CheckCircle, Package, ArrowLeft, Phone, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { TranslationProvider, useTranslation } from "@/contexts/TranslationContext";
 
 export default function OrderSuccessPage({ params }: { params: Promise<{ domain: string }> }) {
+    return (
+        <TranslationProvider>
+            <OrderSuccessPageContent params={params} />
+        </TranslationProvider>
+    );
+}
+
+function OrderSuccessPageContent({ params }: { params: Promise<{ domain: string }> }) {
     const { domain } = use(params);
+    const { t } = useTranslation();
     const router = useRouter();
     const [order, setOrder] = useState<any>(null);
     const [store, setStore] = useState<any>(null);
@@ -53,9 +63,9 @@ export default function OrderSuccessPage({ params }: { params: Promise<{ domain:
     if (!order) {
         return (
             <div className="min-h-screen flex flex-col items-center justify-center p-6">
-                <p className="text-gray-500 mb-4">Order not found</p>
+                <p className="text-gray-500 mb-4">{t("orders.no_orders")}</p>
                 <Button onClick={() => router.push(`/store/${domain}`)}>
-                    Return to Store
+                    {t("storefront.success.continue_shopping")}
                 </Button>
             </div>
         );
@@ -68,7 +78,7 @@ export default function OrderSuccessPage({ params }: { params: Promise<{ domain:
                 <Button variant="ghost" size="icon" onClick={() => router.push(`/store/${domain}`)}>
                     <ArrowLeft size={20} />
                 </Button>
-                <h1 className="font-bold">Order Confirmation</h1>
+                <h1 className="font-bold">{t("storefront.success.title")}</h1>
             </header>
 
             {/* Success Animation */}
@@ -77,9 +87,9 @@ export default function OrderSuccessPage({ params }: { params: Promise<{ domain:
                     <CheckCircle size={48} className="text-green-500" />
                 </div>
 
-                <h2 className="text-3xl font-black mb-2">Order Placed! 🎉</h2>
+                <h2 className="text-3xl font-black mb-2">{t("storefront.success.placed_title")}</h2>
                 <p className="text-gray-600 mb-8 max-w-sm">
-                    Thank you for your purchase. The merchant will verify your payment and process your order.
+                    {t("storefront.success.placed_desc")}
                 </p>
 
                 {/* Order Details Card */}
@@ -89,30 +99,30 @@ export default function OrderSuccessPage({ params }: { params: Promise<{ domain:
                             <Package size={24} />
                         </div>
                         <div>
-                            <p className="text-xs text-gray-500 uppercase tracking-widest">Order Number</p>
+                            <p className="text-xs text-gray-500 uppercase tracking-widest">{t("storefront.success.order_number")}</p>
                             <p className="font-mono font-bold text-lg">{order.order_number}</p>
                         </div>
                     </div>
 
                     <div className="space-y-2">
                         <div className="flex justify-between text-sm">
-                            <span className="text-gray-500">Status</span>
+                            <span className="text-gray-500">{t("storefront.success.status")}</span>
                             <span className="font-bold text-yellow-600 uppercase">{order.status}</span>
                         </div>
                         <div className="flex justify-between text-sm">
-                            <span className="text-gray-500">Total</span>
+                            <span className="text-gray-500">{t("common.total")}</span>
                             <span className="font-black text-lg">{order.total?.toLocaleString()} XOF</span>
                         </div>
                         <div className="flex justify-between text-sm">
-                            <span className="text-gray-500">Items</span>
-                            <span className="font-medium">{order.items?.length || 0} item(s)</span>
+                            <span className="text-gray-500">{t("storefront.success.items")}</span>
+                            <span className="font-medium">{order.items?.length || 0} {t("storefront.success.items").toLowerCase()}</span>
                         </div>
                     </div>
 
                     {/* Contact Merchant */}
                     {store && (
                         <div className="pt-4 border-t border-gray-100">
-                            <p className="text-xs text-gray-500 mb-3">Contact Merchant</p>
+                            <p className="text-xs text-gray-500 mb-3">{t("storefront.success.contact_merchant")}</p>
                             <div className="flex gap-2">
                                 {store.contact_phone && (
                                     <Button
@@ -122,7 +132,7 @@ export default function OrderSuccessPage({ params }: { params: Promise<{ domain:
                                         onClick={() => window.open(`tel:${store.contact_phone}`, '_self')}
                                     >
                                         <Phone size={16} className="mr-2" />
-                                        Call
+                                        {t("storefront.success.call")}
                                     </Button>
                                 )}
                                 {store.whatsapp && (
@@ -133,7 +143,7 @@ export default function OrderSuccessPage({ params }: { params: Promise<{ domain:
                                         onClick={() => window.open(`https://wa.me/${store.whatsapp.replace(/[^0-9]/g, '')}?text=Hi, I just placed order ${order.order_number}`, '_blank')}
                                     >
                                         <MessageCircle size={16} className="mr-2" />
-                                        WhatsApp
+                                        {t("storefront.success.whatsapp")}
                                     </Button>
                                 )}
                             </div>
@@ -147,7 +157,7 @@ export default function OrderSuccessPage({ params }: { params: Promise<{ domain:
                         className="w-full h-14 bg-black text-white font-bold rounded-2xl"
                         onClick={() => router.push(`/store/${domain}`)}
                     >
-                        Continue Shopping
+                        {t("storefront.success.continue_shopping")}
                     </Button>
                 </div>
             </div>
@@ -155,7 +165,7 @@ export default function OrderSuccessPage({ params }: { params: Promise<{ domain:
             {/* Footer */}
             <footer className="p-6 text-center">
                 <p className="text-xs text-gray-400">
-                    Powered by <span className="font-bold text-[#00FF41]">Bouteek</span>
+                    {t("storefront.success.powered_by")} <span className="font-bold text-[#00FF41]">Bouteek</span>
                 </p>
             </footer>
         </div>

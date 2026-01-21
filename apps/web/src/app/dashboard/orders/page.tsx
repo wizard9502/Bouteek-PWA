@@ -52,7 +52,7 @@ function OrdersPageContent() {
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState("all");
     const [merchantId, setMerchantId] = useState<number | null>(null);
-    const [storeName, setStoreName] = useState("Your Store");
+    const [storeName, setStoreName] = useState(t("orders.guest") || "Your Store");
     const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
     const [isDetailOpen, setIsDetailOpen] = useState(false);
 
@@ -62,7 +62,7 @@ function OrdersPageContent() {
         playSound: true,
         onNewOrder: (newOrder) => {
             setOrders(prev => [newOrder, ...prev]);
-            toast.success("New order received!", {
+            toast.success(t("orders.new_order_toast"), {
                 icon: <Bell className="text-bouteek-green" />,
             });
         },
@@ -92,7 +92,7 @@ function OrdersPageContent() {
             if (!merchant) return;
 
             setMerchantId(merchant.id);
-            setStoreName(merchant.businessName || "Your Store");
+            setStoreName(merchant.businessName || t("orders.guest") || "Your Store");
 
             let query = supabase
                 .from('orders')
@@ -114,7 +114,7 @@ function OrdersPageContent() {
             setOrders(data || []);
         } catch (error) {
             console.error(error);
-            toast.error("Failed to load orders");
+            toast.error(t("orders.load_error"));
         } finally {
             setLoading(false);
         }
@@ -140,7 +140,7 @@ function OrdersPageContent() {
                 o.id === orderId ? { ...o, status } : o
             ));
 
-            toast.success(`Order marked as ${status}`);
+            toast.success(`${t("orders.status_marked")} ${status}`);
         } catch (error: any) {
             console.error(error);
             toast.error(error.message || "Failed to update status");
@@ -182,18 +182,18 @@ function OrdersPageContent() {
     };
 
     const tabs = [
-        { id: "all", label: t("orders.tabs.all") || "All" },
-        { id: "pending_verification", label: "Pending Verification" },
-        { id: "processing", label: "Processing" },
-        { id: "completed", label: t("orders.tabs.completed") || "Completed" },
+        { id: "all", label: t("orders.tabs.all") },
+        { id: "pending_verification", label: t("orders.tabs.pending_verification") },
+        { id: "processing", label: t("orders.tabs.processing") },
+        { id: "completed", label: t("orders.tabs.completed") },
     ];
 
     return (
         <div className="space-y-8 pb-12">
             <div>
-                <h1 className="hero-text !text-4xl">{t("orders.title") || "Orders"}</h1>
+                <h1 className="hero-text !text-4xl">{t("orders.title")}</h1>
                 <p className="text-muted-foreground font-medium mt-1">
-                    {t("orders.subtitle") || "Manage incoming orders and payments"}
+                    {t("orders.subtitle")}
                 </p>
             </div>
 
@@ -219,7 +219,7 @@ function OrdersPageContent() {
                 <div className="flex flex-col items-center justify-center p-20 space-y-4">
                     <div className="w-12 h-12 rounded-full border-4 border-bouteek-green/20 border-t-bouteek-green animate-spin" />
                     <p className="text-muted-foreground font-bold text-xs uppercase tracking-widest animate-pulse">
-                        Syncing Orders...
+                        {t("orders.syncing")}
                     </p>
                 </div>
             ) : orders.length === 0 ? (
@@ -229,10 +229,10 @@ function OrdersPageContent() {
                     </div>
                     <div>
                         <p className="text-xl font-black">
-                            No {activeTab !== 'all' ? activeTab.replace('_', ' ') : ''} orders found.
+                            {t("orders.no_orders")}
                         </p>
                         <p className="text-muted-foreground mt-1">
-                            New orders will appear here automatically.
+                            {t("orders.new_orders_desc")}
                         </p>
                     </div>
                 </div>
@@ -275,10 +275,10 @@ function OrdersPageContent() {
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <p className="font-bold text-sm truncate">
-                                            {order.customer_name || "Guest User"}
+                                            {order.customer_name || t("orders.guest")}
                                         </p>
                                         <p className="text-xs text-muted-foreground truncate">
-                                            {order.customer_phone || "No phone"}
+                                            {order.customer_phone || t("orders.no_phone")}
                                         </p>
                                     </div>
                                 </div>
@@ -286,7 +286,7 @@ function OrdersPageContent() {
                                 {/* Transaction ID highlight for pending verification */}
                                 {order.transaction_id && (order.status === 'pending' || order.status === 'pending_verification') && (
                                     <div className="mb-4 p-3 bg-amber-50 rounded-xl border border-amber-200">
-                                        <p className="text-[10px] font-bold uppercase text-amber-600">Transaction ID</p>
+                                        <p className="text-[10px] font-bold uppercase text-amber-600">{t("orders.transaction_id")}</p>
                                         <p className="font-mono font-bold text-sm truncate">{order.transaction_id}</p>
                                     </div>
                                 )}
@@ -294,7 +294,7 @@ function OrdersPageContent() {
                                 {/* Footer */}
                                 <div className="flex items-center justify-between pt-4 border-t border-border/50">
                                     <div>
-                                        <p className="text-[10px] font-bold uppercase text-muted-foreground">Total</p>
+                                        <p className="text-[10px] font-bold uppercase text-muted-foreground">{t("common.total")}</p>
                                         <p className="font-black text-lg">
                                             {(order.total || order.total_amount || 0).toLocaleString()}
                                             <span className="text-xs text-muted-foreground ml-1">XOF</span>

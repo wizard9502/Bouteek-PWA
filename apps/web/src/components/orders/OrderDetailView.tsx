@@ -22,6 +22,7 @@ import {
     Send,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/contexts/TranslationContext";
 
 // WhatsApp icon as inline SVG
 const WhatsAppIcon = ({ size = 20 }: { size?: number }) => (
@@ -71,6 +72,7 @@ export function OrderDetailView({
     onStatusUpdate,
     storeName = "Your Store",
 }: OrderDetailViewProps) {
+    const { t } = useTranslation();
     const [isUpdating, setIsUpdating] = useState(false);
     const [showRejectModal, setShowRejectModal] = useState(false);
 
@@ -85,10 +87,10 @@ export function OrderDetailView({
         setIsUpdating(true);
         try {
             await onStatusUpdate(order.id, "paid");
-            toast.success("Payment approved!");
+            toast.success(t("orders.detail.approved_success"));
             onClose();
         } catch (error) {
-            toast.error("Failed to approve payment");
+            toast.error(t("orders.detail.approve_error"));
         } finally {
             setIsUpdating(false);
         }
@@ -106,11 +108,11 @@ export function OrderDetailView({
                 })
                 .eq("id", order.id);
 
-            toast.success("Order rejected");
+            toast.success(t("orders.detail.rejected_success"));
             setShowRejectModal(false);
             onClose();
         } catch (error) {
-            toast.error("Failed to reject order");
+            toast.error(t("orders.detail.reject_error"));
         } finally {
             setIsUpdating(false);
         }
@@ -119,13 +121,13 @@ export function OrderDetailView({
     const handleCopyAddress = async () => {
         if (order.customer_address) {
             await navigator.clipboard.writeText(order.customer_address);
-            toast.success("Address copied!");
+            toast.success(t("orders.detail.address_copied"));
         }
     };
 
     const handleCopyPhone = async () => {
         const success = await copyPhone();
-        if (success) toast.success("Phone copied!");
+        if (success) toast.success(t("orders.detail.phone_copied"));
     };
 
     const getTimeElapsed = () => {
@@ -166,7 +168,7 @@ export function OrderDetailView({
                         <div className="sticky top-0 z-10 bg-background border-b p-4 flex items-center justify-between">
                             <div>
                                 <h2 className="font-black text-xl">
-                                    Order #{order.order_number || order.id.slice(0, 8)}
+                                    {t("orders.detail.items").split(' ')[0]} #{order.order_number || order.id.slice(0, 8)}
                                 </h2>
                                 <div className="flex items-center gap-2 mt-1">
                                     <Badge className={cn(
@@ -176,7 +178,7 @@ export function OrderDetailView({
                                                 order.status === "cancelled" ? "bg-red-100 text-red-700" :
                                                     "bg-muted text-muted-foreground"
                                     )}>
-                                        {order.status.replace("_", " ")}
+                                        {t(`orders.tabs.${order.status}`)}
                                     </Badge>
                                     <span className="text-xs text-muted-foreground flex items-center gap-1">
                                         <Clock size={12} />
@@ -193,7 +195,7 @@ export function OrderDetailView({
                             {/* Customer Info Section */}
                             <div className="space-y-3">
                                 <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                                    Customer Information
+                                    {t("orders.detail.customer_info")}
                                 </p>
                                 <div className="bg-muted/30 rounded-2xl p-4 space-y-3">
                                     <div className="flex items-center justify-between">
@@ -233,7 +235,7 @@ export function OrderDetailView({
                                             onClick={call}
                                         >
                                             <Phone size={16} className="mr-2" />
-                                            Call
+                                            {t("storefront.success.call")}
                                         </Button>
                                         <Button
                                             variant="outline"
@@ -249,7 +251,7 @@ export function OrderDetailView({
                                             onClick={sendWhatsApp}
                                         >
                                             <WhatsAppIcon size={16} />
-                                            <span className="ml-2">WhatsApp</span>
+                                            <span className="ml-2">{t("storefront.success.whatsapp")}</span>
                                         </Button>
                                     </div>
                                 )}
@@ -258,7 +260,7 @@ export function OrderDetailView({
                             {/* Order Items */}
                             <div className="space-y-3">
                                 <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                                    Order Items
+                                    {t("orders.detail.items")}
                                 </p>
                                 <div className="space-y-3">
                                     {(order.items || []).map((item, idx) => (
@@ -283,7 +285,7 @@ export function OrderDetailView({
                                     ))}
                                 </div>
                                 <div className="flex justify-between items-center pt-3 border-t">
-                                    <span className="font-bold">Total</span>
+                                    <span className="font-bold">{t("common.total")}</span>
                                     <span className="text-xl font-black">
                                         {(order.total || order.total_amount || 0).toLocaleString()} XOF
                                     </span>
@@ -294,14 +296,14 @@ export function OrderDetailView({
                             {order.transaction_id && (
                                 <div className="space-y-3">
                                     <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                                        Payment Proof
+                                        {t("orders.detail.payment_proof")}
                                     </p>
                                     <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
                                         <div className="flex items-center gap-3">
                                             <CreditCard className="text-amber-600" size={24} />
                                             <div>
                                                 <p className="text-[10px] font-bold uppercase text-amber-600">
-                                                    Transaction ID
+                                                    {t("orders.transaction_id")}
                                                 </p>
                                                 <p className="font-mono font-bold text-lg">{order.transaction_id}</p>
                                             </div>
@@ -328,7 +330,7 @@ export function OrderDetailView({
                                         ) : (
                                             <CheckCircle className="mr-2" size={20} />
                                         )}
-                                        Approve Payment
+                                        {t("orders.detail.approve_payment")}
                                     </Button>
                                     <Button
                                         variant="outline"
@@ -337,7 +339,7 @@ export function OrderDetailView({
                                         disabled={isUpdating}
                                     >
                                         <XCircle className="mr-2" size={18} />
-                                        Reject Payment
+                                        {t("orders.detail.reject_payment")}
                                     </Button>
                                 </div>
                             )}
@@ -350,7 +352,7 @@ export function OrderDetailView({
                                         disabled={isUpdating}
                                     >
                                         <Package className="mr-2" size={20} />
-                                        Mark as Completed
+                                        {t("orders.detail.mark_completed")}
                                     </Button>
                                 </div>
                             )}
@@ -380,12 +382,13 @@ interface RejectReasonModalProps {
 }
 
 function RejectReasonModal({ onReject, onClose, isLoading }: RejectReasonModalProps) {
+    const { t } = useTranslation();
     const reasons = [
-        "Incorrect Transaction ID",
-        "Amount Mismatch",
-        "Duplicate Payment",
-        "Fraudulent Transaction",
-        "Customer Request",
+        t("orders.detail.rejection_modal.reasons.incorrect_id"),
+        t("orders.detail.rejection_modal.reasons.amount_mismatch"),
+        t("orders.detail.rejection_modal.reasons.duplicate"),
+        t("orders.detail.rejection_modal.reasons.fraud"),
+        t("orders.detail.rejection_modal.reasons.customer_request"),
     ];
 
     return (
@@ -403,9 +406,9 @@ function RejectReasonModal({ onReject, onClose, isLoading }: RejectReasonModalPr
                 onClick={(e) => e.stopPropagation()}
                 className="bg-background rounded-2xl shadow-xl max-w-sm w-full p-6"
             >
-                <h3 className="font-black text-lg mb-4">Rejection Reason</h3>
+                <h3 className="font-black text-lg mb-4">{t("orders.detail.rejection_modal.title")}</h3>
                 <p className="text-sm text-muted-foreground mb-4">
-                    Select a reason for rejecting this payment:
+                    {t("orders.detail.rejection_modal.subtitle")}
                 </p>
                 <div className="space-y-2">
                     {reasons.map((reason) => (
@@ -425,7 +428,7 @@ function RejectReasonModal({ onReject, onClose, isLoading }: RejectReasonModalPr
                     onClick={onClose}
                     disabled={isLoading}
                 >
-                    Cancel
+                    {t("common.cancel")}
                 </Button>
             </motion.div>
         </motion.div>

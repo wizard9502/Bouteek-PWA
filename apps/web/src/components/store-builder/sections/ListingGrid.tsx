@@ -6,6 +6,16 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { ShoppingBag, Calendar, Clock, Package } from 'lucide-react';
 
+interface Listing {
+    id: string;
+    title: string;
+    price: number;
+    image: string;
+    period?: string;
+    duration?: string;
+    metadata?: any;
+}
+
 interface ListingGridConfig {
     module: 'sale' | 'rental' | 'service';
     columns: number;
@@ -16,35 +26,79 @@ interface ListingGridConfig {
     title: string;
 }
 
-// Mock data for preview (in production, this would come from Supabase)
-const MOCK_LISTINGS = {
-    sale: [
-        { id: '1', title: 'Premium Sneakers', price: 45000, image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400' },
-        { id: '2', title: 'Designer Bag', price: 85000, image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400' },
-        { id: '3', title: 'Sunglasses', price: 25000, image: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400' },
-        { id: '4', title: 'Watch Classic', price: 150000, image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400' },
-    ],
-    rental: [
-        { id: '1', title: 'Mercedes S-Class', price: 150000, image: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=400', period: '/day' },
-        { id: '2', title: 'BMW X5', price: 120000, image: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400', period: '/day' },
-        { id: '3', title: 'Luxury Villa', price: 500000, image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400', period: '/week' },
-        { id: '4', title: 'Camera Kit', price: 50000, image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400', period: '/day' },
-    ],
-    service: [
-        { id: '1', title: 'Spa Massage', price: 35000, image: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400', duration: '60 min' },
-        { id: '2', title: 'Hair Styling', price: 25000, image: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400', duration: '45 min' },
-        { id: '3', title: 'Consultation', price: 50000, image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400', duration: '30 min' },
-        { id: '4', title: 'Makeup Session', price: 40000, image: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=400', duration: '90 min' },
-    ],
-};
+import { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabaseClient';
+import { useParams } from 'next/navigation';
 
 /**
  * ListingGrid - Display products, rentals, or services
  */
 export function ListingGrid({ config, moduleType, isEditing }: BaseSectionProps) {
+    const params = useParams();
+    const domain = params?.domain as string;
+
     const gridConfig = config as ListingGridConfig;
     const module = gridConfig.module || moduleType;
-    const listings = MOCK_LISTINGS[module].slice(0, gridConfig.limit || 4);
+
+    const [listings, setListings] = useState<Listing[]>([]);
+    const [loading, setLoading] = useState(!isEditing);
+
+    useEffect(() => {
+        if (!isEditing && domain) {
+            fetchRealListings();
+        } else {
+            // In editor or if no domain, potentially show limited real data or keep placeholders
+            // For now, let's fetch real data even in editor if we can identify the store
+            fetchRealListings();
+        }
+    }, [domain, module, gridConfig.limit]);
+
+    const fetchRealListings = async () => {
+        try {
+            setLoading(true);
+
+            // 1. Get Store ID from domain
+            const { data: merchant } = await supabase
+                .from('merchants')
+                .select('id')
+                .eq('slug', domain)
+                .single();
+
+            if (!merchant) return;
+
+            // 2. Fetch Listings
+            let query = supabase
+                .from('listings')
+                .select('*')
+                .eq('store_id', merchant.id)
+                .eq('module_type', module)
+                .eq('is_active', true);
+
+            if (gridConfig.category) {
+                query = query.eq('category', gridConfig.category);
+            }
+
+            const { data } = await query
+                .order('created_at', { ascending: false })
+                .limit(gridConfig.limit || 4);
+
+            if (data) {
+                setListings(data.map(l => ({
+                    id: l.id,
+                    title: l.title,
+                    price: l.price,
+                    image: l.images?.[0] || 'https://via.placeholder.com/400',
+                    period: l.metadata?.rental_period,
+                    duration: l.metadata?.service_duration,
+                    metadata: l.metadata
+                })));
+            }
+        } catch (error) {
+            console.error('Error fetching listings:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const gridCols = {
         1: 'grid-cols-1',
@@ -93,42 +147,60 @@ export function ListingGrid({ config, moduleType, isEditing }: BaseSectionProps)
                 )}
 
                 {/* Grid */}
-                <div className={cn('grid gap-6', gridCols[gridConfig.columns as keyof typeof gridCols] || 'grid-cols-2')}>
-                    {listings.map((listing: any) => (
-                        <div key={listing.id} className="group cursor-pointer">
-                            {/* Image */}
-                            <div className="aspect-square rounded-2xl overflow-hidden bg-muted mb-4">
-                                <img
-                                    src={listing.image}
-                                    alt={listing.title}
-                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                />
+                {loading ? (
+                    <div className="grid gap-6 grid-cols-2 md:grid-cols-4">
+                        {[1, 2, 3, 4].map(i => (
+                            <div key={i} className="animate-pulse space-y-4">
+                                <div className="aspect-square bg-muted rounded-2xl" />
+                                <div className="h-4 bg-muted rounded w-3/4" />
+                                <div className="h-4 bg-muted rounded w-1/2" />
                             </div>
-
-                            {/* Info */}
-                            <div className="space-y-2">
-                                <h3 className="font-bold text-sm line-clamp-1 group-hover:text-bouteek-green transition-colors">
-                                    {listing.title}
-                                </h3>
-
-                                {gridConfig.showPrices && (
-                                    <p className="text-lg font-black">
-                                        {listing.price.toLocaleString()} <span className="text-xs text-muted-foreground">XOF{listing.period || ''}</span>
-                                    </p>
-                                )}
-
-                                {/* Module-specific extra info */}
-                                {module === 'service' && listing.duration && (
-                                    <p className="text-xs text-muted-foreground flex items-center gap-1">
-                                        <Clock size={12} /> {listing.duration}
-                                    </p>
-                                )}
-
-                                {gridConfig.showAddToCart && getActionButton(listing)}
+                        ))}
+                    </div>
+                ) : (
+                    <div className={cn('grid gap-6', gridCols[gridConfig.columns as keyof typeof gridCols] || 'grid-cols-2')}>
+                        {listings.length === 0 ? (
+                            <div className="col-span-full py-20 text-center text-muted-foreground font-medium">
+                                No items found in this category.
                             </div>
-                        </div>
-                    ))}
-                </div>
+                        ) : (
+                            listings.map((listing: Listing) => (
+                                <div key={listing.id} className="group cursor-pointer">
+                                    {/* Image */}
+                                    <div className="aspect-square rounded-2xl overflow-hidden bg-muted mb-4">
+                                        <img
+                                            src={listing.image}
+                                            alt={listing.title}
+                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                        />
+                                    </div>
+
+                                    {/* Info */}
+                                    <div className="space-y-2">
+                                        <h3 className="font-bold text-sm line-clamp-1 group-hover:text-bouteek-green transition-colors">
+                                            {listing.title}
+                                        </h3>
+
+                                        {gridConfig.showPrices && (
+                                            <p className="text-lg font-black">
+                                                {listing.price.toLocaleString()} <span className="text-xs text-muted-foreground">XOF{listing.period || ''}</span>
+                                            </p>
+                                        )}
+
+                                        {/* Module-specific extra info */}
+                                        {module === 'service' && listing.duration && (
+                                            <p className="text-xs text-muted-foreground flex items-center gap-1">
+                                                <Clock size={12} /> {listing.duration}
+                                            </p>
+                                        )}
+
+                                        {gridConfig.showAddToCart && getActionButton(listing)}
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                )}
             </div>
         </section>
     );

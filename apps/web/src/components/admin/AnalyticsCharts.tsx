@@ -15,6 +15,7 @@ import {
     ArcElement
 } from 'chart.js';
 import { Line, Doughnut, Bar } from 'react-chartjs-2';
+import { useTranslation } from "@/contexts/TranslationContext";
 
 // Ensure registration happens
 ChartJS.register(
@@ -30,16 +31,23 @@ ChartJS.register(
     Filler
 );
 
+interface RevenueDataPoint {
+    name: string;
+    sub: number;
+    com: number;
+}
+
 interface RevenueChartProps {
-    data: any[];
+    data: RevenueDataPoint[];
 }
 
 export function RevenueGrowthChart({ data }: RevenueChartProps) {
+    const { t } = useTranslation();
     const chartData = {
         labels: data.map(d => d.name),
         datasets: [
             {
-                label: 'Subscriptions',
+                label: t("common.charts.subscriptions"),
                 data: data.map(d => d.sub),
                 borderColor: '#3B82F6',
                 backgroundColor: 'rgba(59, 130, 246, 0.5)',
@@ -47,7 +55,7 @@ export function RevenueGrowthChart({ data }: RevenueChartProps) {
                 fill: true
             },
             {
-                label: 'Commissions',
+                label: t("common.charts.commissions"),
                 data: data.map(d => d.com),
                 borderColor: '#10B981',
                 backgroundColor: 'rgba(16, 185, 129, 0.5)',
@@ -86,16 +94,22 @@ export function RevenueGrowthChart({ data }: RevenueChartProps) {
     return <Line options={options} data={chartData} />;
 }
 
+interface SubscriptionDataPoint {
+    name: string;
+    value: number;
+}
+
 interface SubscriptionChartProps {
-    data: any[];
+    data: SubscriptionDataPoint[];
 }
 
 export function SubscriptionDistributionChart({ data }: SubscriptionChartProps) {
+    const { t } = useTranslation();
     const chartData = {
         labels: data.map(d => d.name),
         datasets: [
             {
-                label: '# of Merchants',
+                label: t("common.charts.merchants_count"),
                 data: data.map(d => d.value),
                 backgroundColor: [
                     '#0088FE', // Starter
@@ -128,11 +142,12 @@ interface DashboardBarChartProps {
 }
 
 export function DashboardRevenueChart({ data }: DashboardBarChartProps) {
+    const { t } = useTranslation();
     const chartData = {
         labels: data.map(d => d.name),
         datasets: [
             {
-                label: 'Revenue',
+                label: t("common.charts.revenue"),
                 data: data.map(d => d.revenue),
                 backgroundColor: '#00FF41',
                 borderRadius: 4,

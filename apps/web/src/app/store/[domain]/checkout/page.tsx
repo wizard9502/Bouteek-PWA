@@ -9,9 +9,19 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation"; // Correct hook for App Router
 import Image from "next/image";
+import { TranslationProvider, useTranslation } from "@/contexts/TranslationContext";
 
 export default function CheckoutPage({ params }: { params: Promise<{ domain: string }> }) {
+    return (
+        <TranslationProvider>
+            <CheckoutPageContent params={params} />
+        </TranslationProvider>
+    );
+}
+
+function CheckoutPageContent({ params }: { params: Promise<{ domain: string }> }) {
     const { domain } = use(params);
+    const { t } = useTranslation();
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -88,7 +98,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ domain: str
     const handlePlaceOrder = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!transactionId) {
-            toast.error("Please enter the Transaction ID");
+            toast.error(t("storefront.checkout.error_tx_id"));
             return;
         }
 
@@ -116,24 +126,24 @@ export default function CheckoutPage({ params }: { params: Promise<{ domain: str
 
             // Clear Cart
             localStorage.removeItem(`cart_${domain}`);
-            toast.success("Order placed successfully!");
+            toast.success(t("storefront.checkout.success_toast"));
 
             // Redirect to success or back to store
             router.push(`/store/${domain}/success?orderId=${result.order_id}`);
 
         } catch (error: any) {
-            toast.error("Failed: " + error.message);
+            toast.error(t("storefront.checkout.error_failed") + error.message);
         } finally {
             setPlacingOrder(false);
         }
     };
 
     if (loading) return <div className="h-screen flex items-center justify-center"><Loader2 className="animate-spin" /></div>;
-    if (!store) return <div className="h-screen flex items-center justify-center">Store not found</div>;
+    if (!store) return <div className="h-screen flex items-center justify-center">{t("storefront.not_found")}</div>;
     if (cart.length === 0) return (
         <div className="h-screen flex flex-col items-center justify-center gap-4">
-            <p className="text-gray-500">Your cart is empty.</p>
-            <Button onClick={() => router.push(`/store/${domain}`)}>Back to Store</Button>
+            <p className="text-gray-500">{t("storefront.cart.empty")}.</p>
+            <Button onClick={() => router.push(`/store/${domain}`)}>{t("storefront.checkout.back_to_store")}</Button>
         </div>
     );
 
@@ -143,13 +153,13 @@ export default function CheckoutPage({ params }: { params: Promise<{ domain: str
                 <Button variant="ghost" size="icon" onClick={() => router.back()}>
                     <ArrowLeft size={20} />
                 </Button>
-                <h1 className="font-bold text-lg">Checkout for {store.business_name}</h1>
+                <h1 className="font-bold text-lg">{t("storefront.checkout.title")} {store.business_name}</h1>
             </div>
 
             <div className="max-w-xl mx-auto w-full p-6 space-y-8 flex-1">
                 {/* Order Summary */}
                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                    <h3 className="font-bold text-sm uppercase text-gray-500 mb-4">Order Summary</h3>
+                    <h3 className="font-bold text-sm uppercase text-gray-500 mb-4">{t("storefront.checkout.summary")}</h3>
                     <div className="space-y-3">
                         {cart.map((item, idx) => (
                             <div key={idx} className="flex justify-between text-sm">
@@ -158,7 +168,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ domain: str
                             </div>
                         ))}
                         <div className="border-t pt-3 flex justify-between font-black text-lg">
-                            <span>Total</span>
+                            <span>{t("common.total")}</span>
                             <span>{totalAmount.toLocaleString()} XOF</span>
                         </div>
                     </div>
@@ -169,12 +179,12 @@ export default function CheckoutPage({ params }: { params: Promise<{ domain: str
                     <div className="space-y-4">
                         <div className="flex items-center gap-2 text-gray-900 font-bold text-lg">
                             <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-sm">1</div>
-                            <h2>Your Details</h2>
+                            <h2>{t("storefront.checkout.details")}</h2>
                         </div>
                         <div className="grid gap-3 pl-10">
-                            <Input placeholder="Full Name" value={customerName} onChange={e => setCustomerName(e.target.value)} required className="h-12 bg-white" />
-                            <Input placeholder="Phone Number" value={customerPhone} onChange={e => setCustomerPhone(e.target.value)} required className="h-12 bg-white" />
-                            <Input placeholder="Delivery Address" value={customerAddress} onChange={e => setCustomerAddress(e.target.value)} required className="h-12 bg-white" />
+                            <Input placeholder={t("storefront.checkout.name")} value={customerName} onChange={e => setCustomerName(e.target.value)} required className="h-12 bg-white" />
+                            <Input placeholder={t("storefront.checkout.phone")} value={customerPhone} onChange={e => setCustomerPhone(e.target.value)} required className="h-12 bg-white" />
+                            <Input placeholder={t("storefront.checkout.address")} value={customerAddress} onChange={e => setCustomerAddress(e.target.value)} required className="h-12 bg-white" />
                         </div>
                     </div>
 
@@ -182,18 +192,18 @@ export default function CheckoutPage({ params }: { params: Promise<{ domain: str
                     <div className="space-y-4">
                         <div className="flex items-center gap-2 text-gray-900 font-bold text-lg">
                             <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-sm">2</div>
-                            <h2>Payment</h2>
+                            <h2>{t("storefront.checkout.payment")}</h2>
                         </div>
 
                         <div className="pl-10 space-y-4">
                             <p className="text-sm text-gray-600 bg-blue-50 p-3 rounded-lg flex gap-2">
                                 <ShieldCheck className="text-blue-600 shrink-0" size={18} />
-                                <span>Send money to the verified merchant number below, then enter the Transaction ID.</span>
+                                <span>{t("storefront.checkout.payment_instruction")}</span>
                             </p>
 
                             {paymentMethods.length === 0 ? (
                                 <div className="p-4 bg-red-50 text-red-600 rounded-lg text-sm text-center">
-                                    Merchant has not enabled payments.
+                                    {t("storefront.checkout.no_payment_methods")}
                                 </div>
                             ) : (
                                 <div className="space-y-3">
@@ -220,22 +230,22 @@ export default function CheckoutPage({ params }: { params: Promise<{ domain: str
                             )}
 
                             <div className="pt-2">
-                                <Label htmlFor="txId" className="mb-2 block font-medium">Transaction ID (Required)</Label>
+                                <Label htmlFor="txId" className="mb-2 block font-medium">{t("storefront.checkout.transaction_id")}</Label>
                                 <Input
                                     id="txId"
-                                    placeholder="Paste SMS content or Trans ID here"
+                                    placeholder={t("storefront.checkout.transaction_placeholder")}
                                     value={transactionId}
                                     onChange={e => setTransactionId(e.target.value)}
                                     required
                                     className={`h-14 text-lg font-mono placeholder:font-sans transition-colors ${!transactionId ? 'border-red-200 focus-visible:ring-red-200' : 'border-green-200 focus-visible:ring-green-200'}`}
                                 />
-                                <p className="text-xs text-muted-foreground mt-2">Example: 'Trans: 123456... Payment to Bouteek'</p>
+                                <p className="text-xs text-muted-foreground mt-2">{t("storefront.checkout.transaction_example")}</p>
                             </div>
                         </div>
                     </div>
 
                     <Button type="submit" className="w-full bg-black hover:bg-gray-900 text-white font-black h-14 rounded-xl shadow-xl shadow-black/10 text-lg" disabled={placingOrder || !transactionId || paymentMethods.length === 0}>
-                        {placingOrder ? <Loader2 className="animate-spin" /> : `Confirm Payment • ${totalAmount.toLocaleString()} XOF`}
+                        {placingOrder ? <Loader2 className="animate-spin" /> : `${t("storefront.checkout.confirm_payment")} • ${totalAmount.toLocaleString()} XOF`}
                     </Button>
                 </form>
             </div>

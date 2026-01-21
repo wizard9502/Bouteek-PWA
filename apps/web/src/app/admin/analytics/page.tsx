@@ -46,33 +46,19 @@ export default function AdminAnalytics() {
 
     const fetchAdminInsights = async () => {
         try {
-            // GMV (Paid Orders)
-            const { data: orders } = await supabase.from('orders').select('total').eq('status', 'paid');
-            const gmv = orders?.reduce((acc, curr) => acc + (curr.total || 0), 0) || 0;
-
-            // Platform Revenue (Subscription transactions)
-            const { data: txs } = await supabase.from('wallet_transactions').select('amount').eq('transaction_type', 'subscription');
-            const rev = txs?.reduce((acc, curr) => acc + Math.abs(curr.amount || 0), 0) || 0;
-
-            // Seller Count
-            const { count } = await supabase.from('merchants').select('*', { count: 'exact', head: true });
+            const kpis = await getAdminKPIs();
+            const revenueHistory = await getRevenueGrowthData();
+            const distribution = await getSubscriptionDistribution();
 
             setStats({
-                totalGMV: gmv,
-                platformRevenue: rev,
-                growthRate: 15.8,
-                activeSellers: count || 0
+                totalGMV: kpis.gmv,
+                platformRevenue: kpis.totalRevenue,
+                growthRate: kpis.gmvGrowth,
+                activeSellers: kpis.activeMerchants
             });
 
-            // Mock revenue over time
-            setRevenueData([
-                { name: 'Week 1', revenue: 450000, gmv: 2500000 },
-                { name: 'Week 2', revenue: 520000, gmv: 3100000 },
-                { name: 'Week 3', revenue: 480000, gmv: 2800000 },
-                { name: 'Week 4', revenue: 610000, gmv: 4200000 },
-                { name: 'Week 5', revenue: 750000, gmv: 5600000 },
-                { name: 'Week 6', revenue: 890000, gmv: 6800000 },
-            ]);
+            setRevenueData(revenueHistory);
+            setSubscriptionData(distribution);
         } catch (error) {
             console.error(error);
         } finally {

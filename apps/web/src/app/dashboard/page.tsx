@@ -51,6 +51,9 @@ function DashboardHomeContent() {
         weekRevenue: 0,
         monthRevenue: 0,
         totalRevenue: 0,
+        todayChange: 0,
+        weekChange: 0,
+        monthChange: 0,
         pendingOrders: 0,
         completedOrders: 0,
         activeOrders: 0,
@@ -103,12 +106,21 @@ function DashboardHomeContent() {
             });
 
             let today = 0, week = 0, month = 0, total = 0;
+            let lastWeek = 0, lastMonth = 0, yesterday = 0;
             let pending = 0, completed = 0, active = 0, cancelled = 0;
 
             const now = new Date();
             const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
+            const yesterdayStart = new Date(startOfDay);
+            yesterdayStart.setDate(yesterdayStart.getDate() - 1);
+
+            const startOfWeek = new Date(now);
+            startOfWeek.setDate(now.getDate() - now.getDay());
+            const lastWeekStart = new Date(startOfWeek);
+            lastWeekStart.setDate(lastWeekStart.getDate() - 7);
+
             const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+            const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
 
             orders?.forEach(order => {
                 const amount = order.total || 0;
@@ -118,8 +130,13 @@ function DashboardHomeContent() {
                 if (order.status === 'paid' || order.status === 'completed') {
                     total += amount;
                     if (date >= startOfDay) today += amount;
+                    else if (date >= yesterdayStart) yesterday += amount;
+
                     if (date >= startOfWeek) week += amount;
+                    else if (date >= lastWeekStart) lastWeek += amount;
+
                     if (date >= startOfMonth) month += amount;
+                    else if (date >= lastMonthStart) lastMonth += amount;
                 }
 
                 // Count Statuses
@@ -129,11 +146,19 @@ function DashboardHomeContent() {
                 else if (order.status === 'cancelled') cancelled++;
             });
 
+            const calculateChange = (current: number, previous: number) => {
+                if (previous === 0) return current > 0 ? 100 : 0;
+                return ((current - previous) / previous) * 100;
+            };
+
             setStats({
                 todayRevenue: today,
                 weekRevenue: week,
                 monthRevenue: month,
                 totalRevenue: total,
+                todayChange: calculateChange(today, yesterday),
+                weekChange: calculateChange(week, lastWeek),
+                monthChange: calculateChange(month, lastMonth),
                 pendingOrders: pending,
                 completedOrders: completed,
                 activeOrders: active,
@@ -196,9 +221,9 @@ function DashboardHomeContent() {
 
 
     const statsCards = [
-        { label: t("dashboard.stats.today"), value: stats.todayRevenue.toLocaleString(), change: "+0%", trendingUp: true },
-        { label: t("dashboard.stats.week"), value: stats.weekRevenue.toLocaleString(), change: "+0%", trendingUp: true },
-        { label: t("dashboard.stats.month"), value: stats.monthRevenue.toLocaleString(), change: "+0%", trendingUp: true },
+        { label: t("dashboard.stats.today"), value: stats.todayRevenue.toLocaleString(), change: `${stats.todayChange >= 0 ? '+' : ''}${stats.todayChange.toFixed(1)}%`, trendingUp: stats.todayChange >= 0 },
+        { label: t("dashboard.stats.week"), value: stats.weekRevenue.toLocaleString(), change: `${stats.weekChange >= 0 ? '+' : ''}${stats.weekChange.toFixed(1)}%`, trendingUp: stats.weekChange >= 0 },
+        { label: t("dashboard.stats.month"), value: stats.monthRevenue.toLocaleString(), change: `${stats.monthChange >= 0 ? '+' : ''}${stats.monthChange.toFixed(1)}%`, trendingUp: stats.monthChange >= 0 },
     ];
 
     const orderStatuses = [

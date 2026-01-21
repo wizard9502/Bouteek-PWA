@@ -26,6 +26,7 @@ import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 import { useTranslation } from "@/contexts/TranslationContext";
 import { supabase } from "@/lib/supabaseClient";
@@ -128,12 +129,12 @@ export default function StorePage() {
             {/* Products Section */}
             <section className="space-y-6">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <h3 className="text-xl font-black tracking-tight">{language === 'fr' ? "Inventaire" : "Inventory"} ({products.length})</h3>
+                    <h3 className="text-xl font-black tracking-tight">{t("store.inventory")} ({products.length})</h3>
                     <div className="flex gap-2 w-full md:w-auto">
                         <div className="relative flex-1 md:w-64">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
                             <Input
-                                placeholder={language === 'fr' ? "Rechercher..." : "Search products..."}
+                                placeholder={t("store.search_products")}
                                 className="pl-10 rounded-xl bg-card border-border/50 h-10"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -144,7 +145,7 @@ export default function StorePage() {
                             variant="outline"
                             size="icon"
                             className="rounded-xl h-10 w-10 border-border/50"
-                            onClick={() => toast.info('Advanced filtering coming soon')}
+                            onClick={() => toast.info(t("store.advanced_filter_coming"))}
                         >
                             <Filter size={18} />
                         </Button>
@@ -155,7 +156,7 @@ export default function StorePage() {
                     {loading ? (
                         <div className="col-span-full flex justify-center p-12"><Loader2 className="animate-spin text-muted-foreground" /></div>
                     ) : products.length === 0 ? (
-                        <div className="col-span-full text-center p-12 text-muted-foreground font-medium">No products found. Add your first item to start selling!</div>
+                        <div className="col-span-full text-center p-12 text-muted-foreground font-medium">{t("common.empty_inventory")}</div>
                     ) : products.filter(p => (p.title || p.name || '').toLowerCase().includes(searchQuery.toLowerCase())).map((product, i) => (
                         <motion.div
                             key={product.id}
@@ -182,7 +183,7 @@ export default function StorePage() {
                                         "rounded-full px-3 py-1 font-bold text-[10px] uppercase shadow-lg",
                                         (product.metadata?.stock_level || product.stock_quantity || 0) > 0 ? "bg-bouteek-green text-black" : "bg-red-500 text-white"
                                     )}>
-                                        {(product.metadata?.stock_level || product.stock_quantity || 0) > 0 ? (language === 'fr' ? "En Stock" : "In Stock") : (language === 'fr' ? "Rupture" : "Out of Stock")}
+                                        {(product.metadata?.stock_level || product.stock_quantity || 0) > 0 ? t("common.in_stock") : t("common.out_of_stock")}
                                     </Badge>
                                 </div>
                             </div>
@@ -190,19 +191,19 @@ export default function StorePage() {
                                 <div className="flex justify-between items-start gap-2">
                                     <div>
                                         <h4 className="font-black text-lg line-clamp-1 group-hover:text-bouteek-green transition-colors">{product.title || product.name}</h4>
-                                        <p className="text-muted-foreground text-sm mt-1">Stock: {product.metadata?.stock_level || product.stock_quantity || 0} units</p>
+                                        <p className="text-muted-foreground text-sm mt-1">Stock: {product.metadata?.stock_level || product.stock_quantity || 0} {t("common.units")}</p>
                                     </div>
                                     <p className="font-black text-xl whitespace-nowrap">{(product.base_price || product.price || 0).toLocaleString()} <span className="text-xs text-muted-foreground">XOF</span></p>
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-3 mt-8">
                                     <Link href={`/dashboard/listings/${product.id}/edit`}>
-                                        <Button variant="outline" className="rounded-2xl border-border/50 font-bold text-xs h-11 w-full">Edit</Button>
+                                        <Button variant="outline" className="rounded-2xl border-border/50 font-bold text-xs h-11 w-full">{t("common.edit")}</Button>
                                     </Link>
                                     <Button
                                         className="rounded-2xl bg-muted text-foreground font-bold text-xs h-11 hover:bg-red-500 hover:text-white transition-colors"
                                         onClick={async () => {
-                                            if (confirm("Are you sure you want to delete this listing?")) {
+                                            if (confirm(t("common.confirm_delete"))) {
                                                 const { error } = await supabase.from('listings').delete().eq('id', product.id);
                                                 if (!error) {
                                                     setProducts(products.filter(p => p.id !== product.id));
@@ -210,13 +211,13 @@ export default function StorePage() {
                                             }
                                         }}
                                     >
-                                        Delete
+                                        {t("common.delete")}
                                     </Button>
                                     <Button
                                         className="col-span-2 rounded-2xl bg-black text-white font-bold text-xs h-11 hover:bg-bouteek-green hover:text-white transition-colors"
                                         onClick={() => window.open(`/store/${merchantSlug}`, '_blank')}
                                     >
-                                        View Site
+                                        {t("common.view_site")}
                                         <ExternalLink size={14} className="ml-2" />
                                     </Button>
                                 </div>

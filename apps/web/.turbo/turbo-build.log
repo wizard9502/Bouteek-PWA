@@ -1,61 +1,11 @@
 
 
-> web@0.1.0 build
+> web@0.1.2 build
 > next build
 
-[1G[0K[1m[38;2;173;127;168m▲ Next.js 16.1.3[39m[22m (Turbopack)
-- Environments: .env.local
-
-[37m[1m [22m[39m Creating an optimized production build ...
-[32m[1m✓[22m[39m Compiled successfully in 99s
-[37m[1m [22m[39m Skipping validation of types
-[?25l[37m[1m [22m[39m Collecting page data using 3 workers  [36m.[39m[2K[1G[37m[1m [22m[39m Collecting page data using 3 workers  [36m..[39m[2K[1G[37m[1m [22m[39m Collecting page data using 3 workers  [36m...[39m[2K[1G[37m[1m [22m[39m Collecting page data using 3 workers  [36m.[39m[2K[1G[37m[1m [22m[39m Collecting page data using 3 workers  [36m..[39m[2K[1G[37m[1m [22m[39m Collecting page data using 3 workers  [36m...[39m[2K[1G[37m[1m [22m[39m Collecting page data using 3 workers  [36m.[39m[2K[1G[37m[1m [22m[39m Collecting page data using 3 workers  [36m..[39m[2K[1G[37m[1m [22m[39m Collecting page data using 3 workers  [36m...[39m[2K[1G[37m[1m [22m[39m Collecting page data using 3 workers  [36m.[39m[2K[1G[37m[1m [22m[39m Collecting page data using 3 workers  [36m..[39m[2K[1G[37m[1m [22m[39m Collecting page data using 3 workers  [36m...[39m[2K[1G[37m[1m [22m[39m Collecting page data using 3 workers  [36m.[39m[2K[1G[37m[1m [22m[39m Collecting page data using 3 workers  [36m..[39m[2K[1G[37m[1m [22m[39m Collecting page data using 3 workers  [36m...[39m[2K[1G[37m[1m [22m[39m Collecting page data using 3 workers  [36m.[39m[2K[1G[37m[1m [22m[39m Collecting page data using 3 workers  [36m..[39m[2K[1G[37m[1m [22m[39m Collecting page data using 3 workers  [36m...[39m[2K[1G[37m[1m [22m[39m Collecting page data using 3 workers  [36m.[39m[2K[1G[37m[1m [22m[39m Collecting page data using 3 workers  [36m..[39m[2K[1G[37m[1m [22m[39m Collecting page data using 3 workers  [36m...[39m[2K[1G[37m[1m [22m[39m Collecting page data using 3 workers  [36m.[39m[2K[1G[37m[1m [22m[39m Collecting page data using 3 workers  [36m..[39m[2K[1G[37m[1m [22m[39m Collecting page data using 3 workers  [36m...[39m[2K[1G[37m[1m [22m[39m Collecting page data using 3 workers  [36m.[39m[2K[1G[37m[1m [22m[39m Collecting page data using 3 workers  [36m..[39m[2K[1G[37m[1m [22m[39m Collecting page data using 3 workers  [36m...[39m[2K[1G[37m[1m [22m[39m Collecting page data using 3 workers  [36m.[39m[2K[1G[37m[1m [22m[39m Collecting page data using 3 workers  [36m..[39m[2K[1G[37m[1m [22m[39m Collecting page data using 3 workers  [36m...[39m[2K[1G[?25h[37m[1m [22m[39m Collecting page data using 3 workers in 6.3s    [32m[1m✓[22m[39m Collecting page data using 3 workers in 6.3s 
-[?25l[37m[1m [22m[39m Generating static pages using 3 workers (0/34)  [36m[    ][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (0/34)  [36m[=   ][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (0/34)  [36m[==  ][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (0/34)  [36m[=== ][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (0/34)  [36m[ ===][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (0/34)  [36m[  ==][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (0/34)  [36m[   =][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (0/34)  [36m[    ][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (0/34)  [36m[   =][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (0/34)  [36m[  ==][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (0/34)  [36m[ ===][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (0/34)  [36m[====][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (0/34)  [36m[=== ][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (0/34)  [36m[==  ][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (0/34)  [36m[=   ][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (0/34)  [36m[    ][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (0/34)  [36m[=   ][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (0/34)  [36m[==  ][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (0/34)  [36m[=== ][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (0/34)  [36m[ ===][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (0/34)  [36m[  ==][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (0/34)  [36m[   =][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (0/34)  [36m[    ][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (0/34)  [36m[   =][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (8/34)  [36m[  ==][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (8/34)  [36m[ ===][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (9/34)  [36m[====][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (9/34)  [36m[=== ][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (9/34)  [36m[==  ][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (10/34)  [36m[=   ][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (10/34)  [36m[    ][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (10/34)  [36m[=   ][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (19/34)  [36m[==  ][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (19/34)  [36m[=== ][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (19/34)  [36m[ ===][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (19/34)  [36m[  ==][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (19/34)  [36m[   =][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (19/34)  [36m[    ][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (19/34)  [36m[   =][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (19/34)  [36m[  ==][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (19/34)  [36m[ ===][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (19/34)  [36m[====][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (19/34)  [36m[=== ][39m[2K[1G[37m[1m [22m[39m Generating static pages using 3 workers (24/34)  [36m[==  ][39m[2K[1G[?25hThe width(-1) and height(-1) of chart should be greater than 0,
-       please check the style of container, or the props width(100%) and height(100%),
-       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
-       height and width.
-[?25h[32m[1m✓[22m[39m Generating static pages using 3 workers (34/34) in 10.7s
-[?25l[37m[1m [22m[39m Finalizing page optimization  [36m.[39m[2K[1G[37m[1m [22m[39m Finalizing page optimization  [36m..[39m[2K[1G[37m[1m [22m[39m Finalizing page optimization  [36m...[39m[2K[1G[37m[1m [22m[39m Finalizing page optimization  [36m.[39m[2K[1G[37m[1m [22m[39m Finalizing page optimization  [36m..[39m[2K[1G[37m[1m [22m[39m Finalizing page optimization  [36m...[39m[2K[1G[37m[1m [22m[39m Finalizing page optimization  [36m.[39m[2K[1G[37m[1m [22m[39m Finalizing page optimization  [36m..[39m[2K[1G[37m[1m [22m[39m Finalizing page optimization  [36m...[39m[2K[1G[37m[1m [22m[39m Finalizing page optimization  [36m.[39m[2K[1G[37m[1m [22m[39m Finalizing page optimization  [36m..[39m[2K[1G[37m[1m [22m[39m Finalizing page optimization  [36m...[39m[2K[1G[37m[1m [22m[39m Finalizing page optimization  [36m.[39m[2K[1G[37m[1m [22m[39m Finalizing page optimization  [36m..[39m[2K[1G[37m[1m [22m[39m Finalizing page optimization  [36m...[39m[2K[1G[37m[1m [22m[39m Finalizing page optimization  [36m.[39m[2K[1G[37m[1m [22m[39m Finalizing page optimization  [36m..[39m[2K[1G[37m[1m [22m[39m Finalizing page optimization  [36m...[39m[2K[1G[37m[1m [22m[39m Finalizing page optimization  [36m.[39m[2K[1G[37m[1m [22m[39m Finalizing page optimization  [36m..[39m[2K[1G[37m[1m [22m[39m Finalizing page optimization  [36m...[39m[2K[1G[?25h[37m[1m [22m[39m Finalizing page optimization in 5.1s    [32m[1m✓[22m[39m Finalizing page optimization in 5.1s 
-
-[4mRoute (app)[24m
-┌ ○ /
-├ ○ /_not-found
-├ ○ /admin
-├ ○ /admin/analytics
-├ ○ /admin/audit
-├ ○ /admin/merchants
-├ ○ /admin/notifications
-├ ○ /admin/payouts
-├ ○ /admin/reports
-├ ○ /admin/settings
-├ ƒ /api/payments/paydunya/create-session
-├ ƒ /api/webhooks/paydunya
-├ ○ /auth
-├ ƒ /auth/callback
-├ ○ /dashboard
-├ ○ /dashboard/finance
-├ ○ /dashboard/orders
-├ ○ /dashboard/products
-├ ○ /dashboard/profile
-├ ○ /dashboard/referrals
-├ ○ /dashboard/settings
-├ ○ /dashboard/store
-├ ○ /dashboard/store/builder
-├ ○ /dashboard/store/collaboration
-├ ○ /dashboard/store/heatmaps
-├ ○ /dashboard/store/inventory
-├ ○ /dashboard/store/products/add
-├ ○ /dashboard/store/promotions
-├ ○ /dashboard/store/receipts
-├ ○ /dashboard/store/reviews
-├ ○ /dashboard/store/seo
-├ ○ /dashboard/subscription
-└ ƒ /store/[domain]
-
-
-ƒ Proxy (Middleware)
-
-○  (Static)   prerendered as static content
-ƒ  (Dynamic)  server-rendered on demand
-
-[?25h[1G[0K⠙[1G[0K
+You are using Node.js 20.2.0. For Next.js, Node.js version ">=20.9.0" is required.
+[37;40mnpm[0m [0m[31;40mERR![0m [0m[35mLifecycle script `build` failed with error:[0m 
+[0m[37;40mnpm[0m [0m[31;40mERR![0m [0m[35mError: command failed[0m 
+[0m[37;40mnpm[0m [0m[31;40mERR![0m [0m[35m  in workspace: web@0.1.2[0m 
+[0m[37;40mnpm[0m [0m[31;40mERR![0m [0m[35m  at location: /Users/mohamedsow/Desktop/Bouteek PWA/apps/web[0m 
+[0m

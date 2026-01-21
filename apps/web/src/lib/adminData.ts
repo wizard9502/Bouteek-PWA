@@ -2,18 +2,19 @@ import { supabase } from "@/lib/supabaseClient";
 
 export async function getAdminKPIs() {
     // 1. Total Revenue (Subscriptions + Commissions)
-    // In a real scenario, we might have a dedicated 'platform_revenue' table or aggregate transactions
-    // For now, let's sum 'subscription' type transactions from wallet_transactions (assuming these are payments TO platform)
-    // And maybe commissions deducted.
-
-    // We'll treat 'subscription' type in wallet_transactions as +Revenue for Platform
     const { data: revenueData } = await supabase
         .from('wallet_transactions')
-        .select('amount')
+        .select('amount, created_at')
         .eq('transaction_type', 'subscription');
 
-
     const totalRevenue = revenueData?.reduce((acc, curr) => acc + (Math.abs(curr.amount || 0)), 0) || 0;
+
+    // Calculate Month-over-Month Growth (Simplified)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const lastMonthRevenue = revenueData?.filter(r => new Date(r.created_at) < thirtyDaysAgo).reduce((acc, curr) => acc + (Math.abs(curr.amount || 0)), 0) || 0;
+    const thisMonthRevenue = totalRevenue - lastMonthRevenue;
+    const revenueGrowth = lastMonthRevenue > 0 ? ((thisMonthRevenue - lastMonthRevenue) / lastMonthRevenue) * 100 : 0;
 
     // 2. Active Merchants
     const { count: activeMerchants } = await supabase
@@ -24,10 +25,13 @@ export async function getAdminKPIs() {
     // 3. GMV (Total Orders Volume)
     const { data: gmvData } = await supabase
         .from('orders')
-        .select('total')
+        .select('total, created_at')
         .eq('status', 'paid');
 
     const gmv = gmvData?.reduce((acc, curr) => acc + (curr.total || 0), 0) || 0;
+    const lastMonthGMV = gmvData?.filter(o => new Date(o.created_at) < thirtyDaysAgo).reduce((acc, curr) => acc + (curr.total || 0), 0) || 0;
+    const thisMonthGMV = gmv - lastMonthGMV;
+    const gmvGrowth = lastMonthGMV > 0 ? ((thisMonthGMV - lastMonthGMV) / lastMonthGMV) * 100 : 0;
 
     // 4. Pending Payouts
     const { count: pendingPayouts } = await supabase
@@ -37,8 +41,10 @@ export async function getAdminKPIs() {
 
     return {
         totalRevenue,
+        revenueGrowth: Number(revenueGrowth.toFixed(1)),
         activeMerchants: activeMerchants || 0,
         gmv,
+        gmvGrowth: Number(gmvGrowth.toFixed(1)),
         pendingPayouts: pendingPayouts || 0
     };
 }
@@ -270,8 +276,7 @@ export async function createNotificationCampaign(campaign: any, adminId: string)
         .from('notification_campaigns')
         .insert({
             ...campaign,
-            status: 'sent', // Simulate sending immediately for now
-            sent_at: new Date().toISOString(),
+            status: 'pending', // Set to pending to be picked up by a real sender service
             created_by: adminId
         });
     return { error };
