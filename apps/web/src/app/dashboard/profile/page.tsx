@@ -216,7 +216,7 @@ function ProfileSettings({ theme, setTheme }: { theme: string | undefined, setTh
                         </div>
                     </div>
 
-                    <Link href="/settings">
+                    <Link href="/dashboard/settings">
                         <Button variant="outline" className="rounded-2xl h-12 px-6 border-border/50 font-bold hidden md:flex">
                             {t("profile.edit_profile")}
                         </Button>

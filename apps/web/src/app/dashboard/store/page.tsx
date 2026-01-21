@@ -226,23 +226,6 @@ export default function StorePage() {
                 </div>
 
             </section>
-
-            {/* Analytics Teaser */}
-            <div className="bouteek-card p-8 bg-gradient-to-br from-bouteek-green/20 to-transparent border-bouteek-green/20 relative overflow-hidden">
-                <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-                    <div>
-                        <h4 className="text-xl font-black">Want deeper insights?</h4>
-                        <p className="text-muted-foreground mt-2 max-w-md font-medium">Use performance heatmaps to see exactly where your customers are clicking on your storefront.</p>
-                    </div>
-                    <Link href="/store/heatmaps">
-                        <Button className="rounded-2xl bg-black text-white px-8 h-12 font-bold shadow-xl shadow-black/20">
-                            Launch Heatmaps
-                            <ChevronRight className="ml-2" size={18} />
-                        </Button>
-                    </Link>
-                </div>
-                <Flame className="absolute -right-10 -bottom-10 text-bouteek-green/10 w-48 h-48 -rotate-12" />
-            </div>
         </div>
     );
 }

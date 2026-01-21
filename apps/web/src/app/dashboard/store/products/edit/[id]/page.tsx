@@ -75,7 +75,7 @@ export default function EditProductPage() {
         } catch (error) {
             console.error("Error fetching product:", error);
             toast.error("Could not load product details");
-            router.push("/store");
+            router.push("/dashboard/store");
         } finally {
             setLoading(false);
         }
@@ -131,7 +131,7 @@ export default function EditProductPage() {
 
             if (error) throw error;
             toast.success(language === 'fr' ? "Produit mis à jour !" : "Product updated!");
-            router.push("/store");
+            router.push("/dashboard/store");
         } catch (error) {
             console.error(error);
             toast.error("Error updating product");
@@ -146,7 +146,7 @@ export default function EditProductPage() {
 
     return (
         <div className="max-w-4xl mx-auto space-y-8 pb-12">
-            <Link href="/store">
+            <Link href="/dashboard/store">
                 <Button variant="ghost" className="rounded-xl flex items-center gap-2 text-muted-foreground hover:text-foreground">
                     <ChevronLeft size={16} />
                     {language === 'fr' ? "Retour à l'inventaire" : "Back to Inventory"}
