@@ -753,37 +753,37 @@ function StoreBuilderContent() {
                             </div>
 
                             <div className="bouteek-card p-6 space-y-4">
-                                <h3 className="font-black text-lg">Hero Section</h3>
+                                <h3 className="font-black text-lg">Typography</h3>
                                 <div className="space-y-4">
-                                    <ImageUpload
-                                        label="Hero Background Image"
-                                        currentImage={storeConfig.heroImage}
-                                        onImageChange={(url) => updateConfig('heroImage', url)}
-                                        maxSizeMB={5}
-                                    />
                                     <div className="space-y-2">
-                                        <Label>Headline</Label>
-                                        <Input
-                                            value={storeConfig.heroTitle}
-                                            onChange={(e) => updateConfig('heroTitle', e.target.value)}
-                                            className="rounded-xl font-bold"
-                                        />
+                                        <Label>Font Family</Label>
+                                        <select
+                                            className="w-full h-12 rounded-xl bg-background border px-3 outline-none"
+                                            value={storeConfig.fontFamily}
+                                            onChange={(e) => updateConfig('fontFamily', e.target.value)}
+                                        >
+                                            <option value="Inter">Inter (Sans-Serif)</option>
+                                            <option value="Roboto">Roboto</option>
+                                            <option value="Poppins">Poppins</option>
+                                            <option value="Playfair Display">Playfair Display (Serif)</option>
+                                            <option value="Courier Prime">Courier Prime (Mono)</option>
+                                            <option value="Outfit">Outfit (Modern)</option>
+                                        </select>
                                     </div>
                                     <div className="space-y-2">
-                                        <Label>Subtitle</Label>
-                                        <Input
-                                            value={storeConfig.heroSubtitle}
-                                            onChange={(e) => updateConfig('heroSubtitle', e.target.value)}
-                                            className="rounded-xl"
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label>Button Text</Label>
-                                        <Input
-                                            value={storeConfig.buttonText}
-                                            onChange={(e) => updateConfig('buttonText', e.target.value)}
-                                            className="rounded-xl"
-                                        />
+                                        <Label>Base Font Size</Label>
+                                        <div className="flex items-center gap-4">
+                                            <span className="text-sm font-bold w-8">{storeConfig.fontSize}</span>
+                                            <input
+                                                type="range"
+                                                min="12"
+                                                max="20"
+                                                step="1"
+                                                value={parseInt(storeConfig.fontSize)}
+                                                onChange={(e) => updateConfig('fontSize', `${e.target.value}px`)}
+                                                className="flex-1 accent-black"
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
