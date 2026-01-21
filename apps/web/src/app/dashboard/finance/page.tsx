@@ -83,10 +83,14 @@ export default function FinancePage() {
 function FinanceOverview() {
     const { t, language } = useTranslation();
     const [amount, setAmount] = useState("");
-    const [showTopUp, setShowTopUp] = useState(false);
+    const [waveTransactionId, setWaveTransactionId] = useState("");
+    const [showTopUpModal, setShowTopUpModal] = useState(false);
     const [balance, setBalance] = useState(0);
     const [transactions, setTransactions] = useState<any[]>([]);
     const [showAllTransactions, setShowAllTransactions] = useState(false);
+    const [isRestricted, setIsRestricted] = useState(false);
+    const [merchant, setMerchant] = useState<any>(null);
+    const [submitting, setSubmitting] = useState(false);
 
     useEffect(() => {
         fetchFinanceData();
@@ -96,14 +100,16 @@ function FinanceOverview() {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
-        const { data: merchant } = await supabase.from('merchants').select('id, bouteek_cash_balance').eq('user_id', user.id).single();
-        if (merchant) {
-            setBalance(merchant.bouteek_cash_balance);
+        const { data: merchantData } = await supabase.from('merchants').select('id, bouteek_cash_balance, is_restricted').eq('user_id', user.id).single();
+        if (merchantData) {
+            setMerchant(merchantData);
+            setBalance(merchantData.bouteek_cash_balance);
+            setIsRestricted(merchantData.is_restricted || false);
 
             const { data: txs } = await supabase
                 .from('wallet_transactions')
                 .select('*')
-                .eq('merchant_id', merchant.id)
+                .eq('merchant_id', merchantData.id)
                 .order('created_at', { ascending: false })
                 .limit(showAllTransactions ? 100 : 10);
 
@@ -114,7 +120,7 @@ function FinanceOverview() {
                     label: tx.description,
                     date: new Date(tx.created_at).toLocaleDateString(),
                     amount: tx.amount,
-                    status: "completed", // assuming mostly completed for now
+                    status: tx.verification_status || "completed",
                     trendingUp: tx.amount > 0
                 })));
             }
@@ -129,63 +135,49 @@ function FinanceOverview() {
         }
     };
 
+    // Wave payment link
+    const wavePaymentLink = `https://pay.wave.com/m/M_sn__dJJVmYlh4yk/c/sn/?amount=${amount || 0}`;
+
     const handleTopUp = async () => {
         if (!amount || Number(amount) < 100) {
-            toast.error("Minimum top-up is 100 XOF");
+            toast.error(language === 'fr' ? "Minimum 100 XOF" : "Minimum top-up is 100 XOF");
             return;
         }
 
-        const toastId = toast.loading("Initiating PayDunya session...");
+        if (!waveTransactionId || waveTransactionId.length !== 17) {
+            toast.error(language === 'fr' ? "ID Transaction Wave invalide (17 caractères)" : "Invalid Wave Transaction ID (17 characters required)");
+            return;
+        }
 
+        if (!merchant) {
+            toast.error("Merchant not found");
+            return;
+        }
+
+        setSubmitting(true);
         try {
-            console.log("Starting PayDunya top-up flow...", { amount });
-            const { data: { user } } = await supabase.auth.getUser();
-            const { data: merchant } = await supabase.from('merchants').select('id, business_name').eq('user_id', user?.id).single();
-
-            console.log("Merchant data:", merchant);
-
-            const response = await fetch('/api/payments/paydunya/create-session', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    amount: Number(amount),
-                    merchantId: merchant?.id,
-                    userId: user?.id,
-                    businessName: merchant?.business_name
-                })
+            const { data, error } = await supabase.rpc('topup_with_wave', {
+                p_merchant_id: merchant.id,
+                p_amount: Number(amount),
+                p_wave_tx_id: waveTransactionId.toUpperCase()
             });
 
-            console.log("API Response Status:", response.status);
+            if (error) throw error;
 
-            let data;
-            try {
-                data = await response.json();
-                console.log("API Response Data:", data);
-            } catch (e) {
-                console.error("Failed to parse JSON:", e);
-                // If parsing fails, it's likely a 500 HTML error page
-                const text = await response.text();
-                console.error("Raw response:", text);
-                throw new Error("Server Error: Unable to create payment session.");
-            }
-
-            if (!response.ok) {
-                throw new Error(data.message || `API Error: ${response.status}`);
-            }
-
-            if (data.url) {
-                toast.dismiss(toastId);
-                toast.success("Opening PayDunya in new tab...");
-                window.open(data.url, '_blank');
+            if (data.success) {
+                toast.success(data.message);
+                setAmount("");
+                setWaveTransactionId("");
+                setShowTopUpModal(false);
+                fetchFinanceData(); // Refresh balance
             } else {
-                console.error("No URL in response:", data);
-                toast.error(data.message || "Failed to initiate payment: No URL returned");
-                toast.dismiss(toastId);
+                toast.error(data.message);
             }
         } catch (error: any) {
-            console.error("Top-up Error Exception:", error);
-            toast.dismiss(toastId);
-            toast.error(`Payment Error: ${error.message}`);
+            console.error("Top-up Error:", error);
+            toast.error(error.message || "Top-up failed");
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -276,15 +268,24 @@ function FinanceOverview() {
                 </section>
             </div>
 
-            {/* Right Side: Quick Top-Up Pad */}
+            {/* Right Side: Wave Top-Up */}
             <div className="lg:col-span-1">
                 <div className="bouteek-card p-8 sticky top-12">
                     <div className="flex flex-col items-center gap-6">
-                        <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-bouteek-green/10 text-bouteek-green font-bold text-[10px] uppercase tracking-widest">
+                        <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#1DA1F2]/10 text-[#1DA1F2] font-bold text-[10px] uppercase tracking-widest">
                             <ShieldCheck size={14} />
-                            {t("finance.paydunya")}
+                            Wave Mobile Money
                         </div>
 
+                        {/* Graylist Warning */}
+                        {isRestricted && (
+                            <div className="w-full bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 text-yellow-700 dark:text-yellow-300 text-xs">
+                                <p className="font-bold mb-1">⏱️ {language === 'fr' ? 'Compte sous surveillance' : 'Account Under Review'}</p>
+                                <p>{language === 'fr'
+                                    ? 'Vos recharges sont soumises à une vérification manuelle de 24h.'
+                                    : 'Your top-ups are subject to 24h manual verification.'}</p>
+                            </div>
+                        )}
 
                         <div className="w-full">
                             <p className="text-center text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4">
@@ -313,21 +314,60 @@ function FinanceOverview() {
                             ))}
                         </div>
 
-                        <div className="w-full space-y-3 mt-4">
+                        {/* Wave Payment Link */}
+                        <div className="w-full space-y-4 mt-4">
                             <Button
-                                onClick={handleTopUp}
+                                onClick={() => window.open(wavePaymentLink, '_blank')}
                                 disabled={!amount || Number(amount) < 100}
-                                className="w-full h-14 rounded-2xl bg-bouteek-green text-black font-black uppercase tracking-widest shadow-xl shadow-bouteek-green/20"
+                                className="w-full h-14 rounded-2xl bg-[#1DA1F2] hover:bg-[#1a8cd8] text-white font-bold"
                             >
-                                {t("finance.pay")}
+                                {language === 'fr' ? 'Ouvrir Wave' : 'Open Wave'}
                                 <ArrowRight size={18} className="ml-2" />
                             </Button>
 
-                            <div className="flex items-center justify-center gap-4 py-2 opacity-50">
+                            <div className="relative">
+                                <div className="absolute inset-0 flex items-center">
+                                    <div className="w-full border-t border-border" />
+                                </div>
+                                <div className="relative flex justify-center">
+                                    <span className="px-4 bg-card text-muted-foreground text-xs uppercase">
+                                        {language === 'fr' ? 'Puis entrez l\'ID' : 'Then enter ID'}
+                                    </span>
+                                </div>
+                            </div>
 
-                                <img src="https://paydunya.com/assets/images/payment_methods/wave.png" className="h-6 object-contain" alt="Wave" />
-                                <img src="https://paydunya.com/assets/images/payment_methods/om.png" className="h-6 object-contain" alt="Orange Money" />
-                                <CreditCard size={20} />
+                            {/* Transaction ID Input */}
+                            <div className="space-y-2">
+                                <input
+                                    type="text"
+                                    placeholder="ID Transaction Wave (17 car.)"
+                                    value={waveTransactionId}
+                                    onChange={(e) => setWaveTransactionId(e.target.value.toUpperCase().slice(0, 17))}
+                                    maxLength={17}
+                                    className="w-full h-14 bg-muted rounded-2xl px-4 text-center font-mono text-lg tracking-widest border-2 border-transparent focus:border-bouteek-green focus:outline-none transition-all"
+                                />
+                                <p className="text-center text-xs text-muted-foreground">
+                                    {waveTransactionId.length}/17
+                                </p>
+                            </div>
+
+                            <Button
+                                onClick={handleTopUp}
+                                disabled={!amount || Number(amount) < 100 || waveTransactionId.length !== 17 || submitting}
+                                className="w-full h-14 rounded-2xl bg-bouteek-green text-black font-black uppercase tracking-widest shadow-xl shadow-bouteek-green/20 disabled:opacity-50"
+                            >
+                                {submitting ? (
+                                    <Loader2 className="animate-spin" size={20} />
+                                ) : (
+                                    <>
+                                        {t("finance.pay")}
+                                        <ArrowRight size={18} className="ml-2" />
+                                    </>
+                                )}
+                            </Button>
+
+                            <div className="flex items-center justify-center py-2 opacity-50">
+                                <img src="https://paydunya.com/assets/images/payment_methods/wave.png" className="h-8 object-contain" alt="Wave" />
                             </div>
                         </div>
                     </div>

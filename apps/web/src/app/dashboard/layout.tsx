@@ -31,12 +31,15 @@ import { TranslationProvider, useTranslation } from "@/contexts/TranslationConte
 import { TawkToChat } from "@/components/TawkToChat";
 
 import { NotificationsManager } from "@/components/NotificationsManager";
+import SuspensionGuard from "@/components/SuspensionGuard";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     return (
         <TranslationProvider>
             <NotificationsManager />
-            <DashboardLayoutContent>{children}</DashboardLayoutContent>
+            <SuspensionGuard>
+                <DashboardLayoutContent>{children}</DashboardLayoutContent>
+            </SuspensionGuard>
         </TranslationProvider>
     );
 }

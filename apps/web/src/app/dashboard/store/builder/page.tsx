@@ -161,17 +161,33 @@ function StoreBuilderContent() {
             updated_at: new Date().toISOString()
         };
 
-        const { error } = await supabase.from('storefronts').upsert(storefrontData, { onConflict: 'merchant_id' });
+        const { error, data: savedStorefront } = await supabase.from('storefronts').upsert(storefrontData, { onConflict: 'merchant_id' }).select('id').single();
 
         if (error) {
             console.error(error);
             toast.error("Failed to save changes. Please try again.");
         } else {
-            // Haptic feedback on save (PWA)
-            if ('vibrate' in navigator) {
-                navigator.vibrate(50);
+            // Now publish the storefront to make it live
+            if (savedStorefront?.id) {
+                const { data: publishResult, error: publishError } = await supabase.rpc('publish_storefront', {
+                    p_storefront_id: savedStorefront.id
+                });
+
+                if (publishError) {
+                    console.error('Publish error:', publishError);
+                    toast.warning("Saved, but failed to publish. Try again.");
+                } else if (publishResult?.success) {
+                    // Haptic feedback on save (PWA)
+                    if ('vibrate' in navigator) {
+                        navigator.vibrate(50);
+                    }
+                    toast.success("Storefront saved and published! 🚀");
+                } else {
+                    toast.error(publishResult?.message || "Failed to publish");
+                }
+            } else {
+                toast.success("Storefront saved successfully!");
             }
-            toast.success("Storefront saved successfully!");
         }
         setIsLoading(false);
     };
