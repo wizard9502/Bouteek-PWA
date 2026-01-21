@@ -188,7 +188,7 @@ function StoreBuilderContent() {
         const storefrontData = {
             merchant_id: merchant.id,
             template_id: selectedTemplate,
-            theme_config: {
+            theme_settings: {
                 ...storeConfig,
                 // Ensure explicit mapping of new fields
                 primaryColor: storeConfig.primaryColor,
