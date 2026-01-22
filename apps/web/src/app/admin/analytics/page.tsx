@@ -36,8 +36,10 @@ export default function AdminAnalytics() {
     const [stats, setStats] = useState({
         totalGMV: 0,
         platformRevenue: 0,
-        growthRate: 12.4,
-        activeSellers: 0
+        gmvGrowth: 0,
+        revenueGrowth: 0,
+        activeSellers: 0,
+        newSellersThisMonth: 0
     });
     const [revenueData, setRevenueData] = useState<any[]>([]);
     const [subscriptionData, setSubscriptionData] = useState<any[]>([]);
@@ -55,8 +57,10 @@ export default function AdminAnalytics() {
             setStats({
                 totalGMV: kpis.gmv,
                 platformRevenue: kpis.totalRevenue,
-                growthRate: kpis.gmvGrowth,
-                activeSellers: kpis.activeMerchants
+                gmvGrowth: kpis.gmvGrowth,
+                revenueGrowth: kpis.revenueGrowth,
+                activeSellers: kpis.activeMerchants,
+                newSellersThisMonth: kpis.newMerchantsThisMonth
             });
 
             setRevenueData(revenueHistory);
@@ -95,9 +99,9 @@ export default function AdminAnalytics() {
                         <div className="p-3 rounded-2xl bg-emerald-50 text-emerald-600">
                             <TrendingUp size={24} />
                         </div>
-                        <div className="flex items-center gap-1 text-emerald-600 text-xs font-black">
-                            <ArrowUpRight size={14} />
-                            +15%
+                        <div className={cn("flex items-center gap-1 text-xs font-black", stats.gmvGrowth >= 0 ? "text-emerald-600" : "text-red-600")}>
+                            {stats.gmvGrowth >= 0 ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
+                            {stats.gmvGrowth >= 0 ? '+' : ''}{stats.gmvGrowth}%
                         </div>
                     </div>
                     <div className="mt-6">
@@ -111,9 +115,9 @@ export default function AdminAnalytics() {
                         <div className="p-3 rounded-2xl bg-blue-50 text-blue-600">
                             <CreditCard size={24} />
                         </div>
-                        <div className="flex items-center gap-1 text-blue-600 text-xs font-black">
-                            <ArrowUpRight size={14} />
-                            +8%
+                        <div className={cn("flex items-center gap-1 text-xs font-black", stats.revenueGrowth >= 0 ? "text-blue-600" : "text-red-600")}>
+                            {stats.revenueGrowth >= 0 ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
+                            {stats.revenueGrowth >= 0 ? '+' : ''}{stats.revenueGrowth}%
                         </div>
                     </div>
                     <div className="mt-6">
@@ -129,7 +133,7 @@ export default function AdminAnalytics() {
                         </div>
                         <div className="flex items-center gap-1 text-emerald-600 text-xs font-black">
                             <ArrowUpRight size={14} />
-                            +24
+                            +{stats.newSellersThisMonth}
                         </div>
                     </div>
                     <div className="mt-6">
@@ -225,12 +229,7 @@ export default function AdminAnalytics() {
                 </CardHeader>
                 <CardContent className="p-8">
                     <div className="h-[300px]">
-                        <SubscriptionDistributionChart data={[
-                            { name: 'Starter', value: 420 },
-                            { name: 'Launch', value: 180 },
-                            { name: 'Growth', value: 95 },
-                            { name: 'Pro', value: 34 }
-                        ]} />
+                        <SubscriptionDistributionChart data={subscriptionData} />
                     </div>
                 </CardContent>
             </Card>

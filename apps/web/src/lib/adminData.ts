@@ -1,39 +1,56 @@
 import { supabase } from "@/lib/supabaseClient";
 
 export async function getAdminKPIs() {
-    // 1. Total Revenue (Subscriptions + Commissions)
+    // 1. Subscription Revenue
     const { data: revenueData } = await supabase
         .from('wallet_transactions')
         .select('amount, created_at')
         .eq('transaction_type', 'subscription');
 
-    const totalRevenue = revenueData?.reduce((acc, curr) => acc + (Math.abs(curr.amount || 0)), 0) || 0;
+    const subscriptionRevenue = revenueData?.reduce((acc, curr) => acc + (Math.abs(curr.amount || 0)), 0) || 0;
 
-    // Calculate Month-over-Month Growth (Simplified)
+    // 2. Commission Revenue from Orders
+    const { data: commissionData } = await supabase
+        .from('orders')
+        .select('commission, created_at')
+        .eq('status', 'paid');
+
+    const commissionRevenue = commissionData?.reduce((acc, curr) => acc + (curr.commission || 0), 0) || 0;
+    const totalRevenue = subscriptionRevenue + commissionRevenue;
+
+    // Calculate Month-over-Month Growth (Simplified, based on subscriptions only for now)
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    const lastMonthRevenue = revenueData?.filter(r => new Date(r.created_at) < thirtyDaysAgo).reduce((acc, curr) => acc + (Math.abs(curr.amount || 0)), 0) || 0;
-    const thisMonthRevenue = totalRevenue - lastMonthRevenue;
-    const revenueGrowth = lastMonthRevenue > 0 ? ((thisMonthRevenue - lastMonthRevenue) / lastMonthRevenue) * 100 : 0;
+    const sixtyDaysAgo = new Date();
+    sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
 
-    // 2. Active Merchants
+    const thisMonthSubs = revenueData?.filter(r => new Date(r.created_at) >= thirtyDaysAgo).reduce((acc, curr) => acc + (Math.abs(curr.amount || 0)), 0) || 0;
+    const lastMonthSubs = revenueData?.filter(r => new Date(r.created_at) < thirtyDaysAgo && new Date(r.created_at) >= sixtyDaysAgo).reduce((acc, curr) => acc + (Math.abs(curr.amount || 0)), 0) || 0;
+    const revenueGrowth = lastMonthSubs > 0 ? ((thisMonthSubs - lastMonthSubs) / lastMonthSubs) * 100 : (thisMonthSubs > 0 ? 100 : 0);
+
+    // 3. Active Merchants & Growth
     const { count: activeMerchants } = await supabase
         .from('merchants')
         .select('*', { count: 'exact', head: true })
         .gt('subscription_end', new Date().toISOString());
 
-    // 3. GMV (Total Orders Volume)
+    const { count: newMerchantsThisMonth } = await supabase
+        .from('merchants')
+        .select('*', { count: 'exact', head: true })
+        .gte('created_at', thirtyDaysAgo.toISOString());
+
+    // 4. GMV (Total Orders Volume)
     const { data: gmvData } = await supabase
         .from('orders')
         .select('total, created_at')
         .eq('status', 'paid');
 
     const gmv = gmvData?.reduce((acc, curr) => acc + (curr.total || 0), 0) || 0;
-    const lastMonthGMV = gmvData?.filter(o => new Date(o.created_at) < thirtyDaysAgo).reduce((acc, curr) => acc + (curr.total || 0), 0) || 0;
-    const thisMonthGMV = gmv - lastMonthGMV;
-    const gmvGrowth = lastMonthGMV > 0 ? ((thisMonthGMV - lastMonthGMV) / lastMonthGMV) * 100 : 0;
+    const thisMonthGMV = gmvData?.filter(o => new Date(o.created_at) >= thirtyDaysAgo).reduce((acc, curr) => acc + (curr.total || 0), 0) || 0;
+    const lastMonthGMV = gmvData?.filter(o => new Date(o.created_at) < thirtyDaysAgo && new Date(o.created_at) >= sixtyDaysAgo).reduce((acc, curr) => acc + (curr.total || 0), 0) || 0;
+    const gmvGrowth = lastMonthGMV > 0 ? ((thisMonthGMV - lastMonthGMV) / lastMonthGMV) * 100 : (thisMonthGMV > 0 ? 100 : 0);
 
-    // 4. Pending Payouts
+    // 5. Pending Payouts
     const { count: pendingPayouts } = await supabase
         .from('affiliate_payouts')
         .select('*', { count: 'exact', head: true })
@@ -41,8 +58,11 @@ export async function getAdminKPIs() {
 
     return {
         totalRevenue,
+        subscriptionRevenue,
+        commissionRevenue,
         revenueGrowth: Number(revenueGrowth.toFixed(1)),
         activeMerchants: activeMerchants || 0,
+        newMerchantsThisMonth: newMerchantsThisMonth || 0,
         gmv,
         gmvGrowth: Number(gmvGrowth.toFixed(1)),
         pendingPayouts: pendingPayouts || 0
