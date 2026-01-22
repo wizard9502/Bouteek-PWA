@@ -9,14 +9,19 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { ArrowLeft, Phone, Loader2, CheckCircle, ShoppingCart } from "lucide-react";
 import Link from "next/link";
+import { RentalCheckout, ServiceCheckout } from "@/components/checkout";
 
 interface Listing {
     id: string;
     title: string;
     price: number;
+    base_price?: number;
     currency: string;
     image_urls: string[];
+    media_urls?: string[];
     store_id: number;
+    module_type?: 'sale' | 'rental' | 'service';
+    metadata?: Record<string, any>;
 }
 
 interface PaymentMethod {
@@ -171,6 +176,31 @@ export default function CheckoutPage() {
         );
     }
 
+    // Route to module-specific checkout components
+    const moduleType = listing.module_type || 'sale';
+
+    if (moduleType === 'rental') {
+        return (
+            <RentalCheckout
+                listing={listing}
+                storefront={storefront}
+                storeSlug={storeSlug || undefined}
+            />
+        );
+    }
+
+    if (moduleType === 'service') {
+        return (
+            <ServiceCheckout
+                listing={listing}
+                storefront={storefront}
+                storeSlug={storeSlug || undefined}
+            />
+        );
+    }
+
+    // Default: Sale checkout (original implementation below)
+
     if (success) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-green-50 p-4">
@@ -267,8 +297,8 @@ export default function CheckoutPage() {
                         <button
                             onClick={() => setSelectedPayment("orange_money")}
                             className={`w-full flex items-center gap-3 p-4 rounded-xl border-2 text-left transition-all ${selectedPayment === "orange_money"
-                                    ? "border-orange-500 bg-orange-50"
-                                    : "border-gray-200"
+                                ? "border-orange-500 bg-orange-50"
+                                : "border-gray-200"
                                 }`}
                         >
                             <div className="w-12 h-12 rounded-xl bg-[#ff7900] flex items-center justify-center">
@@ -287,8 +317,8 @@ export default function CheckoutPage() {
                         <button
                             onClick={() => setSelectedPayment("wave")}
                             className={`w-full flex items-center gap-3 p-4 rounded-xl border-2 text-left transition-all ${selectedPayment === "wave"
-                                    ? "border-blue-500 bg-blue-50"
-                                    : "border-gray-200"
+                                ? "border-blue-500 bg-blue-50"
+                                : "border-gray-200"
                                 }`}
                         >
                             <div className="w-12 h-12 rounded-xl bg-[#1da1f2] flex items-center justify-center">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     Video,
@@ -27,6 +27,7 @@ interface MediaEngineProps {
     onAddMedia: (url: string) => void;
     onRemoveMedia: (index: number) => void;
     onReorderMedia?: (from: number, to: number) => void;
+    onPrimaryImageChange?: (url: string) => void;
     maxImages?: number;
 }
 
@@ -37,6 +38,7 @@ export function MediaEngine({
     onAddMedia,
     onRemoveMedia,
     onReorderMedia,
+    onPrimaryImageChange,
     maxImages = 10,
 }: MediaEngineProps) {
     const [isUploading, setIsUploading] = useState(false);
@@ -44,6 +46,13 @@ export function MediaEngine({
     const [videoValid, setVideoValid] = useState<boolean | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+
+    // Track primary image (first in list) and notify parent
+    useEffect(() => {
+        if (mediaUrls[0] && onPrimaryImageChange) {
+            onPrimaryImageChange(mediaUrls[0]);
+        }
+    }, [mediaUrls[0], onPrimaryImageChange]);
 
     // Validate video URL (YouTube or MP4)
     const validateVideoUrl = useCallback((url: string) => {

@@ -8,6 +8,7 @@ import { Loader2, ShoppingCart, Minus, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { TranslationProvider, useTranslation } from "@/contexts/TranslationContext";
+import { MerchantThemeProvider } from "@/components/MerchantThemeProvider";
 
 export default function StorePage({ params }: { params: Promise<{ domain: string }> }) {
     return (
@@ -116,76 +117,96 @@ function StorePageContent({ params }: { params: Promise<{ domain: string }> }) {
         );
     }
 
+    // Extract branding from storefront for theme
+    const merchantTheme = store?.branding ? {
+        primaryColor: store.branding.primaryColor || '#00C853',
+        secondaryColor: store.branding.secondaryColor || '#1a1a1a',
+        accentColor: store.branding.accentColor || '#FFD700',
+        backgroundColor: store.branding.backgroundColor || '#ffffff',
+        textColor: store.branding.textColor || '#1a1a1a',
+        fontFamily: store.branding.fontFamily || 'system-ui, sans-serif',
+        borderRadius: store.branding.borderRadius || 'lg',
+        buttonStyle: store.branding.buttonStyle || 'solid',
+    } : undefined;
+
     return (
-        <div className="min-h-screen bg-white">
-            {/* Render blocks from JSONB */}
-            <BlockRenderer
-                blocks={blocks}
-                storeId={store.id}
-                storeName={store.business_name}
-            />
+        <MerchantThemeProvider initialTheme={merchantTheme}>
+            <div className="min-h-screen">
+                {/* Render blocks from JSONB */}
+                <BlockRenderer
+                    blocks={blocks}
+                    storeId={store.id}
+                    storeName={store.business_name}
+                />
 
-            {/* Cart Button */}
-            <button
-                onClick={() => setIsCartOpen(true)}
-                className="fixed top-4 right-4 z-50 w-12 h-12 bg-black text-white rounded-full flex items-center justify-center shadow-lg"
-            >
-                <ShoppingCart size={20} />
-                {cart.length > 0 && (
-                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-xs rounded-full flex items-center justify-center">
-                        {cart.reduce((a, b) => a + b.quantity, 0)}
-                    </span>
-                )}
-            </button>
-
-            {/* Cart Modal */}
-            <Dialog open={isCartOpen} onOpenChange={setIsCartOpen}>
-                <DialogContent className="max-w-md">
-                    <DialogHeader>
-                        <DialogTitle>{t("storefront.cart.title")}</DialogTitle>
-                    </DialogHeader>
-                    {cart.length === 0 ? (
-                        <p className="text-center py-8 text-gray-500">{t("storefront.cart.empty")}</p>
-                    ) : (
-                        <div className="space-y-4">
-                            {cart.map((item) => (
-                                <div key={item.product.id} className="flex items-center gap-4">
-                                    <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden">
-                                        {item.product.images?.[0] && (
-                                            <img
-                                                src={item.product.images[0]}
-                                                alt={item.product.name}
-                                                className="w-full h-full object-cover"
-                                            />
-                                        )}
-                                    </div>
-                                    <div className="flex-1">
-                                        <p className="font-semibold text-sm">{item.product.name}</p>
-                                        <p className="text-sm text-gray-500">
-                                            {item.product.price?.toLocaleString()} XOF × {item.quantity}
-                                        </p>
-                                    </div>
-                                    <button
-                                        onClick={() => removeFromCart(item.product.id)}
-                                        className="text-red-500"
-                                    >
-                                        <X size={18} />
-                                    </button>
-                                </div>
-                            ))}
-                            <div className="border-t pt-4">
-                                <div className="flex justify-between font-bold">
-                                    <span>{t("common.total")}</span>
-                                    <span>{totalAmount.toLocaleString()} XOF</span>
-                                </div>
-                            </div>
-                            <Button onClick={proceedToCheckout} className="w-full">
-                                {t("storefront.cart.checkout")}
-                            </Button>
-                        </div>
+                {/* Cart Button - uses theme primary color */}
+                <button
+                    onClick={() => setIsCartOpen(true)}
+                    className="fixed top-4 right-4 z-50 w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-105"
+                    style={{ backgroundColor: 'var(--brand-primary, #000)' }}
+                >
+                    <ShoppingCart size={20} className="text-white" />
+                    {cart.length > 0 && (
+                        <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-xs text-white rounded-full flex items-center justify-center">
+                            {cart.reduce((a, b) => a + b.quantity, 0)}
+                        </span>
                     )}
-                </DialogContent>
-            </Dialog>
-        </div>
+                </button>
+
+                {/* Cart Modal */}
+                <Dialog open={isCartOpen} onOpenChange={setIsCartOpen}>
+                    <DialogContent className="max-w-md">
+                        <DialogHeader>
+                            <DialogTitle>{t("storefront.cart.title")}</DialogTitle>
+                        </DialogHeader>
+                        {cart.length === 0 ? (
+                            <p className="text-center py-8 text-gray-500">{t("storefront.cart.empty")}</p>
+                        ) : (
+                            <div className="space-y-4">
+                                {cart.map((item) => (
+                                    <div key={item.product.id} className="flex items-center gap-4">
+                                        <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden">
+                                            {item.product.images?.[0] && (
+                                                <img
+                                                    src={item.product.images[0]}
+                                                    alt={item.product.name}
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            )}
+                                        </div>
+                                        <div className="flex-1">
+                                            <p className="font-semibold text-sm">{item.product.name}</p>
+                                            <p className="text-sm text-gray-500">
+                                                {item.product.price?.toLocaleString()} XOF × {item.quantity}
+                                            </p>
+                                        </div>
+                                        <button
+                                            onClick={() => removeFromCart(item.product.id)}
+                                            className="text-red-500"
+                                        >
+                                            <X size={18} />
+                                        </button>
+                                    </div>
+                                ))}
+                                <div className="border-t pt-4">
+                                    <div className="flex justify-between font-bold">
+                                        <span>{t("common.total")}</span>
+                                        <span>{totalAmount.toLocaleString()} XOF</span>
+                                    </div>
+                                </div>
+                                <Button
+                                    onClick={proceedToCheckout}
+                                    className="w-full"
+                                    style={{ backgroundColor: 'var(--brand-primary)' }}
+                                >
+                                    {t("storefront.cart.checkout")}
+                                </Button>
+                            </div>
+                        )}
+                    </DialogContent>
+                </Dialog>
+            </div>
+        </MerchantThemeProvider>
     );
 }
+

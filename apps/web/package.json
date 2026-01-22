@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "postinstall": "node -e \"try{require('lightningcss-linux-x64-gnu')}catch(e){}\""
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -47,7 +48,6 @@
     "dotenv": "latest",
     "framer-motion": "latest",
     "lightningcss": "latest",
-    "lightningcss-linux-x64-gnu": "latest",
     "lucide-react": "latest",
     "next": "latest",
     "next-themes": "latest",
@@ -72,5 +72,18 @@
     "postcss": "latest",
     "tailwindcss": "latest",
     "typescript": "latest"
+  },
+  "optionalDependencies": {
+    "lightningcss-darwin-arm64": "latest",
+    "lightningcss-darwin-x64": "latest",
+    "lightningcss-linux-arm64-gnu": "latest",
+    "lightningcss-linux-arm64-musl": "latest",
+    "lightningcss-linux-x64-gnu": "latest",
+    "lightningcss-linux-x64-musl": "latest",
+    "lightningcss-win32-arm64-msvc": "latest",
+    "lightningcss-win32-x64-msvc": "latest"
+  },
+  "overrides": {
+    "lightningcss": "latest"
   }
 }
