@@ -208,7 +208,7 @@ export default function AdminDashboard() {
                     <Button
                         variant="ghost"
                         className="text-sm font-bold text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-xl"
-                        onClick={() => window.location.href = '/merchants'}
+                        onClick={() => window.location.href = '/admin/merchants'}
                     >
                         View All <ArrowUpRight className="ml-1 w-4 h-4" />
                     </Button>
