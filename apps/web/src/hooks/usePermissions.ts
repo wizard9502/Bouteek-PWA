@@ -104,7 +104,7 @@ export function usePermissions(): PermissionsState {
             const { data: merchant } = await supabase
                 .from("merchants")
                 .select("id")
-                .eq("userId", user.id)
+                .eq("user_id", user.id)
                 .single();
 
             if (!merchant) {

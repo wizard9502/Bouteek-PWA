@@ -72,7 +72,7 @@ export default function PromotionsPage() {
             const { data: merchant } = await supabase
                 .from("merchants")
                 .select("id")
-                .eq("userId", user.id)
+                .eq("user_id", user.id)
                 .single();
 
             if (!merchant) return;
@@ -403,8 +403,8 @@ function CreatePromotionModal({ merchantId, onClose, onCreated }: CreateModalPro
                                         key={t}
                                         onClick={() => setType(t)}
                                         className={`p-3 rounded-xl border-2 text-left transition-all ${type === t
-                                                ? "border-bouteek-green bg-bouteek-green/5"
-                                                : "border-border"
+                                            ? "border-bouteek-green bg-bouteek-green/5"
+                                            : "border-border"
                                             }`}
                                     >
                                         <Icon size={20} className={type === t ? "text-bouteek-green" : ""} />
