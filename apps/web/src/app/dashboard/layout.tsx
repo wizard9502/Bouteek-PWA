@@ -249,7 +249,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
 
                 <div className="p-5 rounded-[2.5rem] bg-muted/40 border border-border/50 space-y-4">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-bouteek-green/10 flex items-center justify-center text-bouteek-green select-none">
+                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary select-none">
                             <Wallet size={18} />
                         </div>
                         <div>
@@ -346,8 +346,8 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
                                 <div className={cn(
                                     "w-16 h-16 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300",
                                     isActive
-                                        ? "bg-black text-bouteek-green scale-110 shadow-bouteek-green/50 ring-4 ring-background"
-                                        : "bg-black text-white hover:scale-105 ring-4 ring-background"
+                                        ? "bg-primary text-primary-foreground scale-110 shadow-primary/50 ring-4 ring-background"
+                                        : "bg-muted text-muted-foreground hover:scale-105 ring-4 ring-background"
                                 )}>
                                     <Icon size={28} strokeWidth={2.5} />
                                 </div>
@@ -389,7 +389,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
 
             {/* Global FAB (Mobile) */}
             < Button
-                className="md:hidden fixed bottom-24 right-6 w-14 h-14 rounded-full bg-bouteek-green shadow-xl shadow-bouteek-green/40 flex items-center justify-center text-white z-40 transition-transform active:scale-95"
+                className="md:hidden fixed bottom-24 right-6 w-14 h-14 rounded-full bg-primary shadow-xl shadow-primary/40 flex items-center justify-center text-primary-foreground z-40 transition-transform active:scale-95"
                 onClick={() => router.push(getHref("/dashboard/listings/new"))
                 }
             >
