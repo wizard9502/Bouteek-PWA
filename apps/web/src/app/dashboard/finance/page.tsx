@@ -424,11 +424,11 @@ function SubscriptionManager({ plans }: { plans: any[] }) {
         try {
             const basePrice = PRICES[selectedPlanSlug as keyof typeof PRICES] || 0;
             const totalCost = basePrice * duration;
-            const currentBalance = Number(merchant.bouteek_cash_balance || 0);
+            const currentBalance = Number(merchant?.bouteek_cash_balance || 0);
 
             // Perform atomic subscription purchase via RPC
             const { data: result, error: rpcError } = await supabase.rpc('purchase_subscription', {
-                merchant_id_input: merchant.id,
+                merchant_id_input: merchant?.id,
                 plan_slug_input: selectedPlanSlug,
                 duration_months: duration,
                 total_cost: totalCost
@@ -455,9 +455,9 @@ function SubscriptionManager({ plans }: { plans: any[] }) {
     if (loading) return <div className="p-8 flex justify-center"><Loader2 className="animate-spin" /></div>;
 
     const selectedPlan = plans.find(p => p.slug === selectedPlanSlug) || plans[0];
-    const currentPrice = selectedPlan ? selectedPlan.price : 0;
+    const currentPrice = selectedPlan?.price || 0;
     const discount = duration === 12 ? 0.2 : duration === 6 ? 0.1 : 0;
-    const totalPrice = currentPrice * duration * (1 - discount);
+    const totalPrice = (currentPrice || 0) * duration * (1 - discount);
 
     return (
         <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4">

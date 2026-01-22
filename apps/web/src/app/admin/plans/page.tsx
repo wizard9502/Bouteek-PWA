@@ -11,28 +11,30 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Loader2, Check, Shield } from "lucide-react";
 import { motion } from "framer-motion";
-const updatePlanCommission = async (planId: string, value: string) => {
-    setSaving(planId);
-    try {
-        const { error } = await supabase
-            .from('plans')
-            .update({ commission_rate: Number(value) })
-            .eq('id', planId);
 
-        if (error) throw error;
-        setPlans(plans.map(p => p.id === planId ? { ...p, commission_rate: Number(value) } : p));
-        toast.success("Commission rate updated");
-    } catch (error) {
-        toast.error("Failed to update commission");
-    } finally {
-        setSaving(null);
-    }
-};
 
 export default function PlansPage() {
     const [plans, setPlans] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState<string | null>(null);
+
+    const updatePlanCommission = async (planId: string, value: string) => {
+        setSaving(planId);
+        try {
+            const { error } = await supabase
+                .from('plans')
+                .update({ commission_rate: Number(value) })
+                .eq('id', planId);
+
+            if (error) throw error;
+            setPlans(plans.map(p => p.id === planId ? { ...p, commission_rate: Number(value) } : p));
+            toast.success("Commission rate updated");
+        } catch (error) {
+            toast.error("Failed to update commission");
+        } finally {
+            setSaving(null);
+        }
+    };
 
     useEffect(() => {
         fetchPlans();

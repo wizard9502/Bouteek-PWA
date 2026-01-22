@@ -16,6 +16,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { getAdminKPIs, getRevenueGrowthData, getSubscriptionDistribution } from "@/lib/adminData";
 
 // Dynamic import for Recharts components to prevent SSR crashes
 export const dynamic = 'force-dynamic';
@@ -39,6 +40,7 @@ export default function AdminAnalytics() {
         activeSellers: 0
     });
     const [revenueData, setRevenueData] = useState<any[]>([]);
+    const [subscriptionData, setSubscriptionData] = useState<any[]>([]);
 
     useEffect(() => {
         fetchAdminInsights();
@@ -224,10 +226,10 @@ export default function AdminAnalytics() {
                 <CardContent className="p-8">
                     <div className="h-[300px]">
                         <SubscriptionDistributionChart data={[
-                            { tier: 'Starter', users: 420 },
-                            { tier: 'Launch', users: 180 },
-                            { tier: 'Growth', users: 95 },
-                            { tier: 'Pro', users: 34 }
+                            { name: 'Starter', value: 420 },
+                            { name: 'Launch', value: 180 },
+                            { name: 'Growth', value: 95 },
+                            { name: 'Pro', value: 34 }
                         ]} />
                     </div>
                 </CardContent>

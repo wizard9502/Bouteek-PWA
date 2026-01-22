@@ -55,8 +55,7 @@ export async function isStorefrontRequest(): Promise<boolean> {
  * Get storefront data by subdomain or custom domain.
  */
 export async function getStorefrontByDomain(subdomain: string): Promise<any> {
-    const { createClient } = await import("@/lib/supabaseClient");
-    const supabase = createClient();
+    const { supabase } = await import("@/lib/supabaseClient");
 
     // Check if it's a custom domain lookup
     if (subdomain.startsWith("custom:")) {
