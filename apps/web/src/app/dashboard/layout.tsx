@@ -15,11 +15,13 @@ import {
     Sun,
     Search,
     Settings,
-    Heart
+    Heart,
+    ChevronRight,
 } from "lucide-react";
 
 
 import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabaseClient";
@@ -53,6 +55,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
     const [scrolled, setScrolled] = useState(false);
     const [user, setUser] = useState<any>(null);
     const [isSubdomain, setIsSubdomain] = useState(false);
+    const [colorTheme, setColorTheme] = useState<string>('default');
 
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -73,7 +76,11 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
                         email: user.email
                     });
                     if (merchant.preferred_theme) {
-                        setTheme(merchant.preferred_theme);
+                        // If the stored theme is one of our valid colors, use it
+                        // Otherwise default to standard handling or ignore if it was 'dark'/'light' legacy
+                        if (['pink', 'purple', 'ocean', 'luxury', 'sunset'].includes(merchant.preferred_theme)) {
+                            setColorTheme(merchant.preferred_theme);
+                        }
                     }
                 }
             }
@@ -81,7 +88,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
         fetchUser();
 
         return () => window.removeEventListener("scroll", handleScroll);
-    }, [setTheme]);
+    }, []);
 
     // Detect if we're on dashboard.bouteek.shop subdomain
     useEffect(() => {
@@ -106,6 +113,13 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
         router.push("/auth");
     };
 
+    const handleColorChange = async (newColor: string) => {
+        setColorTheme(newColor);
+        if (user?.id) {
+            await supabase.from('merchants').update({ preferred_theme: newColor }).eq('id', user.id);
+        }
+    };
+
     const navItems = [
         { href: "/dashboard", label: "Analytics", icon: LayoutDashboard }, // Renamed from Dashboard
         { href: "/dashboard/store", label: t("sidebar.store"), icon: Store },
@@ -114,16 +128,23 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
         { href: "/dashboard/profile", label: t("sidebar.profile"), icon: UserCircle },
     ];
 
-
+    const colorOptions = [
+        { id: 'default', color: 'bg-zinc-900 dark:bg-white', label: 'Default' },
+        { id: 'pink', color: 'bg-pink-500', label: 'Pink' },
+        { id: 'purple', color: 'bg-purple-600', label: 'Purple' },
+        { id: 'ocean', color: 'bg-blue-500', label: 'Ocean' },
+        { id: 'luxury', color: 'bg-amber-500', label: 'Luxury' },
+        { id: 'sunset', color: 'bg-orange-500', label: 'Sunset' },
+    ];
 
     return (
-        <div className="min-h-screen bg-background flex flex-col md:flex-row overflow-x-hidden">
+        <div className={cn("min-h-screen bg-background flex flex-col md:flex-row overflow-x-hidden transition-colors duration-300", colorTheme)}>
             <TawkToChat user={user} />
             {/* Desktop Sidebar */}
             <aside className="hidden md:flex flex-col w-72 h-screen sticky top-0 border-r border-border bg-card/50 backdrop-blur-xl transition-all duration-300">
                 <div className="p-8 flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <div className="w-14 h-14 rounded-2xl bg-bouteek-green/10 flex items-center justify-center shadow-lg shadow-bouteek-green/10">
+                        <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center shadow-lg shadow-primary/10">
                             <img src="/bouteek-logo.jpg" alt="Logo" className="w-12 h-12 rounded-xl object-contain" />
                         </div>
                         <span className="font-black text-2xl tracking-tighter">Bouteek</span>
@@ -141,7 +162,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
                                 className={cn(
                                     "flex items-center gap-4 px-6 py-4 rounded-3xl transition-all duration-200 group relative overflow-hidden",
                                     isActive
-                                        ? "bg-bouteek-green text-white font-bold shadow-lg shadow-bouteek-green/20"
+                                        ? "bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20"
                                         : "text-muted-foreground hover:bg-muted hover:text-foreground"
                                 )}
                             >
@@ -164,46 +185,65 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
 
                 <div className="p-6 mt-auto space-y-4">
                     {/* Theme & Language Switcher Desktop */}
-                    <div className="flex flex-wrap gap-2 bg-muted/30 p-3 rounded-[2rem] border border-border/40">
-                        {[
-                            { id: 'light', color: 'bg-white' },
-                            { id: 'dark', color: 'bg-zinc-900' },
-                            { id: 'pink', color: 'bg-pink-500' },
-                            { id: 'purple', color: 'bg-purple-600' },
-                            { id: 'ocean', color: 'bg-blue-500' },
-                            { id: 'luxury', color: 'bg-zinc-950', border: 'border-amber-500' },
-                            { id: 'sunset', color: 'bg-orange-500' },
-                        ].map((t) => (
-                            <button
-                                key={t.id}
-                                onClick={async () => {
-                                    setTheme(t.id);
-                                    if (user?.id) {
-                                        await supabase.from('merchants').update({ preferred_theme: t.id }).eq('id', user.id);
-                                    }
-                                }}
-                                className={cn(
-                                    "w-6 h-6 rounded-full border transition-all hover:scale-125",
-                                    t.color,
-                                    t.border || "border-border",
-                                    theme === t.id ? "ring-2 ring-primary ring-offset-2 scale-110" : "opacity-60"
-                                )}
-                            />
-                        ))}
-                    </div>
-                    <div className="flex bg-zinc-200 dark:bg-zinc-800 p-1 rounded-xl flex-[2]">
-                        <button
-                            onClick={() => setLanguage('fr')}
-                            className={cn("flex-1 py-1 px-2 rounded-lg text-[10px] font-black transition-all", language === 'fr' ? "bg-white dark:bg-zinc-700 shadow-sm text-black dark:text-white" : "text-muted-foreground")}
-                        >
-                            FR
-                        </button>
-                        <button
-                            onClick={() => setLanguage('en')}
-                            className={cn("flex-1 py-1 px-2 rounded-lg text-[10px] font-black transition-all", language === 'en' ? "bg-white dark:bg-zinc-700 shadow-sm text-black dark:text-white" : "text-muted-foreground")}
-                        >
-                            EN
-                        </button>
+                    <div className="flex flex-col gap-3">
+                        <div className="flex items-center gap-2">
+                            {/* Color Theme Popover */}
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <Button variant="outline" className="w-full justify-start gap-2 rounded-xl h-10 border-border/50">
+                                        <div className={cn("w-4 h-4 rounded-full border", colorOptions.find(c => c.id === colorTheme)?.color)} />
+                                        <span className="text-xs font-bold">Theme</span>
+                                        <ChevronRight size={14} className="ml-auto opacity-50" />
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-56 p-2 rounded-2xl" align="start" side="right">
+                                    <div className="grid grid-cols-1 gap-1">
+                                        {colorOptions.map((option) => (
+                                            <button
+                                                key={option.id}
+                                                onClick={() => handleColorChange(option.id)}
+                                                className={cn(
+                                                    "flex items-center gap-3 px-3 py-2 rounded-xl transition-colors text-sm font-medium",
+                                                    colorTheme === option.id ? "bg-accent text-accent-foreground" : "hover:bg-muted"
+                                                )}
+                                            >
+                                                <div className={cn("w-4 h-4 rounded-full border", option.color)} />
+                                                {option.label}
+                                                {colorTheme === option.id && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary" />}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </PopoverContent>
+                            </Popover>
+                        </div>
+
+                        <div className="flex gap-2">
+                            {/* Dark Mode Toggle */}
+                            <Button
+                                variant="outline"
+                                className="flex-1 rounded-xl border-border/50 h-10"
+                                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                            >
+                                {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+                                <span className="ml-2 text-xs font-bold">{theme === 'dark' ? 'Light' : 'Dark'}</span>
+                            </Button>
+
+                            {/* Language Toggle */}
+                            <div className="flex bg-muted p-1 rounded-xl flex-1 border border-border/50">
+                                <button
+                                    onClick={() => setLanguage('fr')}
+                                    className={cn("flex-1 rounded-lg text-[10px] font-black transition-all", language === 'fr' ? "bg-background shadow-sm text-foreground" : "text-muted-foreground")}
+                                >
+                                    FR
+                                </button>
+                                <button
+                                    onClick={() => setLanguage('en')}
+                                    className={cn("flex-1 rounded-lg text-[10px] font-black transition-all", language === 'en' ? "bg-background shadow-sm text-foreground" : "text-muted-foreground")}
+                                >
+                                    EN
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -253,14 +293,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
                         variant="ghost"
                         size="icon"
                         className="rounded-full bg-muted/50 transition-colors"
-                        onClick={async () => {
-                            // Only toggle between light and dark
-                            const newTheme = theme === 'dark' ? 'light' : 'dark';
-                            setTheme(newTheme);
-                            if (user?.id) {
-                                await supabase.from('merchants').update({ preferred_theme: newTheme }).eq('id', user.id);
-                            }
-                        }}
+                        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
                     >
                         {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
                     </Button>
