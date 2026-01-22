@@ -64,6 +64,23 @@ export default function UsersManagementPage() {
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [isDetailOpen, setIsDetailOpen] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
+    const [isSubdomain, setIsSubdomain] = useState(false);
+
+    // Detect subdomain
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const hostname = window.location.hostname;
+            const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "bouteek.shop";
+            setIsSubdomain(hostname === `admin.${rootDomain}` || hostname.startsWith("admin."));
+        }
+    }, []);
+
+    const getHref = (path: string) => {
+        if (isSubdomain) {
+            return path === "/admin" ? "/" : path.replace("/admin", "");
+        }
+        return path;
+    };
 
     const pageSize = 20;
 
@@ -220,7 +237,7 @@ export default function UsersManagementPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-black text-gray-900">User Management</h1>
-                    <p className="text-muted-foreground font-medium mt-1">
+                    <p className="text-gray-600 font-medium mt-1">
                         Manage all platform users, roles, and access.
                     </p>
                 </div>
@@ -266,19 +283,19 @@ export default function UsersManagementPage() {
                 <table className="w-full">
                     <thead className="bg-gray-50/50">
                         <tr className="border-b border-border/50">
-                            <th className="text-left py-4 px-6 text-xs font-black uppercase tracking-wider text-muted-foreground">
+                            <th className="text-left py-4 px-6 text-gray-600 font-black uppercase tracking-wider">
                                 User
                             </th>
-                            <th className="text-left py-4 px-6 text-xs font-black uppercase tracking-wider text-muted-foreground">
+                            <th className="text-left py-4 px-6 text-gray-600 font-black uppercase tracking-wider">
                                 Role
                             </th>
-                            <th className="text-left py-4 px-6 text-xs font-black uppercase tracking-wider text-muted-foreground">
+                            <th className="text-left py-4 px-6 text-gray-600 font-black uppercase tracking-wider">
                                 Status
                             </th>
-                            <th className="text-left py-4 px-6 text-xs font-black uppercase tracking-wider text-muted-foreground">
+                            <th className="text-left py-4 px-6 text-gray-600 font-black uppercase tracking-wider">
                                 Joined
                             </th>
-                            <th className="text-right py-4 px-6 text-xs font-black uppercase tracking-wider text-muted-foreground">
+                            <th className="text-right py-4 px-6 text-gray-600 font-black uppercase tracking-wider">
                                 Actions
                             </th>
                         </tr>
@@ -313,7 +330,7 @@ export default function UsersManagementPage() {
                                                 <p className="font-bold text-gray-900 truncate max-w-[200px]">
                                                     {user.email}
                                                 </p>
-                                                <p className="text-xs text-muted-foreground font-mono">
+                                                <p className="text-xs text-gray-600 font-mono">
                                                     {user.id.substring(0, 8)}...
                                                 </p>
                                             </div>
@@ -418,7 +435,7 @@ export default function UsersManagementPage() {
                                 </div>
                                 <div>
                                     <p className="font-bold text-lg">{selectedUser.email}</p>
-                                    <p className="text-sm text-muted-foreground font-mono">{selectedUser.id}</p>
+                                    <p className="text-sm text-gray-600 font-mono">{selectedUser.id}</p>
                                 </div>
                             </div>
 

@@ -43,6 +43,23 @@ export default function AdminAnalytics() {
     });
     const [revenueData, setRevenueData] = useState<any[]>([]);
     const [subscriptionData, setSubscriptionData] = useState<any[]>([]);
+    const [isSubdomain, setIsSubdomain] = useState(false);
+
+    // Detect subdomain
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const hostname = window.location.hostname;
+            const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "bouteek.shop";
+            setIsSubdomain(hostname === `admin.${rootDomain}` || hostname.startsWith("admin."));
+        }
+    }, []);
+
+    const getHref = (path: string) => {
+        if (isSubdomain) {
+            return path === "/admin" ? "/" : path.replace("/admin", "");
+        }
+        return path;
+    };
 
     useEffect(() => {
         fetchAdminInsights();
@@ -79,7 +96,7 @@ export default function AdminAnalytics() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
                     <h1 className="text-4xl font-black tracking-tight">Platform Analytics</h1>
-                    <p className="text-muted-foreground font-medium mt-1">Real-time performance metrics for Bouteek Ecosystem.</p>
+                    <p className="text-gray-600 font-medium mt-1">Real-time performance metrics for Bouteek Ecosystem.</p>
                 </div>
                 <div className="flex items-center gap-3">
                     <Button variant="outline" className="rounded-2xl h-12 font-bold px-6">
@@ -105,7 +122,7 @@ export default function AdminAnalytics() {
                         </div>
                     </div>
                     <div className="mt-6">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Total GMV</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-600">Total GMV</p>
                         <h3 className="text-3xl font-black mt-1 text-gray-900">{stats.totalGMV.toLocaleString()} XOF</h3>
                     </div>
                 </Card>
@@ -121,7 +138,7 @@ export default function AdminAnalytics() {
                         </div>
                     </div>
                     <div className="mt-6">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Platform Income</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-600">Platform Income</p>
                         <h3 className="text-3xl font-black mt-1 text-gray-900">{stats.platformRevenue.toLocaleString()} XOF</h3>
                     </div>
                 </Card>
@@ -137,7 +154,7 @@ export default function AdminAnalytics() {
                         </div>
                     </div>
                     <div className="mt-6">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Total Sellers</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-600">Total Sellers</p>
                         <h3 className="text-3xl font-black mt-1 text-gray-900">{stats.activeSellers.toLocaleString()}</h3>
                     </div>
                 </Card>
@@ -153,7 +170,7 @@ export default function AdminAnalytics() {
                         </div>
                     </div>
                     <div className="mt-6">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Churn Rate</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-600">Churn Rate</p>
                         <h3 className="text-3xl font-black mt-1 text-gray-900">4.2%</h3>
                     </div>
                 </Card>
@@ -171,11 +188,11 @@ export default function AdminAnalytics() {
                             <div className="flex gap-4">
                                 <div className="flex items-center gap-2">
                                     <div className="w-3 h-3 rounded-full bg-blue-500" />
-                                    <span className="text-[10px] font-black uppercase text-muted-foreground">Revenue</span>
+                                    <span className="text-[10px] font-black uppercase text-gray-600">Revenue</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <div className="w-3 h-3 rounded-full bg-emerald-500" />
-                                    <span className="text-[10px] font-black uppercase text-muted-foreground">GMV (x0.1)</span>
+                                    <span className="text-[10px] font-black uppercase text-gray-600">GMV (x0.1)</span>
                                 </div>
                             </div>
                         </div>

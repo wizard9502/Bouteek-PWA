@@ -37,7 +37,7 @@ export default function AffiliatePayouts() {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-3xl font-black text-gray-900">Affiliate Payouts</h1>
-                    <p className="text-muted-foreground font-medium mt-1">Manage commission withdrawals.</p>
+                    <p className="text-gray-600 font-medium mt-1">Manage commission withdrawals.</p>
                 </div>
                 <div className="flex gap-2">
                     {['all', 'pending', 'paid', 'cancelled'].map(f => (
@@ -61,12 +61,12 @@ export default function AffiliatePayouts() {
                 <table className="w-full">
                     <thead className="bg-gray-50/50">
                         <tr className="border-b border-border/50">
-                            <th className="text-left py-4 px-6 text-xs font-black uppercase tracking-wider text-muted-foreground">ID</th>
-                            <th className="text-left py-4 px-6 text-xs font-black uppercase tracking-wider text-muted-foreground">Referrer</th>
-                            <th className="text-left py-4 px-6 text-xs font-black uppercase tracking-wider text-muted-foreground">Amount</th>
-                            <th className="text-left py-4 px-6 text-xs font-black uppercase tracking-wider text-muted-foreground">Status</th>
-                            <th className="text-left py-4 px-6 text-xs font-black uppercase tracking-wider text-muted-foreground">Date</th>
-                            <th className="text-right py-4 px-6 text-xs font-black uppercase tracking-wider text-muted-foreground">Actions</th>
+                            <th className="text-left py-4 px-6 text-gray-600 font-black uppercase tracking-wider text-gray-700">ID</th>
+                            <th className="text-left py-4 px-6 text-gray-600 font-black uppercase tracking-wider text-gray-700">Referrer</th>
+                            <th className="text-left py-4 px-6 text-gray-600 font-black uppercase tracking-wider text-gray-700">Amount</th>
+                            <th className="text-left py-4 px-6 text-gray-600 font-black uppercase tracking-wider text-gray-700">Status</th>
+                            <th className="text-left py-4 px-6 text-gray-600 font-black uppercase tracking-wider text-gray-700">Date</th>
+                            <th className="text-right py-4 px-6 text-gray-600 font-black uppercase tracking-wider text-gray-700">Actions</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-border/50">
@@ -76,12 +76,12 @@ export default function AffiliatePayouts() {
                             <tr><td colSpan={6} className="p-8 text-center text-muted-foreground">No payouts found.</td></tr>
                         ) : payouts.map((p) => (
                             <tr key={p.id} className="group hover:bg-gray-50/50 transition-colors">
-                                <td className="py-4 px-6 font-mono text-xs text-muted-foreground">
+                                <td className="py-4 px-6 font-mono text-xs text-gray-600">
                                     {p.id.substring(0, 8)}
                                 </td>
                                 <td className="py-4 px-6">
                                     <p className="font-bold text-gray-900">{p.merchants?.business_name || 'Unknown'}</p>
-                                    <p className="text-xs text-muted-foreground">ID: {p.merchants?.id?.substring(0, 8)}</p>
+                                    <p className="text-xs text-gray-600">ID: {p.merchants?.id?.substring(0, 8)}</p>
                                 </td>
                                 <td className="py-4 px-6 font-mono font-bold text-emerald-600">
                                     {p.amount.toLocaleString()} XOF

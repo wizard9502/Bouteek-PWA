@@ -66,7 +66,7 @@ export default function AdminNotifications() {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-3xl font-black text-gray-900">Notifications</h1>
-                    <p className="text-muted-foreground font-medium mt-1">Manage announcements and push campaigns.</p>
+                    <p className="text-gray-600 font-medium mt-1">Manage announcements and push campaigns.</p>
                 </div>
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
@@ -126,10 +126,10 @@ export default function AdminNotifications() {
                 <table className="w-full">
                     <thead className="bg-gray-50/50">
                         <tr className="border-b border-border/50">
-                            <th className="text-left py-4 px-6 text-xs font-black uppercase tracking-wider text-muted-foreground">Campaign</th>
-                            <th className="text-left py-4 px-6 text-xs font-black uppercase tracking-wider text-muted-foreground">Audience</th>
-                            <th className="text-left py-4 px-6 text-xs font-black uppercase tracking-wider text-muted-foreground">Status</th>
-                            <th className="text-left py-4 px-6 text-xs font-black uppercase tracking-wider text-muted-foreground">Sent</th>
+                            <th className="text-left py-4 px-6 text-gray-600 font-black uppercase tracking-wider text-gray-700">Campaign</th>
+                            <th className="text-left py-4 px-6 text-gray-600 font-black uppercase tracking-wider text-gray-700">Audience</th>
+                            <th className="text-left py-4 px-6 text-gray-600 font-black uppercase tracking-wider text-gray-700">Status</th>
+                            <th className="text-left py-4 px-6 text-gray-600 font-black uppercase tracking-wider text-gray-700">Sent</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-border/50">
@@ -141,7 +141,7 @@ export default function AdminNotifications() {
                             <tr key={c.id}>
                                 <td className="py-4 px-6">
                                     <p className="font-bold text-gray-900">{c.title}</p>
-                                    <p className="text-xs text-muted-foreground truncate max-w-[300px]">{c.body}</p>
+                                    <p className="text-xs text-gray-600 truncate max-w-[300px]">{c.body}</p>
                                 </td>
                                 <td className="py-4 px-6 uppercase text-xs font-bold text-muted-foreground">
                                     {c.target_audience}

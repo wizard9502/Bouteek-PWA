@@ -117,7 +117,7 @@ export default function AdminReports() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
                     <h1 className="text-4xl font-black tracking-tight">Reports & Exports</h1>
-                    <p className="text-muted-foreground font-medium mt-1">Generate and download platform data for accounting and audit.</p>
+                    <p className="text-gray-600 font-medium mt-1">Generate and download platform data for accounting and audit.</p>
                 </div>
                 <div className="flex items-center gap-3">
                     <div className="relative">
@@ -139,7 +139,7 @@ export default function AdminReports() {
                                         <report.icon size={28} />
                                     </div>
                                     <h4 className="text-lg font-black mt-6">{report.name}</h4>
-                                    <p className="text-xs text-muted-foreground font-medium mt-2 leading-relaxed">{report.desc}</p>
+                                    <p className="text-xs text-gray-600 font-medium mt-2 leading-relaxed">{report.desc}</p>
 
                                     <div className="mt-8 flex gap-2">
                                         <Button
@@ -197,7 +197,7 @@ export default function AdminReports() {
                                         </div>
                                         <div>
                                             <p className="font-bold text-sm truncate max-w-[200px] md:max-w-xs">{file.name}</p>
-                                            <div className="flex items-center gap-3 mt-1 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                                            <div className="flex items-center gap-3 mt-1 text-[10px] font-bold text-gray-500 uppercase tracking-widest">
                                                 <span className="flex items-center gap-1">
                                                     <Calendar size={12} />
                                                     {file.date}

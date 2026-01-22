@@ -37,7 +37,25 @@ export default function AdminDashboard() {
     const [distribution, setDistribution] = useState<any[]>([]);
     const [recentMerchants, setRecentMerchants] = useState<any[]>([]);
     const [revenueGrowth, setRevenueGrowth] = useState<any[]>([]);
+    const [revenueGrowth, setRevenueGrowth] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isSubdomain, setIsSubdomain] = useState(false);
+
+    // Detect subdomain
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const hostname = window.location.hostname;
+            const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "bouteek.shop";
+            setIsSubdomain(hostname === `admin.${rootDomain}` || hostname.startsWith("admin."));
+        }
+    }, []);
+
+    const getHref = (path: string) => {
+        if (isSubdomain) {
+            return path === "/admin" ? "/" : path.replace("/admin", "");
+        }
+        return path;
+    };
 
 
     useEffect(() => {
@@ -65,7 +83,7 @@ export default function AdminDashboard() {
 
     if (isLoading) {
         return (
-            <div className="flex items-center justify-center h-screen text-muted-foreground animate-pulse">
+            <div className="flex items-center justify-center h-screen text-gray-500 text-xs font-bold">
                 Loading Admin Dashboard...
             </div>
         );
@@ -77,7 +95,7 @@ export default function AdminDashboard() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-black text-gray-900">Dashboard Overview</h1>
-                    <p className="text-muted-foreground font-medium mt-1">Platform health at a glance.</p>
+                    <p className="text-gray-600 font-medium mt-1">Platform health at a glance.</p>
                 </div>
                 <div className="flex items-center gap-3">
                     <Button
@@ -101,7 +119,7 @@ export default function AdminDashboard() {
                 <Card className="p-6 rounded-3xl border-border/50 shadow-sm hover:shadow-md transition-shadow">
                     <div className="flex items-start justify-between">
                         <div>
-                            <p className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Total Revenue</p>
+                            <p className="text-gray-600 font-bold uppercase tracking-wider">Total Revenue</p>
                             <h3 className="text-3xl font-black mt-2 text-gray-900">{stats?.totalRevenue?.toLocaleString()} XOF</h3>
                             <div className="flex items-center gap-1 mt-2 text-emerald-600 bg-emerald-50 w-fit px-2 py-1 rounded-full text-xs font-bold">
                                 <TrendingUp size={12} />
@@ -117,7 +135,7 @@ export default function AdminDashboard() {
                 <Card className="p-6 rounded-3xl border-border/50 shadow-sm hover:shadow-md transition-shadow">
                     <div className="flex items-start justify-between">
                         <div>
-                            <p className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Active Merchants</p>
+                            <p className="text-gray-600 font-bold uppercase tracking-wider">Active Merchants</p>
                             <h3 className="text-3xl font-black mt-2 text-gray-900">{stats?.activeMerchants}</h3>
                             <div className="flex items-center gap-1 mt-2 text-emerald-600 bg-emerald-50 w-fit px-2 py-1 rounded-full text-xs font-bold">
                                 <TrendingUp size={12} />
@@ -133,9 +151,9 @@ export default function AdminDashboard() {
                 <Card className="p-6 rounded-3xl border-border/50 shadow-sm hover:shadow-md transition-shadow">
                     <div className="flex items-start justify-between">
                         <div>
-                            <p className="text-sm font-bold text-muted-foreground uppercase tracking-wider">GMV</p>
+                            <p className="text-gray-600 font-bold uppercase tracking-wider">GMV</p>
                             <h3 className="text-3xl font-black mt-2 text-gray-900">{stats?.gmv?.toLocaleString()} XOF</h3>
-                            <p className="text-xs text-muted-foreground mt-2 font-medium">Gross Merchandise Value</p>
+                            <p className="text-gray-500 text-xs font-bold">Gross Merchandise Value</p>
                         </div>
                         <div className="p-3 bg-orange-50 text-orange-600 rounded-2xl">
                             <ShoppingBag size={24} />
@@ -197,7 +215,7 @@ export default function AdminDashboard() {
                     <Button
                         variant="ghost"
                         className="text-sm font-bold text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-xl"
-                        onClick={() => window.location.href = '/admin/merchants'}
+                        onClick={() => window.location.href = getHref('/admin/merchants')}
                     >
                         View All <ArrowUpRight className="ml-1 w-4 h-4" />
                     </Button>
@@ -206,11 +224,11 @@ export default function AdminDashboard() {
                     <table className="w-full">
                         <thead>
                             <tr className="border-b border-border/50">
-                                <th className="text-left py-4 px-4 text-xs font-black uppercase tracking-wider text-muted-foreground">Business</th>
-                                <th className="text-left py-4 px-4 text-xs font-black uppercase tracking-wider text-muted-foreground">Plan</th>
-                                <th className="text-left py-4 px-4 text-xs font-black uppercase tracking-wider text-muted-foreground">Status</th>
-                                <th className="text-left py-4 px-4 text-xs font-black uppercase tracking-wider text-muted-foreground">Joined</th>
-                                <th className="text-right py-4 px-4 text-xs font-black uppercase tracking-wider text-muted-foreground">Actions</th>
+                                <th className="text-left py-4 px-4 text-gray-600 font-black uppercase tracking-wider">Business</th>
+                                <th className="text-left py-4 px-4 text-gray-600 font-black uppercase tracking-wider">Plan</th>
+                                <th className="text-left py-4 px-4 text-gray-600 font-black uppercase tracking-wider">Status</th>
+                                <th className="text-left py-4 px-4 text-gray-600 font-black uppercase tracking-wider">Joined</th>
+                                <th className="text-right py-4 px-4 text-gray-600 font-black uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

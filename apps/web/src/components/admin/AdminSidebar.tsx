@@ -55,13 +55,13 @@ export default function AdminSidebar() {
     const routes = [
         { label: "Dashboard", icon: LayoutDashboard, href: "/admin", color: "text-sky-400" },
         { label: "Users", icon: Users, href: "/admin/users", color: "text-blue-400" },
-        { label: "Plans", icon: Layers, href: "/admin/plans", color: "text-purple-400" },
+        { label: "Plans", icon: Layers, href: "/admin/plans", color: "text-emerald-400" },
         { label: "Merchants", icon: Users, href: "/admin/merchants", color: "text-violet-400" },
         { label: "Analytics", icon: BarChart3, href: "/admin/analytics", color: "text-pink-400" },
         { label: "Notifications", icon: Bell, href: "/admin/notifications", color: "text-orange-400" },
-        { label: "Payouts", icon: CreditCard, href: "/admin/payouts", color: "text-emerald-400" },
-        { label: "Reports", icon: FileText, href: "/admin/reports", color: "text-green-400" },
-        { label: "Settings", icon: Settings, href: "/admin/settings", color: "text-gray-400" },
+        { label: "Payouts", icon: CreditCard, href: "/admin/payouts", color: "text-yellow-400" },
+        { label: "Reports", icon: FileText, href: "/admin/reports", color: "text-cyan-400" },
+        { label: "Settings", icon: Settings, href: "/admin/settings", color: "text-slate-400" },
         { label: "Audit Logs", icon: Shield, href: "/admin/audit", color: "text-red-400" },
     ];
 

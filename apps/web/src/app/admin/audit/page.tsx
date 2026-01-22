@@ -28,18 +28,18 @@ export default function AdminAudit() {
             <div className="p-8 space-y-8">
                 <div>
                     <h1 className="text-3xl font-black text-gray-900">{t("admin.audit.title")}</h1>
-                    <p className="text-muted-foreground font-medium mt-1">{t("admin.audit.subtitle")}</p>
+                    <p className="text-gray-600 font-medium mt-1">{t("admin.audit.subtitle")}</p>
                 </div>
 
                 <div className="bg-white rounded-3xl border border-border/50 shadow-sm overflow-hidden">
                     <table className="w-full">
                         <thead className="bg-gray-50/50">
                             <tr className="border-b border-border/50">
-                                <th className="text-left py-4 px-6 text-xs font-black uppercase tracking-wider text-muted-foreground">{t("admin.audit.table.admin")}</th>
-                                <th className="text-left py-4 px-6 text-xs font-black uppercase tracking-wider text-muted-foreground">{t("admin.audit.table.action")}</th>
-                                <th className="text-left py-4 px-6 text-xs font-black uppercase tracking-wider text-muted-foreground">{t("admin.audit.table.target")}</th>
-                                <th className="text-left py-4 px-6 text-xs font-black uppercase tracking-wider text-muted-foreground">{t("admin.audit.table.details")}</th>
-                                <th className="text-right py-4 px-6 text-xs font-black uppercase tracking-wider text-muted-foreground">{t("admin.audit.table.time")}</th>
+                                <th className="text-left py-4 px-6 text-gray-600 font-black uppercase tracking-wider text-gray-700">{t("admin.audit.table.admin")}</th>
+                                <th className="text-left py-4 px-6 text-gray-600 font-black uppercase tracking-wider text-gray-700">{t("admin.audit.table.action")}</th>
+                                <th className="text-left py-4 px-6 text-gray-600 font-black uppercase tracking-wider text-gray-700">{t("admin.audit.table.target")}</th>
+                                <th className="text-left py-4 px-6 text-gray-600 font-black uppercase tracking-wider text-gray-700">{t("admin.audit.table.details")}</th>
+                                <th className="text-right py-4 px-6 text-gray-600 font-black uppercase tracking-wider text-gray-700">{t("admin.audit.table.time")}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border/50">
@@ -63,7 +63,7 @@ export default function AdminAudit() {
                                     <td className="py-4 px-6 text-xs font-medium text-gray-600">
                                         {log.target_type}: {log.target_id?.substring(0, 8)}
                                     </td>
-                                    <td className="py-4 px-6 text-xs text-muted-foreground max-w-[300px] truncate">
+                                    <td className="py-4 px-6 text-xs text-gray-600 max-w-[300px] truncate">
                                         {JSON.stringify(log.details)}
                                     </td>
                                     <td className="py-4 px-6 text-right text-xs text-gray-500 font-medium">

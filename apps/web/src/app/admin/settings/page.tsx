@@ -78,7 +78,7 @@ export default function AdminSettings() {
                 <div className="flex items-center justify-between p-4 border rounded-2xl bg-gray-50/50">
                     <div className="space-y-1">
                         <Label className="text-base font-bold">Free Trial Enabled</Label>
-                        <p className="text-sm text-muted-foreground">Allow new merchants to try specifically for 14 days.</p>
+                        <p className="text-sm text-gray-600">Allow new merchants to try specifically for 14 days.</p>
                     </div>
                     <Switch
                         checked={generalConfig.free_trial_enabled}
@@ -133,7 +133,7 @@ export default function AdminSettings() {
                                     value={pricingConfig[tier]?.commission_rate}
                                     onChange={(e) => updatePricing(tier, 'commission_rate', e.target.value)}
                                 />
-                                <p className="text-xs text-muted-foreground text-right">
+                                <p className="text-xs text-gray-600 text-right">
                                     {(pricingConfig[tier]?.commission_rate * 100).toFixed(2)}%
                                 </p>
                             </div>

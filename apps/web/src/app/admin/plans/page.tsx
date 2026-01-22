@@ -102,7 +102,7 @@ export default function PlansPage() {
         <div className="space-y-8 pb-12">
             <div>
                 <h1 className="hero-text !text-4xl">Plan Management</h1>
-                <p className="text-muted-foreground font-medium mt-1">Configure features and limits for each subscription tier.</p>
+                <p className="text-gray-600 font-medium mt-1">Configure features and limits for each subscription tier.</p>
             </div>
 
             {loading ? (
@@ -122,11 +122,11 @@ export default function PlansPage() {
                                         <h3 className="font-black text-2xl uppercase tracking-tight">{plan.name}</h3>
                                         <Badge className="bg-muted text-foreground hover:bg-muted font-mono">{plan.slug}</Badge>
                                     </div>
-                                    <p className="text-3xl font-black mt-4">
+                                    <p className="text-gray-700 font-black mt-4">
                                         {plan.price.toLocaleString()} <span className="text-sm font-bold text-muted-foreground">XOF</span>
                                     </p>
                                     <div className="mt-4 space-y-1">
-                                        <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Commission Rate (%)</Label>
+                                        <Label className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Commission Rate (%)</Label>
                                         <div className="flex items-center gap-2">
                                             <Input
                                                 type="number"
@@ -140,7 +140,7 @@ export default function PlansPage() {
                                 </div>
 
                                 <div className="space-y-6 flex-1">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Feature Availability</p>
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-600">Feature Availability</p>
                                     <div className="space-y-4">
                                         {featuresList.map((feature) => (
                                             <div key={feature.key} className="flex items-center justify-between p-3 rounded-xl bg-muted/20">

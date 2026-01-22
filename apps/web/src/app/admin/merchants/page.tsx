@@ -46,6 +46,23 @@ export default function MerchantsManagement() {
     const [creditAmount, setCreditAmount] = useState("");
     const [creditReason, setCreditReason] = useState("");
     const [isCreditDialogOpen, setIsCreditDialogOpen] = useState(false);
+    const [isSubdomain, setIsSubdomain] = useState(false);
+
+    // Detect subdomain
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const hostname = window.location.hostname;
+            const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "bouteek.shop";
+            setIsSubdomain(hostname === `admin.${rootDomain}` || hostname.startsWith("admin."));
+        }
+    }, []);
+
+    const getHref = (path: string) => {
+        if (isSubdomain) {
+            return path === "/admin" ? "/" : path.replace("/admin", "");
+        }
+        return path;
+    };
 
     useEffect(() => {
         fetchMerchants();
@@ -105,7 +122,7 @@ export default function MerchantsManagement() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-black text-gray-900">Merchants</h1>
-                    <p className="text-muted-foreground font-medium mt-1">Manage all registered businesses.</p>
+                    <p className="text-gray-600 font-medium mt-1">Manage all registered businesses.</p>
                 </div>
                 <div className="flex items-center gap-3">
                     <div className="relative">
@@ -143,11 +160,11 @@ export default function MerchantsManagement() {
                 <table className="w-full">
                     <thead className="bg-gray-50/50">
                         <tr className="border-b border-border/50">
-                            <th className="text-left py-4 px-6 text-xs font-black uppercase tracking-wider text-muted-foreground">Merchant</th>
-                            <th className="text-left py-4 px-6 text-xs font-black uppercase tracking-wider text-muted-foreground">Status</th>
-                            <th className="text-left py-4 px-6 text-xs font-black uppercase tracking-wider text-muted-foreground">Balance</th>
-                            <th className="text-left py-4 px-6 text-xs font-black uppercase tracking-wider text-muted-foreground">Joined</th>
-                            <th className="text-right py-4 px-6 text-xs font-black uppercase tracking-wider text-muted-foreground">Actions</th>
+                            <th className="text-left py-4 px-6 text-gray-600 font-black uppercase tracking-wider text-gray-700">Merchant</th>
+                            <th className="text-left py-4 px-6 text-gray-600 font-black uppercase tracking-wider text-gray-700">Status</th>
+                            <th className="text-left py-4 px-6 text-gray-600 font-black uppercase tracking-wider text-gray-700">Balance</th>
+                            <th className="text-left py-4 px-6 text-gray-600 font-black uppercase tracking-wider text-gray-700">Joined</th>
+                            <th className="text-right py-4 px-6 text-gray-600 font-black uppercase tracking-wider text-gray-700">Actions</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-border/50">
