@@ -52,6 +52,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const [user, setUser] = useState<any>(null);
+    const [isSubdomain, setIsSubdomain] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -80,7 +81,25 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
         fetchUser();
 
         return () => window.removeEventListener("scroll", handleScroll);
+    }, [setTheme]);
+
+    // Detect if we're on dashboard.bouteek.shop subdomain
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const hostname = window.location.hostname;
+            const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "bouteek.shop";
+            setIsSubdomain(hostname === `dashboard.${rootDomain}` || hostname.startsWith("dashboard."));
+        }
     }, []);
+
+    // Generate correct href based on subdomain
+    const getHref = (path: string) => {
+        if (isSubdomain) {
+            // On dashboard.bouteek.shop, remove /dashboard prefix
+            return path === "/dashboard" ? "/" : path.replace("/dashboard", "");
+        }
+        return path;
+    };
 
     const handleLogout = async () => {
         await supabase.auth.signOut();
@@ -118,7 +137,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
                         return (
                             <Link
                                 key={item.href}
-                                href={item.href}
+                                href={getHref(item.href)}
                                 className={cn(
                                     "flex items-center gap-4 px-6 py-4 rounded-3xl transition-all duration-200 group relative overflow-hidden",
                                     isActive
@@ -288,7 +307,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
                         return (
                             <Link
                                 key={item.href}
-                                href={item.href}
+                                href={getHref(item.href)}
                                 className="relative -top-8 flex flex-col items-center justify-center"
                             >
                                 <div className={cn(
@@ -312,7 +331,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
                     return (
                         <Link
                             key={item.href}
-                            href={item.href}
+                            href={getHref(item.href)}
                             className={cn(
                                 "flex flex-col items-center gap-1 transition-all duration-200 w-12",
                                 isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
@@ -338,7 +357,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
             {/* Global FAB (Mobile) */}
             < Button
                 className="md:hidden fixed bottom-24 right-6 w-14 h-14 rounded-full bg-bouteek-green shadow-xl shadow-bouteek-green/40 flex items-center justify-center text-white z-40 transition-transform active:scale-95"
-                onClick={() => router.push("/dashboard/listings/new")
+                onClick={() => router.push(getHref("/dashboard/listings/new"))
                 }
             >
                 <Plus size={28} />
