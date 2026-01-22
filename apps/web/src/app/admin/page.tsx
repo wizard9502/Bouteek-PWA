@@ -124,10 +124,10 @@ export default function AdminDashboard() {
             {/* Premium KPI Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
                 {[
-                    { label: "Net Revenue", value: `${stats?.totalRevenue?.toLocaleString()} XOF`, sub: "+12.5% MOM", icon: Activity, color: "text-bouteek-green" },
-                    { label: "Global Sellers", value: stats?.activeMerchants, sub: "+8.2% Growth", icon: Users, color: "text-blue-400" },
-                    { label: "Gross Volume", value: `${stats?.gmv?.toLocaleString()} XOF`, sub: "Direct P2P Sales", icon: Zap, color: "text-purple-400" },
-                    { label: "Pending Audit", value: stats?.pendingPayouts, sub: "Encrypted Payouts", icon: Shield, color: "text-red-400" }
+                    { label: "Net Revenue", value: `${(stats?.totalRevenue || 0).toLocaleString()} XOF`, sub: "+12.5% MOM", icon: Activity, color: "text-bouteek-green" },
+                    { label: "Global Sellers", value: stats?.activeMerchants || 0, sub: "+8.2% Growth", icon: Users, color: "text-blue-400" },
+                    { label: "Gross Volume", value: `${(stats?.gmv || 0).toLocaleString()} XOF`, sub: "Direct P2P Sales", icon: Zap, color: "text-purple-400" },
+                    { label: "Pending Audit", value: stats?.pendingPayouts || 0, sub: "Encrypted Payouts", icon: Shield, color: "text-red-400" }
                 ].map((kpi, i) => (
                     <motion.div
                         key={kpi.label}
