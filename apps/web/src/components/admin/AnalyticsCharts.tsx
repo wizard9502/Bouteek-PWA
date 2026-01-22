@@ -49,18 +49,24 @@ export function RevenueGrowthChart({ data }: RevenueChartProps) {
             {
                 label: t("common.charts.subscriptions"),
                 data: data.map(d => d.sub),
-                borderColor: '#3B82F6',
-                backgroundColor: 'rgba(59, 130, 246, 0.5)',
-                tension: 0.4,
-                fill: true
+                borderColor: '#00FF41',
+                backgroundColor: 'rgba(0, 255, 65, 0.1)',
+                tension: 0.5,
+                fill: true,
+                pointBackgroundColor: '#00FF41',
+                pointBorderColor: '#000',
+                pointHoverRadius: 6,
             },
             {
                 label: t("common.charts.commissions"),
                 data: data.map(d => d.com),
-                borderColor: '#10B981',
-                backgroundColor: 'rgba(16, 185, 129, 0.5)',
-                tension: 0.4,
-                fill: true
+                borderColor: 'rgba(255, 255, 255, 0.5)',
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                tension: 0.5,
+                fill: true,
+                pointBackgroundColor: '#fff',
+                pointBorderColor: '#000',
+                pointHoverRadius: 6,
             }
         ]
     };
@@ -70,8 +76,21 @@ export function RevenueGrowthChart({ data }: RevenueChartProps) {
         plugins: {
             legend: {
                 position: 'top' as const,
+                labels: {
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    font: { size: 10, weight: 'bold' as const, family: 'Inter' },
+                    usePointStyle: true,
+                    padding: 20
+                }
             },
             tooltip: {
+                backgroundColor: '#000',
+                titleColor: '#00FF41',
+                bodyColor: '#fff',
+                borderColor: 'rgba(255, 255, 255, 0.1)',
+                borderWidth: 1,
+                padding: 12,
+                displayColors: false,
                 mode: 'index' as const,
                 intersect: false,
             }
@@ -79,14 +98,12 @@ export function RevenueGrowthChart({ data }: RevenueChartProps) {
         scales: {
             y: {
                 beginAtZero: true,
-                grid: {
-                    display: false
-                }
+                grid: { color: 'rgba(255, 255, 255, 0.05)', drawBorder: false },
+                ticks: { color: 'rgba(255, 255, 255, 0.4)', font: { size: 10, weight: 'bold' as const } }
             },
             x: {
-                grid: {
-                    display: false
-                }
+                grid: { display: false },
+                ticks: { color: 'rgba(255, 255, 255, 0.4)', font: { size: 10, weight: 'bold' as const } }
             }
         }
     };
@@ -112,12 +129,14 @@ export function SubscriptionDistributionChart({ data }: SubscriptionChartProps) 
                 label: t("common.charts.merchants_count"),
                 data: data.map(d => d.value),
                 backgroundColor: [
-                    '#0088FE', // Starter
-                    '#00C49F', // Launch
-                    '#FFBB28', // Growth
-                    '#FF8042'  // Pro
+                    '#00FF41',
+                    'rgba(0, 255, 65, 0.7)',
+                    'rgba(0, 255, 65, 0.4)',
+                    'rgba(0, 255, 65, 0.2)'
                 ],
-                borderWidth: 0,
+                borderWidth: 2,
+                borderColor: '#000',
+                hoverOffset: 15
             },
         ],
     };
@@ -126,9 +145,16 @@ export function SubscriptionDistributionChart({ data }: SubscriptionChartProps) 
         responsive: true,
         plugins: {
             legend: {
-                position: 'bottom' as const
+                position: 'bottom' as const,
+                labels: {
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    font: { size: 10, weight: 'bold' as const },
+                    usePointStyle: true,
+                    padding: 20
+                }
             }
-        }
+        },
+        cutout: '75%'
     };
 
     return <Doughnut data={chartData} options={options} />;
@@ -150,7 +176,8 @@ export function DashboardRevenueChart({ data }: DashboardBarChartProps) {
                 label: t("common.charts.revenue"),
                 data: data.map(d => d.revenue),
                 backgroundColor: '#00FF41',
-                borderRadius: 4,
+                borderRadius: 8,
+                hoverBackgroundColor: '#00FF41',
             }
         ]
     };
@@ -159,10 +186,14 @@ export function DashboardRevenueChart({ data }: DashboardBarChartProps) {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-            legend: {
-                display: false
-            },
+            legend: { display: false },
             tooltip: {
+                backgroundColor: '#000',
+                titleColor: '#00FF41',
+                bodyColor: '#fff',
+                borderColor: 'rgba(255, 255, 255, 0.1)',
+                borderWidth: 1,
+                padding: 12,
                 callbacks: {
                     label: function (context: any) {
                         return context.parsed.y.toLocaleString() + ' XOF';
@@ -173,29 +204,18 @@ export function DashboardRevenueChart({ data }: DashboardBarChartProps) {
         scales: {
             y: {
                 beginAtZero: true,
-                grid: {
-                    color: '#f3f4f6'
-                },
+                grid: { color: 'rgba(255, 255, 255, 0.05)', drawBorder: false },
                 ticks: {
+                    color: 'rgba(255, 255, 255, 0.4)',
                     callback: function (value: any) {
                         return (value / 1000) + 'k';
                     },
-                    font: {
-                        size: 10,
-                        weight: 'bold' as const
-                    }
-                },
-                border: { display: false }
+                    font: { size: 10, weight: 'bold' as const }
+                }
             },
             x: {
                 grid: { display: false },
-                ticks: {
-                    font: {
-                        size: 10,
-                        weight: 'bold' as const
-                    }
-                },
-                border: { display: false }
+                ticks: { color: 'rgba(255, 255, 255, 0.4)', font: { size: 10, weight: 'bold' as const } }
             }
         }
     };

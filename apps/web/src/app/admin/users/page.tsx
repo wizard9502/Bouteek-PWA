@@ -13,6 +13,8 @@ import {
     Mail,
     Calendar,
     Users as UsersIcon,
+    ArrowUpRight,
+    Filter
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,6 +45,7 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/lib/supabaseClient";
 import { toast } from "sonner";
+import { motion } from "framer-motion";
 
 interface User {
     id: string;
@@ -74,13 +77,6 @@ export default function UsersManagementPage() {
             setIsSubdomain(hostname === `admin.${rootDomain}` || hostname.startsWith("admin."));
         }
     }, []);
-
-    const getHref = (path: string) => {
-        if (isSubdomain) {
-            return path === "/admin" ? "/" : path.replace("/admin", "");
-        }
-        return path;
-    };
 
     const pageSize = 20;
 
@@ -198,7 +194,7 @@ export default function UsersManagementPage() {
     const getRoleBadge = (role: string, isBanned: boolean) => {
         if (isBanned) {
             return (
-                <Badge variant="destructive" className="gap-1">
+                <Badge variant="destructive" className="gap-1 px-3 py-1 rounded-full uppercase text-[10px] font-black tracking-widest shadow-[0_0_10px_rgba(239,68,68,0.3)]">
                     <ShieldAlert size={12} />
                     Banned
                 </Badge>
@@ -208,21 +204,21 @@ export default function UsersManagementPage() {
         switch (role) {
             case "admin":
                 return (
-                    <Badge className="bg-purple-100 text-purple-700 border-purple-200 gap-1">
+                    <Badge className="bg-purple-500/10 text-purple-400 border-purple-500/30 gap-1 px-3 py-1 rounded-full uppercase text-[10px] font-black tracking-widest">
                         <Shield size={12} />
                         Admin
                     </Badge>
                 );
             case "merchant":
                 return (
-                    <Badge className="bg-blue-100 text-blue-700 border-blue-200 gap-1">
+                    <Badge className="bg-bouteek-green/10 text-bouteek-green border-bouteek-green/30 gap-1 px-3 py-1 rounded-full uppercase text-[10px] font-black tracking-widest shadow-[0_0_10px_rgba(0,255,65,0.1)]">
                         <UserCog size={12} />
                         Merchant
                     </Badge>
                 );
             default:
                 return (
-                    <Badge variant="secondary" className="gap-1">
+                    <Badge className="bg-white/5 text-gray-400 border-white/10 gap-1 px-3 py-1 rounded-full uppercase text-[10px] font-black tracking-widest">
                         Customer
                     </Badge>
                 );
@@ -232,21 +228,28 @@ export default function UsersManagementPage() {
     const totalPages = Math.ceil(total / pageSize);
 
     return (
-        <div className="p-8 space-y-8">
-            {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-3xl font-black text-gray-900">User Management</h1>
-                    <p className="text-gray-600 font-medium mt-1">
-                        Manage all platform users, roles, and access.
-                    </p>
+        <div className="space-y-12 pb-20">
+            {/* Advanced Header */}
+            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 py-4 border-b border-white/5">
+                <div className="space-y-2">
+                    <div className="flex items-center gap-2 mb-2">
+                        <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-[0_0_8px_#3B82F6]" />
+                        <span className="text-[10px] font-black text-blue-400 uppercase tracking-[0.4em]">Identity Services</span>
+                    </div>
+                    <h1 className="text-5xl md:text-7xl font-black text-white italic tracking-tighter uppercase leading-none">
+                        USERS <span className="text-white/10">REGISTRY</span>
+                    </h1>
+                    <p className="text-gray-500 font-bold tracking-[0.1em] text-sm uppercase">Comprehensive Authentication & Permissions Matrix</p>
                 </div>
-                <div className="flex items-center gap-3">
-                    <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+
+                <div className="flex items-center gap-4">
+                    <div className="relative group">
+                        <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                            <Search className="h-4 w-4 text-bouteek-green opacity-50 group-hover:opacity-100 transition-opacity" />
+                        </div>
                         <Input
-                            placeholder="Search by email..."
-                            className="pl-9 w-[300px] rounded-xl"
+                            placeholder="QUERY SYSTEM ID OR EMAIL..."
+                            className="pl-12 w-[350px] h-14 bg-white/5 border-white/5 rounded-full text-[11px] font-black uppercase tracking-widest focus:ring-bouteek-green focus:border-bouteek-green/50 placeholder:text-gray-700"
                             value={search}
                             onChange={(e) => {
                                 setSearch(e.target.value);
@@ -257,8 +260,28 @@ export default function UsersManagementPage() {
                 </div>
             </div>
 
-            {/* Filters */}
-            <div className="flex gap-2 pb-4 overflow-x-auto">
+            {/* Quick Stats Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="bg-white/[0.02] border border-white/5 p-6 rounded-[2rem] flex items-center justify-between group hover:border-bouteek-green/20 transition-all">
+                    <div>
+                        <p className="text-gray-600 text-[10px] font-black uppercase tracking-widest">Total Nodes</p>
+                        <p className="text-2xl font-black text-white mt-1">{total}</p>
+                    </div>
+                    <UsersIcon className="text-gray-700 group-hover:text-bouteek-green transition-colors" size={24} />
+                </div>
+                {["admin", "merchant", "customer"].map(role => (
+                    <div key={role} className="bg-white/[0.02] border border-white/5 p-6 rounded-[2rem] flex items-center justify-between group hover:border-white/10 transition-all">
+                        <div>
+                            <p className="text-gray-600 text-[10px] font-black uppercase tracking-widest">{role}</p>
+                            <p className="text-2xl font-black text-white mt-1">--</p>
+                        </div>
+                        <div className="w-1.5 h-1.5 rounded-full bg-gray-700 group-hover:bg-white transition-colors" />
+                    </div>
+                ))}
+            </div>
+
+            {/* Entity Filters */}
+            <div className="flex flex-wrap gap-3">
                 {["all", "admin", "merchant", "customer"].map((f) => (
                     <button
                         key={f}
@@ -267,10 +290,10 @@ export default function UsersManagementPage() {
                             setPage(1);
                         }}
                         className={cn(
-                            "px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider border transition-colors",
+                            "px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 border backdrop-blur-xl",
                             roleFilter === f
-                                ? "bg-black text-white border-black"
-                                : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
+                                ? "bg-bouteek-green text-black border-bouteek-green shadow-[0_0_15px_rgba(0,255,65,0.2)]"
+                                : "bg-white/5 text-gray-500 border-white/5 hover:border-white/10 hover:text-white"
                         )}
                     >
                         {f}
@@ -278,219 +301,231 @@ export default function UsersManagementPage() {
                 ))}
             </div>
 
-            {/* Table */}
-            <div className="bg-white rounded-3xl border border-border/50 shadow-sm overflow-hidden">
-                <table className="w-full">
-                    <thead className="bg-gray-50/50">
-                        <tr className="border-b border-border/50">
-                            <th className="text-left py-4 px-6 text-gray-600 font-black uppercase tracking-wider">
-                                User
-                            </th>
-                            <th className="text-left py-4 px-6 text-gray-600 font-black uppercase tracking-wider">
-                                Role
-                            </th>
-                            <th className="text-left py-4 px-6 text-gray-600 font-black uppercase tracking-wider">
-                                Status
-                            </th>
-                            <th className="text-left py-4 px-6 text-gray-600 font-black uppercase tracking-wider">
-                                Joined
-                            </th>
-                            <th className="text-right py-4 px-6 text-gray-600 font-black uppercase tracking-wider">
-                                Actions
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border/50">
-                        {isLoading ? (
-                            <tr>
-                                <td colSpan={5} className="p-12 text-center">
-                                    <Loader2 className="animate-spin mx-auto text-muted-foreground" size={32} />
-                                    <p className="mt-2 text-muted-foreground">Loading users...</p>
-                                </td>
+            {/* Advanced Registry Table */}
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-black/40 rounded-[3rem] border border-white/5 shadow-2xl overflow-hidden"
+            >
+                <div className="overflow-x-auto no-scrollbar">
+                    <table className="w-full">
+                        <thead>
+                            <tr className="border-b border-white/5">
+                                <th className="text-left py-8 px-8 text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Identity Identifier</th>
+                                <th className="text-left py-8 px-8 text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Access Tier</th>
+                                <th className="text-left py-8 px-8 text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Status</th>
+                                <th className="text-left py-8 px-8 text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Node Sync</th>
+                                <th className="text-right py-8 px-8 text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Actions</th>
                             </tr>
-                        ) : users.length === 0 ? (
-                            <tr>
-                                <td colSpan={5} className="p-12 text-center">
-                                    <UsersIcon className="mx-auto text-muted-foreground mb-4" size={48} />
-                                    <p className="font-bold text-lg">No Users Found</p>
-                                    <p className="text-muted-foreground mt-1">
-                                        {search ? "Try adjusting your search term" : "No users match the current filter"}
-                                    </p>
-                                </td>
-                            </tr>
-                        ) : (
-                            users.map((user) => (
-                                <tr key={user.id} className="group hover:bg-gray-50/50 transition-colors">
-                                    <td className="py-4 px-6">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center font-bold text-gray-500">
-                                                {user.email.substring(0, 2).toUpperCase()}
-                                            </div>
-                                            <div>
-                                                <p className="font-bold text-gray-900 truncate max-w-[200px]">
-                                                    {user.email}
-                                                </p>
-                                                <p className="text-xs text-gray-600 font-mono">
-                                                    {user.id.substring(0, 8)}...
-                                                </p>
-                                            </div>
+                        </thead>
+                        <tbody className="divide-y divide-white/5">
+                            {isLoading ? (
+                                <tr>
+                                    <td colSpan={5} className="py-24 text-center">
+                                        <div className="flex flex-col items-center gap-4">
+                                            <div className="w-8 h-8 border-2 border-bouteek-green/20 border-t-bouteek-green rounded-full animate-spin" />
+                                            <p className="text-[10px] font-black text-bouteek-green uppercase tracking-[0.3em] animate-pulse">Syncing User Matrix</p>
                                         </div>
                                     </td>
-                                    <td className="py-4 px-6">
-                                        {getRoleBadge(user.role, false)}
-                                    </td>
-                                    <td className="py-4 px-6">
-                                        {user.is_banned ? (
-                                            <span className="inline-flex items-center gap-1 text-red-600 font-bold text-xs bg-red-50 px-2 py-1 rounded-md">
-                                                <XCircle size={12} /> Banned
-                                            </span>
-                                        ) : user.email_confirmed_at ? (
-                                            <span className="inline-flex items-center gap-1 text-emerald-600 font-bold text-xs bg-emerald-50 px-2 py-1 rounded-md">
-                                                <CheckCircle2 size={12} /> Verified
-                                            </span>
-                                        ) : (
-                                            <span className="inline-flex items-center gap-1 text-amber-600 font-bold text-xs bg-amber-50 px-2 py-1 rounded-md">
-                                                Pending
-                                            </span>
-                                        )}
-                                    </td>
-                                    <td className="py-4 px-6 text-sm text-gray-500">
-                                        {new Date(user.created_at).toLocaleDateString()}
-                                    </td>
-                                    <td className="py-4 px-6 text-right">
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <Button variant="ghost" size="icon" className="rounded-xl">
-                                                    <MoreHorizontal size={18} />
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end" className="rounded-xl">
-                                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                                <DropdownMenuItem onClick={() => openUserDetail(user)}>
-                                                    View Details
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem onClick={() => openUserDetail(user)}>
-                                                    Change Role
-                                                </DropdownMenuItem>
-                                                <DropdownMenuSeparator />
-                                                <DropdownMenuItem
-                                                    className={user.is_banned ? "text-green-600" : "text-red-600"}
-                                                    onClick={() => handleToggleBan(user)}
-                                                    disabled={isUpdating}
-                                                >
-                                                    {user.is_banned ? "Unban User" : "Ban User"}
-                                                </DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
+                                </tr>
+                            ) : users.length === 0 ? (
+                                <tr>
+                                    <td colSpan={5} className="py-32 text-center">
+                                        <div className="flex flex-col items-center gap-4 opacity-30">
+                                            <UsersIcon size={48} className="text-gray-500" />
+                                            <p className="text-[10px] font-black uppercase tracking-[0.4em]">Zero Identities Found</p>
+                                        </div>
                                     </td>
                                 </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
-            </div>
-
-            {/* Pagination */}
-            {totalPages > 1 && (
-                <div className="flex items-center justify-between">
-                    <p className="text-sm text-muted-foreground">
-                        Showing {((page - 1) * pageSize) + 1} - {Math.min(page * pageSize, total)} of {total} users
-                    </p>
-                    <div className="flex gap-2">
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setPage(p => Math.max(1, p - 1))}
-                            disabled={page === 1}
-                        >
-                            Previous
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                            disabled={page === totalPages}
-                        >
-                            Next
-                        </Button>
-                    </div>
+                            ) : (
+                                users.map((user) => (
+                                    <tr key={user.id} className="group hover:bg-white/[0.03] transition-all">
+                                        <td className="py-8 px-8">
+                                            <div className="flex items-center gap-5">
+                                                <div className="w-14 h-14 rounded-2xl bg-black border border-white/10 flex items-center justify-center font-black text-gray-500 group-hover:text-bouteek-green group-hover:border-bouteek-green/30 transition-all shadow-inner relative overflow-hidden">
+                                                    <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                    <span className="relative z-10">{user.email.substring(0, 2).toUpperCase()}</span>
+                                                </div>
+                                                <div>
+                                                    <p className="font-black text-white text-sm uppercase tracking-wider group-hover:text-bouteek-green transition-colors underline-offset-4 group-hover:underline">
+                                                        {user.email}
+                                                    </p>
+                                                    <p className="text-[9px] font-bold text-gray-600 uppercase tracking-[0.2em] mt-1 font-mono">
+                                                        ID: {user.id.substring(0, 16)}...
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="py-8 px-8">
+                                            {getRoleBadge(user.role, false)}
+                                        </td>
+                                        <td className="py-8 px-8">
+                                            {user.is_banned ? (
+                                                <div className="flex items-center gap-2">
+                                                    <div className="w-2 h-2 rounded-full bg-red-600 shadow-[0_0_8px_#EF4444]" />
+                                                    <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">Compromised</span>
+                                                </div>
+                                            ) : user.email_confirmed_at ? (
+                                                <div className="flex items-center gap-2">
+                                                    <div className="w-2 h-2 rounded-full bg-bouteek-green shadow-[0_0_8px_#00FF41]" />
+                                                    <span className="text-[10px] font-black text-white uppercase tracking-widest">Active Sync</span>
+                                                </div>
+                                            ) : (
+                                                <div className="flex items-center gap-2 opacity-40">
+                                                    <div className="w-2 h-2 rounded-full bg-gray-500" />
+                                                    <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Awaiting Verification</span>
+                                                </div>
+                                            )}
+                                        </td>
+                                        <td className="py-8 px-8 text-[10px] font-bold text-gray-400 tracking-[0.2em] uppercase">
+                                            {new Date(user.created_at).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' })}
+                                        </td>
+                                        <td className="py-8 px-8 text-right">
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button variant="ghost" size="icon" className="rounded-2xl w-12 h-12 hover:bg-bouteek-green hover:text-black hover:rotate-90 transition-all duration-500 border border-transparent hover:border-bouteek-green/30">
+                                                        <MoreHorizontal size={20} />
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="end" className="bg-black/95 backdrop-blur-2xl border-white/10 rounded-[2rem] p-4 p-w-64 shadow-2xl">
+                                                    <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-500 mb-2">Protocol Menu</DropdownMenuLabel>
+                                                    <DropdownMenuItem className="rounded-xl py-3 focus:bg-bouteek-green focus:text-black font-bold uppercase text-[9px] tracking-widest" onClick={() => openUserDetail(user)}>
+                                                        Deep Audit
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem className="rounded-xl py-3 focus:bg-bouteek-green focus:text-black font-bold uppercase text-[9px] tracking-widest" onClick={() => openUserDetail(user)}>
+                                                        Adjust Credentials
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuSeparator className="bg-white/5 my-2" />
+                                                    <DropdownMenuItem
+                                                        className={cn(
+                                                            "rounded-xl py-3 font-black uppercase text-[9px] tracking-widest",
+                                                            user.is_banned ? "text-emerald-500 focus:bg-emerald-500 focus:text-black" : "text-red-500 focus:bg-red-500 focus:text-black"
+                                                        )}
+                                                        onClick={() => handleToggleBan(user)}
+                                                        disabled={isUpdating}
+                                                    >
+                                                        {user.is_banned ? "Reauthorize Node" : "Sever Connection"}
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
                 </div>
-            )}
 
-            {/* User Detail Dialog */}
+                {/* Advanced Pagination */}
+                {totalPages > 1 && (
+                    <div className="flex items-center justify-between p-10 bg-white/[0.01] border-t border-white/5">
+                        <p className="text-[9px] font-black text-gray-600 uppercase tracking-[0.3em]">
+                            Registry Page {page} of {totalPages} <span className="mx-2 text-white/10">|</span> Total Entities: {total}
+                        </p>
+                        <div className="flex gap-4">
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setPage(p => Math.max(1, p - 1))}
+                                disabled={page === 1}
+                                className="rounded-full px-8 h-12 bg-white/5 hover:bg-bouteek-green hover:text-black font-black text-[9px] uppercase tracking-widest disabled:opacity-20"
+                            >
+                                PREVIOUS
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                                disabled={page === totalPages}
+                                className="rounded-full px-8 h-12 bg-white/5 hover:bg-bouteek-green hover:text-black font-black text-[9px] uppercase tracking-widest disabled:opacity-20"
+                            >
+                                NEXT
+                            </Button>
+                        </div>
+                    </div>
+                )}
+            </motion.div>
+
+            {/* Deep Audit Dialog */}
             <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
-                <DialogContent className="rounded-2xl">
+                <DialogContent className="bg-black/95 backdrop-blur-3xl border-white/10 rounded-[3rem] p-10 max-w-2xl shadow-[0_0_100px_rgba(0,0,0,1)]">
                     <DialogHeader>
-                        <DialogTitle>User Details</DialogTitle>
-                        <DialogDescription>
-                            View and manage user information
+                        <DialogTitle className="text-3xl font-black text-white italic tracking-tighter uppercase leading-none">Identity <span className="text-bouteek-green">Profile</span></DialogTitle>
+                        <DialogDescription className="text-gray-500 font-bold tracking-[0.1em] text-[10px] uppercase mt-2">
+                            Secure Deep-Packet User Audit
                         </DialogDescription>
                     </DialogHeader>
 
                     {selectedUser && (
-                        <div className="space-y-6 py-4">
-                            <div className="flex items-center gap-4">
-                                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center font-bold text-xl text-gray-500">
+                        <div className="space-y-10 py-10">
+                            <div className="flex items-center gap-8">
+                                <div className="w-24 h-24 rounded-[2rem] bg-black border border-white/5 flex items-center justify-center font-black text-3xl text-bouteek-green shadow-[inset_0_0_20px_rgba(0,255,65,0.05)] shadow-inner">
                                     {selectedUser.email.substring(0, 2).toUpperCase()}
                                 </div>
-                                <div>
-                                    <p className="font-bold text-lg">{selectedUser.email}</p>
-                                    <p className="text-sm text-gray-600 font-mono">{selectedUser.id}</p>
+                                <div className="space-y-1">
+                                    <p className="font-black text-2xl text-white uppercase tracking-tight">{selectedUser.email}</p>
+                                    <p className="text-[10px] font-bold text-gray-600 font-mono tracking-widest uppercase opacity-50">{selectedUser.id}</p>
+                                    <div className="pt-2">{getRoleBadge(selectedUser.role, selectedUser.is_banned)}</div>
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="p-4 bg-muted/50 rounded-xl">
-                                    <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                                        <Calendar size={14} />
-                                        <span className="text-xs font-bold uppercase">Joined</span>
+                            <div className="grid grid-cols-2 gap-6">
+                                <div className="p-6 bg-white/[0.03] border border-white/5 rounded-[2rem] space-y-4">
+                                    <div className="flex items-center gap-2 text-gray-500 uppercase tracking-widest">
+                                        <Calendar size={14} className="text-bouteek-green" />
+                                        <span className="text-[9px] font-black">Sync Date</span>
                                     </div>
-                                    <p className="font-medium">
-                                        {new Date(selectedUser.created_at).toLocaleDateString("en-US", {
+                                    <p className="font-black text-white text-sm">
+                                        {new Date(selectedUser.created_at).toLocaleDateString("en-GB", {
                                             year: "numeric",
                                             month: "long",
                                             day: "numeric",
-                                        })}
+                                        }).toUpperCase()}
                                     </p>
                                 </div>
-                                <div className="p-4 bg-muted/50 rounded-xl">
-                                    <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                                        <Mail size={14} />
-                                        <span className="text-xs font-bold uppercase">Email Status</span>
+                                <div className="p-6 bg-white/[0.03] border border-white/5 rounded-[2rem] space-y-4">
+                                    <div className="flex items-center gap-2 text-gray-500 uppercase tracking-widest">
+                                        <Mail size={14} className="text-bouteek-green" />
+                                        <span className="text-[9px] font-black">Auth Sync</span>
                                     </div>
-                                    <p className="font-medium">
-                                        {selectedUser.email_confirmed_at ? "Verified" : "Pending"}
+                                    <p className="font-black text-white text-sm uppercase">
+                                        {selectedUser.email_confirmed_at ? "ENCRYPTED & VERIFIED" : "AWAITING HANDSHAKE"}
                                     </p>
                                 </div>
                             </div>
 
-                            <div className="space-y-2">
-                                <label className="text-sm font-bold">Role</label>
+                            <div className="space-y-4">
+                                <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] ml-4">Access Permissions Override</label>
                                 <Select
                                     value={selectedUser.role}
                                     onValueChange={(value) => handleRoleChange(selectedUser.id, value)}
                                     disabled={isUpdating}
                                 >
-                                    <SelectTrigger className="rounded-xl">
+                                    <SelectTrigger className="h-16 rounded-full bg-white/5 border-white/5 text-[11px] font-black uppercase tracking-widest px-8">
                                         <SelectValue />
                                     </SelectTrigger>
-                                    <SelectContent className="rounded-xl">
-                                        <SelectItem value="customer">Customer</SelectItem>
-                                        <SelectItem value="merchant">Merchant</SelectItem>
-                                        <SelectItem value="admin">Admin</SelectItem>
+                                    <SelectContent className="bg-black/95 border-white/10 rounded-3xl p-2 shadow-2xl">
+                                        <SelectItem value="customer" className="rounded-xl py-3 focus:bg-bouteek-green focus:text-black font-bold uppercase text-[9px] tracking-widest cursor-pointer">Customer Node</SelectItem>
+                                        <SelectItem value="merchant" className="rounded-xl py-3 focus:bg-bouteek-green focus:text-black font-bold uppercase text-[9px] tracking-widest cursor-pointer">Merchant Node</SelectItem>
+                                        <SelectItem value="admin" className="rounded-xl py-3 focus:bg-bouteek-green focus:text-black font-bold uppercase text-[9px] tracking-widest cursor-pointer">Administrator Node</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
                         </div>
                     )}
 
-                    <DialogFooter>
-                        <Button variant="outline" onClick={() => setIsDetailOpen(false)}>
-                            Close
+                    <DialogFooter className="gap-4">
+                        <Button variant="ghost" className="rounded-full h-14 px-10 font-black text-[10px] uppercase tracking-widest text-gray-400 hover:text-white hover:bg-white/5" onClick={() => setIsDetailOpen(false)}>
+                            CANCEL
                         </Button>
                         {selectedUser && (
                             <Button
-                                variant={selectedUser.is_banned ? "default" : "destructive"}
+                                className={cn(
+                                    "rounded-full h-14 px-10 font-black text-[10px] uppercase tracking-widest transition-all shadow-xl",
+                                    selectedUser.is_banned
+                                        ? "bg-bouteek-green text-black hover:bg-white shadow-bouteek-green/20"
+                                        : "bg-red-600 text-white hover:bg-black border border-transparent hover:border-red-600 shadow-red-600/20"
+                                )}
                                 onClick={() => {
                                     handleToggleBan(selectedUser);
                                     setIsDetailOpen(false);
@@ -498,7 +533,7 @@ export default function UsersManagementPage() {
                                 disabled={isUpdating}
                             >
                                 {isUpdating && <Loader2 className="animate-spin mr-2" size={16} />}
-                                {selectedUser.is_banned ? "Unban User" : "Ban User"}
+                                {selectedUser.is_banned ? "REAUTHORIZE ACCESS" : "KILL CONNECTION"}
                             </Button>
                         )}
                     </DialogFooter>
