@@ -13,7 +13,8 @@ import {
     ArrowUpRight,
     Activity,
     Layers,
-    Zap
+    Zap,
+    Shield
 } from "lucide-react";
 import { getAdminKPIs, getSubscriptionDistribution, getRecentMerchants, getRevenueGrowthData } from "@/lib/adminData";
 import { toast } from "sonner";

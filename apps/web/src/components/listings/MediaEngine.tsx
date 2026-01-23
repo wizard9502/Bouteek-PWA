@@ -98,7 +98,7 @@ export function MediaEngine({
                 // Compress image using Canvas API (Dakar/Senegal bandwidth optimization)
                 const compressedFile = await compressImage(file, 0.7, 1200);
 
-                const fileExt = compressedFile.name.split('.').pop() || 'jpg';
+                const fileExt = 'jpg'; // Compressed file is always JPEG
                 const fileName = `${crypto.randomUUID()}_${Date.now()}.${fileExt}`;
                 const filePath = `listing-images/${fileName}`;
 
