@@ -87,7 +87,7 @@ export function ListingGrid({ config, moduleType, isEditing }: BaseSectionProps)
                     id: l.id,
                     title: l.title,
                     price: l.price,
-                    image: l.images?.[0] || 'https://via.placeholder.com/400',
+                    image: l.images?.[0] || '/placeholder.svg',
                     period: l.metadata?.rental_period,
                     duration: l.metadata?.service_duration,
                     metadata: l.metadata

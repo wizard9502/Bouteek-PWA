@@ -521,3 +521,36 @@ export async function getRevenueGrowthData() {
         return [];
     }
 }
+
+export async function getMerchantDetails(id: string) {
+    try {
+        const { data, error } = await supabase
+            .from('merchants')
+            .select('*, users(email), storefronts(*)')
+            .eq('id', id)
+            .single();
+
+        if (error) throw error;
+        return data;
+    } catch (error) {
+        console.error("Merchant detail fetch failed", error);
+        return null;
+    }
+}
+
+export async function getMerchantOrders(merchantId: string, limit: number = 50) {
+    try {
+        const { data, error } = await supabase
+            .from('orders')
+            .select('*')
+            .eq('merchant_id', merchantId)
+            .order('created_at', { ascending: false })
+            .limit(limit);
+
+        if (error) throw error;
+        return data || [];
+    } catch (error) {
+        console.error("Merchant orders fetch failed", error);
+        return [];
+    }
+}
