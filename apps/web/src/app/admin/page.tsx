@@ -58,26 +58,46 @@ export default function AdminDashboard() {
     };
 
     useEffect(() => {
+        let mounted = true;
+        const loadTo = setTimeout(() => {
+            if (mounted && isLoading) {
+                console.warn("Admin dashboard data load timed out");
+                setIsLoading(false);
+                toast.error("Dashboard data load timed out - showing partial or empty data");
+            }
+        }, 15000); // 15s timeout
+
         async function loadData() {
             try {
                 const [kpis, dist, recent, growth] = await Promise.all([
-                    getAdminKPIs(),
-                    getSubscriptionDistribution(),
-                    getRecentMerchants(),
-                    getRevenueGrowthData()
+                    getAdminKPIs().catch(e => { console.error("KPI fail", e); return null; }),
+                    getSubscriptionDistribution().catch(e => { console.error("Dist fail", e); return []; }),
+                    getRecentMerchants().catch(e => { console.error("Recent fail", e); return []; }),
+                    getRevenueGrowthData().catch(e => { console.error("Growth fail", e); return []; })
                 ]);
-                setStats(kpis);
-                setDistribution(dist);
-                setRecentMerchants(recent);
-                setRevenueGrowth(growth);
 
+                if (mounted) {
+                    setStats(kpis || {});
+                    setDistribution(dist || []);
+                    setRecentMerchants(recent || []);
+                    setRevenueGrowth(growth || []);
+                }
             } catch (error) {
                 console.error("Failed to load admin data", error);
+                if (mounted) toast.error("Critical dashboard error");
             } finally {
-                setIsLoading(false);
+                if (mounted) {
+                    setIsLoading(false);
+                    clearTimeout(loadTo);
+                }
             }
         }
         loadData();
+
+        return () => {
+            mounted = false;
+            clearTimeout(loadTo);
+        };
     }, []);
 
     if (isLoading) {
