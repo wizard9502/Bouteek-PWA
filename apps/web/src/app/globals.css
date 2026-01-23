@@ -221,15 +221,7 @@ button:active,
   transition: all 0.1s ease-out;
 }
 
-/* Improved dark mode for mobile sunlight readability */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: 0 0% 3%;
-    --foreground: 0 0% 100%;
-    --card: 0 0% 6%;
-    --muted-foreground: 0 0% 70%;
-  }
-}
+
 
 /* High contrast for Dakar sunlight */
 @media (prefers-contrast: high) {
