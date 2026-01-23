@@ -133,8 +133,8 @@ export function BookingWidget({ config, moduleType, isEditing }: BaseSectionProp
                                     !date && "invisible",
                                     date && !isDateSelectable(date) && "text-muted-foreground/30 cursor-not-allowed",
                                     date && isDateSelectable(date) && "hover:bg-muted",
-                                    date && selectedDate?.toDateString() === date.toDateString() && "bg-black text-white",
-                                    date && selectedEndDate?.toDateString() === date.toDateString() && "bg-black text-white",
+                                    date && selectedDate?.toDateString() === date.toDateString() && "bg-primary text-primary-foreground",
+                                    date && selectedEndDate?.toDateString() === date.toDateString() && "bg-primary text-primary-foreground",
                                     date && isDateInRange(date) && "bg-muted",
                                 )}
                             >
@@ -158,8 +158,8 @@ export function BookingWidget({ config, moduleType, isEditing }: BaseSectionProp
                                         className={cn(
                                             "py-2 px-3 rounded-xl text-sm font-medium border transition-colors",
                                             selectedTime === time
-                                                ? "bg-black text-white border-black"
-                                                : "hover:border-black"
+                                                ? "bg-primary text-primary-foreground border-primary"
+                                                : "hover:border-foreground"
                                         )}
                                     >
                                         {time}
