@@ -103,7 +103,7 @@ export default function AdminAnalytics() {
                         <Calendar className="mr-2" size={18} />
                         Last 30 Days
                     </Button>
-                    <Button className="rounded-2xl h-12 bg-black text-white font-bold px-6 shadow-xl shadow-black/20">
+                    <Button className="rounded-2xl h-12 px-6 shadow-xl shadow-primary/20">
                         Export Full Audit
                     </Button>
                 </div>
@@ -203,13 +203,13 @@ export default function AdminAnalytics() {
                 </Card>
 
                 <div className="space-y-8">
-                    <Card className="rounded-4xl border-border/50 shadow-sm p-8 bg-black text-white relative overflow-hidden">
+                    <Card className="rounded-4xl border-border/50 shadow-sm p-8 bg-primary text-primary-foreground relative overflow-hidden">
                         <div className="relative z-10">
                             <h4 className="text-xl font-black">Optimization Engine</h4>
-                            <p className="text-sm text-gray-400 mt-2 font-medium">System suggests increasing commission on 'Starter' tier to 6% based on current infrastructure costs.</p>
-                            <Button className="w-full mt-6 rounded-2xl bg-bouteek-green text-black font-black uppercase tracking-widest h-12">Run ROI Analysis</Button>
+                            <p className="text-sm text-primary-foreground/80 mt-2 font-medium">System suggests increasing commission on 'Starter' tier to 6% based on current infrastructure costs.</p>
+                            <Button className="w-full mt-6 rounded-2xl bg-background text-foreground hover:bg-background/90 font-black uppercase tracking-widest h-12">Run ROI Analysis</Button>
                         </div>
-                        <TrendingUp size={120} className="absolute -bottom-10 -right-10 text-white/5 -rotate-12" />
+                        <TrendingUp size={120} className="absolute -bottom-10 -right-10 text-primary-foreground/5 -rotate-12" />
                     </Card>
 
                     <Card className="rounded-4xl border-border/50 shadow-sm p-8">
