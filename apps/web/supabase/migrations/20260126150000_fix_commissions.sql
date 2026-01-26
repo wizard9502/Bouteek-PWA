@@ -18,8 +18,8 @@ BEGIN
     FROM public.plans 
     WHERE slug = v_tier;
 
-    -- Return normalized rate (5.00 -> 0.05). Default to 10% (0.10) if not found.
-    RETURN COALESCE(v_rate, 10.00) / 100.0;
+    -- Return normalized rate (5.00 -> 0.05). Default to 5% (0.05) if not found.
+    RETURN COALESCE(v_rate, 5.00) / 100.0;
 END;
 $$;
 

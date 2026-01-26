@@ -10,36 +10,12 @@ import { toast } from "sonner";
 import { useTranslation } from "@/contexts/TranslationContext";
 import { useRouter } from "next/navigation";
 
-const PLANS = [
-    {
-        id: 'starter',
-        name: 'Starter',
-        price: 2000,
-        description: 'Perfect for small businesses just getting started.',
-        features: ['Up to 50 listings', 'Basic Analytics', 'Standard Support', '5% Commission']
-    },
-    {
-        id: 'launch',
-        name: 'Launch',
-        price: 5000,
-        description: 'For growing businesses ready to scale.',
-        features: ['Up to 200 listings', 'Advanced Analytics', 'Priority Support', '3% Commission', 'Custom Domain']
-    },
-    {
-        id: 'growth',
-        name: 'Growth',
-        price: 12500,
-        description: 'Maximum power for established brands.',
-        features: ['Unlimited listings', 'Real-time Analytics', 'Dedicated Manager', '1.5% Commission', 'API Access', 'White-labeling']
-    },
-    {
-        id: 'pro',
-        name: 'Pro',
-        price: 20000,
-        description: 'Complete enterprise solution.',
-        features: ['Unlimited listings', 'Custom Reports', '24/7 Phone Support', '0.75% Commission', 'Multi-store Management']
-    }
-];
+const PLANS_TEMPLATE: Record<string, any> = {
+    'starter': { description: 'Perfect for small businesses just getting started.', features: ['Up to 10 products', 'Basic Analytics', 'Standard Support'] },
+    'launch': { description: 'For growing businesses ready to scale.', features: ['Up to 50 products', 'Advanced Analytics', 'Priority Support', 'Custom Domain'] },
+    'growth': { description: 'Maximum power for established brands.', features: ['Up to 200 products', 'Real-time Analytics', 'Dedicated Manager', 'API Access', 'Receipt Builder'] },
+    'pro': { description: 'Complete enterprise solution.', features: ['Unlimited products', 'Custom Reports', '24/7 Phone Support', 'Multi-store Management', 'RBAC'] }
+};
 
 export default function SubscriptionPage() {
     const { t } = useTranslation();
@@ -48,29 +24,48 @@ export default function SubscriptionPage() {
     const [upgrading, setUpgrading] = useState<string | null>(null);
     const [currentPlan, setCurrentPlan] = useState<string>('starter');
     const [merchantDetails, setMerchantDetails] = useState<any>(null);
+    const [plans, setPlans] = useState<any[]>([]);
 
     useEffect(() => {
-        fetchSubscription();
+        fetchData();
     }, []);
 
-    const fetchSubscription = async () => {
+    const fetchData = async () => {
         try {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) return;
 
-            const { data, error } = await supabase
-                .from('merchants')
-                .select('*')
-                .eq('user_id', user.id)
-                .single();
+            // Parallel Fetch: Merchant & Plans
+            const [merchantRes, plansRes] = await Promise.all([
+                supabase.from('merchants').select('*').eq('user_id', user.id).single(),
+                supabase.from('plans').select('*').order('price', { ascending: true })
+            ]);
 
-            if (error) throw error;
-            if (data) {
-                setMerchantDetails(data);
-                setCurrentPlan(data.subscription_tier || 'starter');
+            if (merchantRes.error) throw merchantRes.error;
+            if (plansRes.error) throw plansRes.error;
+
+            if (merchantRes.data) {
+                setMerchantDetails(merchantRes.data);
+                setCurrentPlan(merchantRes.data.subscription_tier || 'starter');
             }
+
+            // Merge DB Plans with UI Template
+            const mergedPlans = (plansRes.data || []).map((dbPlan: any) => {
+                const template = PLANS_TEMPLATE[dbPlan.slug] || { description: '', features: [] };
+                return {
+                    ...dbPlan,
+                    description: template.description,
+                    // Append dynamic commission to features list
+                    features: [
+                        ...template.features,
+                        `${dbPlan.commission_rate}% Commission`
+                    ]
+                };
+            });
+            setPlans(mergedPlans);
+
         } catch (error) {
-            console.error("Fetch sub error", error);
+            console.error("Fetch data error", error);
             toast.error("Failed to load subscription details");
         } finally {
             setLoading(false);
@@ -168,9 +163,9 @@ export default function SubscriptionPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-                {PLANS.map((plan) => {
-                    const isCurrent = currentPlan === plan.id;
-                    const isPopular = plan.id === 'launch';
+                {plans.map((plan) => {
+                    const isCurrent = currentPlan === plan.slug;
+                    const isPopular = plan.slug === 'launch';
                     const canAfford = (merchantDetails?.bouteek_cash_balance || 0) >= plan.price;
 
                     return (
@@ -219,8 +214,8 @@ export default function SubscriptionPage() {
                                     <Button
                                         onClick={() => handleUpgrade(plan)}
                                         disabled={!!upgrading}
-                                        className={`w-full rounded-xl font-bold h-12 ${plan.id === 'pro' ? 'bg-black text-white hover:bg-black/90' : ''}`}
-                                        variant={plan.id === 'starter' ? 'outline' : 'default'}
+                                        className={`w-full rounded-xl font-bold h-12 ${plan.slug === 'pro' ? 'bg-black text-white hover:bg-black/90' : ''}`}
+                                        variant={plan.slug === 'starter' ? 'outline' : 'default'}
                                     >
                                         {upgrading === plan.id ? (
                                             <Loader2 className="w-4 h-4 animate-spin" />
