@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { useTheme } from "next-themes";
+import { usePreviewSync } from "@/hooks/usePreviewSync";
 import { toast } from "sonner";
 import {
     Sheet,
@@ -173,6 +174,7 @@ export default function StoreBuilderPage() {
     } = useStoreBuilder();
 
     const { theme, setTheme } = useTheme();
+    const { updatePreview, isConnected } = usePreviewSync();
 
     const [blocks, setBlocks] = useState<Block[]>([]);
     const [settings, setStoreSettings] = useState<any>({});
@@ -198,6 +200,16 @@ export default function StoreBuilderPage() {
             setSlug(storeData.slug || "");
         }
     }, [storeData]);
+
+    // Sync to preview whenever state changes
+    useEffect(() => {
+        updatePreview({
+            blocks,
+            theme: { mode: theme, ...settings },
+            storeId: storeData?.merchant_id,
+            storeName: settings.storeName,
+        });
+    }, [blocks, settings, theme, storeData?.merchant_id, updatePreview]);
 
     const handleSaveDraft = () => {
         saveStore(blocks, settings, slug);

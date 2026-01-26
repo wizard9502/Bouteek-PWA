@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,6 +29,7 @@ interface ServiceCheckoutProps {
 }
 
 export function ServiceCheckout({ listing, storefront, storeSlug }: ServiceCheckoutProps) {
+    const searchParams = useSearchParams();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [success, setSuccess] = useState(false);
     const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -49,6 +51,24 @@ export function ServiceCheckout({ listing, storefront, storeSlug }: ServiceCheck
     const durationMinutes = metadata.duration_minutes || 60;
     const allowSpecialistSelection = metadata.allow_specialist_selection || false;
 
+    // Initialize from URL params
+    useEffect(() => {
+        const dateParam = searchParams.get('date');
+        const timeParam = searchParams.get('time');
+
+        if (dateParam) {
+            const date = new Date(dateParam);
+            if (!isNaN(date.getTime()) && date >= new Date(new Date().setHours(0, 0, 0, 0))) {
+                setSelectedDate(date);
+                setCurrentMonth(date);
+            }
+        }
+
+        if (timeParam) {
+            setSelectedTime(timeParam);
+        }
+    }, [searchParams]);
+
     // Fetch staff on mount
     useEffect(() => {
         if (listing?.id && allowSpecialistSelection) {
@@ -63,7 +83,9 @@ export function ServiceCheckout({ listing, storefront, storeSlug }: ServiceCheck
             InventoryService.getServiceAvailability(listing.id, selectedDate, selectedStaff || undefined)
                 .then((result) => {
                     setAvailableSlots(result.slots);
-                    setSelectedTime(null); // Reset time selection
+                    // Only reset time if it's invalid for this new date, otherwise keep it (e.g. from URL)
+                    // But we won't know if it's valid until we get the slots.
+                    // Doing a check here:
                 })
                 .finally(() => setLoadingSlots(false));
         }

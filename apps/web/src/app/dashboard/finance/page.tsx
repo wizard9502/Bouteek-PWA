@@ -366,8 +366,8 @@ function FinanceOverview() {
                                 )}
                             </Button>
 
-                            <div className="flex items-center justify-center py-2 opacity-50">
-                                <img src="https://paydunya.com/assets/images/payment_methods/wave.png" className="h-8 object-contain" alt="Wave" />
+                            <div className="flex items-center justify-center py-2 opacity-50 space-x-2">
+                                <span className="text-xs font-bold text-muted-foreground">Secured by Bouteek</span>
                             </div>
                         </div>
                     </div>

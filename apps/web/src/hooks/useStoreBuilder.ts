@@ -130,6 +130,7 @@ export function useStoreBuilder() {
             const payload = {
                 merchant_id: storeData.merchant_id,
                 layout_blocks: blocks,
+                layout_config: blocks, // Saving to both for compatibility and compliance
                 settings: settings,
                 slug: slug || null, // Allow null for drafts if not set
                 updated_at: new Date().toISOString(),

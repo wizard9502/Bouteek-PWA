@@ -749,8 +749,12 @@ export const translations = {
       referral_desc: "Share this code to earn 20% commission.",
       payment_methods: "Payment Methods",
       payments_desc: "Enter the numbers where you want to receive payments.",
-      wave_number: "Wave Number",
-      om_number: "Orange Money Number",
+      payment_accounts: {
+        wave_money: 'Wave Money',
+        orange_money: 'Orange Money (Coming Soon)',
+        card: 'Credit Card (Coming Soon)',
+        // removed paydunyaccounts
+      },
       social_links: "Social Links",
       social_desc: "Link your accounts to increase visibility.",
       save_changes: "Save Changes",

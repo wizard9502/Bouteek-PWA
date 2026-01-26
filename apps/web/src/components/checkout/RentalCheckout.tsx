@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,6 +28,7 @@ interface RentalCheckoutProps {
 }
 
 export function RentalCheckout({ listing, storefront, storeSlug }: RentalCheckoutProps) {
+    const searchParams = useSearchParams();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [success, setSuccess] = useState(false);
     const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -45,6 +47,27 @@ export function RentalCheckout({ listing, storefront, storeSlug }: RentalCheckou
     const rentalUnit = metadata.rental_unit || "day";
     const depositAmount = metadata.deposit_amount || 0;
     const requireIdVerification = metadata.require_id_verification || false;
+
+    // Initialize from URL params
+    useEffect(() => {
+        const startParam = searchParams.get('startDate');
+        const endParam = searchParams.get('endDate');
+
+        if (startParam) {
+            const start = new Date(startParam);
+            if (!isNaN(start.getTime()) && start >= new Date(new Date().setHours(0, 0, 0, 0))) {
+                setStartDate(start);
+                setCurrentMonth(start);
+            }
+        }
+
+        if (endParam) {
+            const end = new Date(endParam);
+            if (!isNaN(end.getTime())) {
+                setEndDate(end);
+            }
+        }
+    }, [searchParams]);
 
     // Fetch booked dates when month changes
     useEffect(() => {

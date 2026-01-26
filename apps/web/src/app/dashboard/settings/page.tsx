@@ -7,9 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Loader2, Instagram, Music, Smartphone } from "lucide-react";
+import { Loader2, Instagram, Music, Smartphone, Check, X, Globe } from "lucide-react";
 import { useTranslation } from "@/contexts/TranslationContext";
-
+import { useDebounce } from "@/hooks/useDebounce";
 
 export default function SettingsPage() {
     const [loading, setLoading] = useState(true);
@@ -19,6 +19,15 @@ export default function SettingsPage() {
     // Form State
     const [businessName, setBusinessName] = useState("");
     const [slug, setSlug] = useState("");
+    const debouncedSlug = useDebounce(slug, 500);
+    const [isCheckingSlug, setIsCheckingSlug] = useState(false);
+    const [isSlugAvailable, setIsSlugAvailable] = useState<boolean | null>(null);
+    const [initialSlug, setInitialSlug] = useState(""); // Track initial to avoid checking self
+
+    // Domain State
+    const [customDomain, setCustomDomain] = useState("");
+    const [domainStatus, setDomainStatus] = useState<string>("none"); // none, pending, active
+
     const [waveNumber, setWaveNumber] = useState("");
     const [orangeNumber, setOrangeNumber] = useState("");
     const [referralCode, setReferralCode] = useState("");
@@ -33,6 +42,48 @@ export default function SettingsPage() {
     useEffect(() => {
         fetchMerchantProfile();
     }, []);
+
+    useEffect(() => {
+        if (debouncedSlug && debouncedSlug !== initialSlug) {
+            checkSlugAvailability(debouncedSlug);
+        } else if (debouncedSlug === initialSlug) {
+            setIsSlugAvailable(true); // Available if it's their own
+            setIsCheckingSlug(false);
+        } else {
+            setIsSlugAvailable(null);
+        }
+    }, [debouncedSlug, initialSlug]);
+
+    const checkSlugAvailability = async (checkSlug: string) => {
+        if (checkSlug.length < 3) return;
+        setIsCheckingSlug(true);
+        try {
+            const reservedSlugs = [
+                "admin", "dashboard", "api", "auth", "login", "register", "signup", "settings",
+                "team", "accounting", "support", "help", "contact", "legal", "terms", "privacy",
+                "www", "bouteek", "shop"
+            ];
+
+            if (reservedSlugs.includes(checkSlug)) {
+                setIsSlugAvailable(false);
+                return;
+            }
+
+            const { data, error } = await supabase
+                .from('storefronts')
+                .select('id')
+                .eq('slug', checkSlug)
+                .maybeSingle(); // Avoid error on no rows
+
+            if (error) throw error;
+            setIsSlugAvailable(!data); // If data exists, it's NOT available
+        } catch (error) {
+            console.error("Slug check failed", error);
+            setIsSlugAvailable(null); // Unknown state
+        } finally {
+            setIsCheckingSlug(false);
+        }
+    };
 
     const fetchMerchantProfile = async () => {
         try {
@@ -54,6 +105,7 @@ export default function SettingsPage() {
                 setMerchantId(data.id);
                 setBusinessName(data.business_name || "");
                 setSlug(data.slug || "");
+                setInitialSlug(data.slug || "");
                 setReferralCode(data.referral_code || "");
                 setInstagram(data.instagram || "");
                 setTikTok(data.tiktok || "");
@@ -97,9 +149,13 @@ export default function SettingsPage() {
 
     const fetchStorefrontAndPayments = async (merchantId: string) => {
         // Get Storefront
-        const { data: storefront } = await supabase.from('storefronts').select('id').eq('merchant_id', merchantId).single();
+        const { data: storefront } = await supabase.from('storefronts').select('id, custom_domain, custom_domain_status').eq('merchant_id', merchantId).single();
 
         if (storefront) {
+            setCustomDomain(storefront.custom_domain || "");
+            setDomainStatus(storefront.custom_domain_status || "none");
+
+            const { data: methods } = await supabase.from('storefront_payment_methods').select('*').eq('storefront_id', storefront.id);
             const { data: methods } = await supabase.from('storefront_payment_methods').select('*').eq('storefront_id', storefront.id);
 
             if (methods) {
@@ -109,6 +165,14 @@ export default function SettingsPage() {
                 if (om) setOrangeNumber(om.details?.phoneNumber || "");
             }
         }
+    };
+
+    const verifyDomain = async () => {
+        if (!customDomain) return;
+        // Mock verification for now - or simple status toggle
+        // In real app: call Vercel API
+        setDomainStatus('pending');
+        toast.info("Domain verification started. Check DNS settings.");
     };
 
     const handleSave = async (e: React.FormEvent) => {
@@ -173,11 +237,22 @@ export default function SettingsPage() {
             if (!storefront) {
                 const { data: newSf, error: newSfError } = await supabase
                     .from('storefronts')
-                    .insert({ merchant_id: currentMerchantId, name: businessName })
+                    .insert({
+                        merchant_id: currentMerchantId,
+                        name: businessName,
+                        custom_domain: customDomain,
+                        custom_domain_status: domainStatus
+                    })
                     .select()
                     .single();
                 if (newSfError) throw newSfError;
                 storefrontId = newSf.id;
+            } else {
+                // Update existing storefront if exists
+                await supabase.from('storefronts').update({
+                    custom_domain: customDomain,
+                    custom_domain_status: domainStatus
+                }).eq('id', storefront.id);
             }
 
             // 3. Upsert Payment Methods
@@ -245,18 +320,36 @@ export default function SettingsPage() {
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="slug" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{t("settings.store_slug")}</Label>
-                            <div className="flex items-center gap-1 bg-muted/30 p-1 rounded-xl border border-transparent focus-within:border-bouteek-green transition-all">
+                            <div className="flex items-center gap-1 bg-muted/30 p-1 rounded-xl border border-transparent focus-within:border-bouteek-green transition-all relative">
                                 <span className="text-muted-foreground text-xs font-bold pl-3">https://</span>
                                 <Input
                                     id="slug"
                                     value={slug}
                                     onChange={e => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
-                                    className="border-none bg-transparent h-10 font-bold focus-visible:ring-0 px-0 w-full text-right"
+                                    className={`border-none bg-transparent h-10 font-bold focus-visible:ring-0 px-0 w-full text-right ${slug.length > 2
+                                        ? (isSlugAvailable ? 'text-green-600' : (isSlugAvailable === false ? 'text-red-500' : ''))
+                                        : ''
+                                        }`}
                                     placeholder={t("settings.placeholder_slug")}
                                     required
                                 />
                                 <span className="text-muted-foreground text-xs font-bold pr-3">.bouteek.shop</span>
+
+                                <div className="absolute right-[-30px] flex items-center h-full">
+                                    {isCheckingSlug ? (
+                                        <Loader2 className="w-5 h-5 text-gray-400 animate-spin" />
+                                    ) : slug.length > 2 && (
+                                        isSlugAvailable ? (
+                                            <div className="p-1 bg-green-100 rounded-full text-green-600"><Check size={14} strokeWidth={3} /></div>
+                                        ) : isSlugAvailable === false ? (
+                                            <div className="p-1 bg-red-100 rounded-full text-red-500"><X size={14} strokeWidth={3} /></div>
+                                        ) : null
+                                    )}
+                                </div>
                             </div>
+                            {slug.length > 2 && isSlugAvailable === false && (
+                                <p className="text-[10px] text-red-500 font-bold uppercase tracking-widest text-right">URL Taken</p>
+                            )}
                         </div>
 
                         <div className="space-y-2">
@@ -306,6 +399,79 @@ export default function SettingsPage() {
                                 placeholder="+221 77 000 00 00"
                             />
                         </div>
+                    </CardContent>
+                </Card>
+
+                    </CardContent>
+                </Card>
+
+                <Card className="rounded-3xl border-border/50">
+                    <CardHeader>
+                        <CardTitle className="text-xl font-black">{t("settings.domain") || "Custom Domain"}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                        <p className="text-sm text-muted-foreground font-medium">
+                            {t("settings.domain_desc") || "Connect your own domain (e.g. shop.com) to your store."}
+                        </p>
+
+                        <div className="space-y-4">
+                            <Label htmlFor="customDomain" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Domain Name</Label>
+                            <div className="flex gap-4">
+                                <Input
+                                    id="customDomain"
+                                    value={customDomain}
+                                    onChange={e => setCustomDomain(e.target.value.toLowerCase())}
+                                    className="h-12 rounded-xl bg-muted/30 font-bold flex-1"
+                                    placeholder="shop.example.com"
+                                />
+                                <Button 
+                                    type="button" 
+                                    variant="outline" 
+                                    className="h-12 rounded-xl font-bold px-6"
+                                    onClick={verifyDomain} // Assuming verifyDomain function exists
+                                >
+                                    Verify
+                                </Button>
+                            </div>
+                        </div>
+
+                        {/* Status Display */}
+                        <div className="bg-gray-50 rounded-2xl p-4 flex items-center justify-between border border-border/50">
+                            <div className="flex items-center gap-3">
+                                <div className={`p-2 rounded-lg ${
+                                    domainStatus === 'active' ? 'bg-green-100 text-green-700' : 
+                                    domainStatus === 'pending' ? 'bg-amber-100 text-amber-700' : 
+                                    'bg-gray-200 text-gray-500'
+                                }`}>
+                                    {domainStatus === 'active' ? <Check size={20} /> : 
+                                     domainStatus === 'pending' ? <Loader2 size={20} className="animate-spin" /> : 
+                                     <Globe size={20} />}
+                                </div>
+                                <div>
+                                    <h4 className="font-black text-sm uppercase tracking-wide">
+                                        {domainStatus === 'active' ? 'Active' : 
+                                         domainStatus === 'pending' ? 'Verification Pending' : 
+                                         'Not Connected'}
+                                    </h4>
+                                    <p className="text-xs text-muted-foreground">
+                                        {domainStatus === 'active' ? 'Your domain is live.' : 
+                                         domainStatus === 'pending' ? 'Check your DNS settings.' : 
+                                         'Add a domain to get started.'}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* DNS Instructions (Shown if pending) */}
+                        {domainStatus === 'pending' && (
+                            <div className="bg-blue-50/50 rounded-2xl p-4 border border-blue-100 text-xs text-blue-800 space-y-2">
+                                <p className="font-bold uppercase tracking-widest">DNS Configuration</p>
+                                <p>Add the following record to your DNS provider:</p>
+                                <div className="bg-white p-3 rounded-xl border border-blue-200 font-mono flex justify-between items-center">
+                                    <span>CNAME @ cname.vercel-dns.com</span>
+                                </div>
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
 
@@ -365,8 +531,8 @@ export default function SettingsPage() {
                         </>
                     ) : t("settings.save_changes")}
                 </Button>
-            </form>
-        </div>
+            </form >
+        </div >
     );
 }
 
