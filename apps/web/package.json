@@ -53,6 +53,7 @@
     "next-themes": "latest",
     "pg": "latest",
     "postgres": "latest",
+    "puppeteer": "^24.36.0",
     "react": "18.2.0",
     "react-chartjs-2": "latest",
     "react-dom": "18.2.0",
