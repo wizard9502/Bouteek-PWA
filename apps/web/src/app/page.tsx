@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Menu, X, Check, Zap, Lock, Smartphone, Globe, TrendingUp, Instagram, Music } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { supabase } from "@/lib/supabaseClient";
 
 
 import { translations } from "@/lib/translations";
@@ -46,31 +47,58 @@ function HomeContent() {
 
   const t_obj = translations[language];
 
-  const pricingPlans = [
+  // ... (inside HomeContent)
+
+  const [dbPlans, setDbPlans] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchPlans = async () => {
+      const { data } = await supabase.from('plans').select('*').order('price', { ascending: true });
+      if (data) setDbPlans(data);
+    };
+    fetchPlans();
+  }, []);
+
+  // Merge DB plans with translations
+  const pricingPlans = dbPlans.length > 0 ? dbPlans.map(plan => {
+    // Map slug to translation key
+    const transKey = plan.slug as keyof typeof t_obj.pricing.features;
+    return {
+      name: plan.name,
+      price: `${plan.price.toLocaleString()} XOF`,
+      description: t_obj.pricing[`${plan.slug}Desc` as keyof typeof t_obj.pricing] || plan.description,
+      features: [
+        ...(t_obj.pricing.features[transKey] || []),
+        `${plan.commission_rate}% ${language === 'wo' ? "Komisiõ" : language === "fr" ? "Commission" : "Commission"}`
+      ],
+      highlighted: plan.slug === 'launch'
+    };
+  }) : [
+    // Fallback while loading
     {
       name: t_obj.pricing.starter,
-      price: "2,000 XOF",
+      price: "...",
       description: t_obj.pricing.starterDesc,
       features: t_obj.pricing.features.starter,
       highlighted: false
     },
     {
       name: t_obj.pricing.launch,
-      price: "5,000 XOF",
+      price: "...",
       description: t_obj.pricing.launchDesc,
       features: t_obj.pricing.features.launch,
       highlighted: true
     },
     {
       name: t_obj.pricing.growth,
-      price: "12,500 XOF",
+      price: "...",
       description: t_obj.pricing.growthDesc,
       features: t_obj.pricing.features.growth,
       highlighted: false
     },
     {
       name: t_obj.pricing.pro,
-      price: "20,000 XOF",
+      price: "...",
       description: t_obj.pricing.proDesc,
       features: t_obj.pricing.features.pro,
       highlighted: false

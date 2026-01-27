@@ -23,9 +23,9 @@ DECLARE
   v_default_slug text;
 BEGIN
   -- 1. Create Merchant Profile
-  INSERT INTO public.merchants (id, user_id, name, email, subscription_tier)
+  INSERT INTO public.merchants (id, user_id, business_name, email, subscription_tier)
   VALUES (
-    NEW.id, -- Use auth.uid as merchant id (1:1 mapping simplification for MPV) or gen random
+    NEW.id, -- Use auth.uid as merchant id
     NEW.id,
     COALESCE(NEW.raw_user_meta_data->>'full_name', 'New Merchant'),
     NEW.email,

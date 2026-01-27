@@ -14,6 +14,7 @@ import {
     Activity,
     Globe
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { getAllMerchants, toggleMerchantVerify, toggleMerchantBan, adjustMerchantCredit } from "@/lib/adminData";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -46,6 +47,7 @@ export default function MerchantsManagement() {
     const [filter, setFilter] = useState("all");
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(0);
+    const router = useRouter();
 
     // Credit Adjustment State
     const [selectedMerchant, setSelectedMerchant] = useState<any>(null);
@@ -266,7 +268,7 @@ export default function MerchantsManagement() {
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end" className="bg-popover border-border rounded-[2rem] p-4 w-64 shadow-2xl">
                                                 <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground mb-2">Protocol Menu</DropdownMenuLabel>
-                                                <DropdownMenuItem className="rounded-xl py-3 focus:bg-primary focus:text-primary-foreground font-bold uppercase text-[9px] tracking-widest cursor-pointer" onClick={() => window.location.href = `/admin/merchants/${merchant.id}`}>
+                                                <DropdownMenuItem className="rounded-xl py-3 focus:bg-primary focus:text-primary-foreground font-bold uppercase text-[9px] tracking-widest cursor-pointer" onClick={() => router.push(`/admin/merchants/${merchant.id}`)}>
                                                     View Entity Details
                                                 </DropdownMenuItem>
                                                 <DropdownMenuItem className="rounded-xl py-3 focus:bg-primary focus:text-primary-foreground font-bold uppercase text-[9px] tracking-widest" onClick={() => handleVerify(merchant)}>

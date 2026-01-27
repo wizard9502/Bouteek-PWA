@@ -24,6 +24,8 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const RevenueGrowthChart = dynamic(
     () => import("@/components/admin/AnalyticsCharts").then((mod) => mod.RevenueGrowthChart),
@@ -41,6 +43,7 @@ export default function AdminDashboard() {
     const [revenueGrowth, setRevenueGrowth] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isSubdomain, setIsSubdomain] = useState(false);
+    const router = useRouter();
 
     // Detect subdomain
     useEffect(() => {
@@ -120,15 +123,15 @@ export default function AdminDashboard() {
                         <span className="text-[10px] font-black text-bouteek-green uppercase tracking-[0.4em]">System Operational</span>
                     </div>
                     <h1 className="text-5xl md:text-7xl font-black text-white italic tracking-tighter uppercase leading-none">
-                        CONSOLE <span className="text-bouteek-green/20 group-hover:text-bouteek-green/40 transition-colors">OVERVIEW</span>
+                        CONSOLE <span className="text-white/20 group-hover:text-bouteek-green/40 transition-colors">OVERVIEW</span>
                     </h1>
-                    <p className="text-gray-500 font-bold tracking-[0.1em] text-sm uppercase">Platform Core Dynamics & Real-time Metrics</p>
+                    <p className="text-gray-300 font-bold tracking-[0.1em] text-sm uppercase">Platform Core Dynamics & Real-time Metrics</p>
                 </div>
 
                 <div className="flex items-center gap-4 bg-white/5 p-2 rounded-[2rem] border border-white/5 backdrop-blur-xl">
                     <Button
                         variant="ghost"
-                        className="rounded-full font-black text-[10px] uppercase tracking-widest text-gray-400 hover:text-white h-12 px-8"
+                        className="rounded-full font-black text-[10px] uppercase tracking-widest text-gray-300 hover:text-white h-12 px-8"
                         onClick={() => toast.info('Neural filtering in progress')}
                     >
                         <Filter className="mr-2 w-4 h-4 text-bouteek-green" /> Analytics Range
@@ -145,35 +148,36 @@ export default function AdminDashboard() {
             {/* Premium KPI Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
                 {[
-                    { label: "Net Revenue", value: `${(stats?.totalRevenue || 0).toLocaleString()} XOF`, sub: "+12.5% MOM", icon: Activity, color: "text-bouteek-green" },
-                    { label: "Global Sellers", value: stats?.activeMerchants || 0, sub: "+8.2% Growth", icon: Users, color: "text-blue-400" },
-                    { label: "Gross Volume", value: `${(stats?.gmv || 0).toLocaleString()} XOF`, sub: "Direct P2P Sales", icon: Zap, color: "text-purple-400" },
-                    { label: "Pending Audit", value: stats?.pendingPayouts || 0, sub: "Encrypted Payouts", icon: Shield, color: "text-red-400" }
+                    { label: "Net Revenue", value: `${(stats?.totalRevenue || 0).toLocaleString()} XOF`, sub: "+12.5% MOM", icon: Activity, color: "text-bouteek-green", href: "/admin/finance" },
+                    { label: "Global Sellers", value: stats?.activeMerchants || 0, sub: "+8.2% Growth", icon: Users, color: "text-blue-400", href: "/admin/merchants" },
+                    { label: "Gross Volume", value: `${(stats?.gmv || 0).toLocaleString()} XOF`, sub: "Direct P2P Sales", icon: Zap, color: "text-purple-400", href: "/admin/analytics" },
+                    { label: "Pending Audit", value: stats?.pendingPayouts || 0, sub: "Encrypted Payouts", icon: Shield, color: "text-red-400", href: "/admin/payouts" }
                 ].map((kpi, i) => (
-                    <motion.div
-                        key={kpi.label}
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: i * 0.1 }}
-                        className="group relative"
-                    >
-                        <div className="absolute inset-0 bg-bouteek-green/5 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-                        <Card className="relative h-full bg-white/[0.02] hover:bg-white/[0.05] border-white/5 hover:border-bouteek-green/30 p-8 rounded-[2.5rem] transition-all duration-500 backdrop-blur-xl group cursor-default">
-                            <div className="flex items-start justify-between">
-                                <div className="space-y-4">
-                                    <p className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">{kpi.label}</p>
-                                    <h3 className="text-3xl font-black text-white tracking-tight">{kpi.value}</h3>
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-bouteek-green" />
-                                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{kpi.sub}</span>
+                    <Link key={kpi.label} href={getHref(kpi.href)}>
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: i * 0.1 }}
+                            className="group relative h-full"
+                        >
+                            <div className="absolute inset-0 bg-bouteek-green/5 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <Card className="relative h-full bg-white/[0.02] hover:bg-white/[0.05] border-white/5 hover:border-bouteek-green/30 p-8 rounded-[2.5rem] transition-all duration-500 backdrop-blur-xl group cursor-pointer">
+                                <div className="flex items-start justify-between">
+                                    <div className="space-y-4">
+                                        <p className="text-[10px] font-black text-gray-300 uppercase tracking-[0.2em]">{kpi.label}</p>
+                                        <h3 className="text-3xl font-black text-white tracking-tight">{kpi.value}</h3>
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-bouteek-green" />
+                                            <span className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">{kpi.sub}</span>
+                                        </div>
+                                    </div>
+                                    <div className={cn("p-4 rounded-2xl bg-black/50 border border-white/5 group-hover:border-bouteek-green/20 group-hover:shadow-[0_0_15px_rgba(0,255,65,0.1)] transition-all", kpi.color)}>
+                                        <kpi.icon size={24} />
                                     </div>
                                 </div>
-                                <div className={cn("p-4 rounded-2xl bg-black/50 border border-white/5 group-hover:border-bouteek-green/20 group-hover:shadow-[0_0_15px_rgba(0,255,65,0.1)] transition-all", kpi.color)}>
-                                    <kpi.icon size={24} />
-                                </div>
-                            </div>
-                        </Card>
-                    </motion.div>
+                            </Card>
+                        </motion.div>
+                    </Link>
                 ))}
             </div>
 
@@ -246,7 +250,7 @@ export default function AdminDashboard() {
                     <Button
                         variant="ghost"
                         className="rounded-full font-black text-[10px] uppercase tracking-widest text-bouteek-green hover:bg-bouteek-green hover:text-black transition-all h-12 px-8 border border-bouteek-green/20"
-                        onClick={() => window.location.href = getHref('/admin/merchants')}
+                        onClick={() => router.push(getHref('/admin/merchants'))}
                     >
                         Access Master Registry <ArrowUpRight className="ml-2 w-4 h-4" />
                     </Button>

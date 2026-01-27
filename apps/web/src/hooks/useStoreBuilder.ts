@@ -129,10 +129,9 @@ export function useStoreBuilder() {
 
             const payload = {
                 merchant_id: storeData.merchant_id,
-                layout_blocks: blocks,
-                layout_config: blocks, // Saving to both for compatibility and compliance
+                layout_config: blocks, // Primary source of truth
                 settings: settings,
-                slug: slug || null, // Allow null for drafts if not set
+                slug: slug || null,
                 updated_at: new Date().toISOString(),
             };
 
@@ -209,6 +208,16 @@ export function useStoreBuilder() {
             setStoreData(prev => prev ? { ...prev, is_published: true, published_at: new Date().toISOString() } : null);
 
             // Success Modal or Toast handled by UI
+
+            // WIRING REPAIR: Trigger Revalidation
+            try {
+                await fetch('/api/revalidate', {
+                    method: 'POST',
+                    body: JSON.stringify({ slug }),
+                    headers: { 'Content-Type': 'application/json' }
+                });
+            } catch (e) { console.error("Revalidation signal failed", e); }
+
             return { success: true, slug: slug };
 
         } catch (error) {

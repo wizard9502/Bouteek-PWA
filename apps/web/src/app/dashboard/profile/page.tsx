@@ -17,7 +17,8 @@ import {
     MapPin,
     ShieldCheck,
     Star,
-    TicketPercent
+    TicketPercent,
+    Loader2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -224,6 +225,37 @@ function ProfileSettings({ theme, setTheme }: { theme: string | undefined, setTh
 
                 </div>
             </motion.div>
+
+            {/* Verification Status Card */}
+            <Link href="/dashboard/profile/verification">
+                <div className="bouteek-card p-6 border-l-4 border-l-bouteek-green flex items-center justify-between group hover:bg-muted/50 transition-colors cursor-pointer mb-8">
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-full bg-bouteek-green/10 flex items-center justify-center text-bouteek-green">
+                            <ShieldCheck size={24} />
+                        </div>
+                        <div>
+                            <h3 className="font-black text-lg tracking-tight uppercase">{t("profile.verification_title") || "Identity Verification"}</h3>
+                            <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
+                                {merchant?.is_verified
+                                    ? (t("profile.verified_desc") || "Your identity is verified. You have full access.")
+                                    : (t("profile.unverified_desc") || "Verify your identity to unlock all features.")}
+                            </p>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        {merchant?.is_verified ? (
+                            <span className="bg-bouteek-green/20 text-bouteek-green px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">
+                                {t("profile.verified")}
+                            </span>
+                        ) : (
+                            <span className="bg-red-500/10 text-red-500 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest animate-pulse">
+                                {t("profile.action_required") || "Action Required"}
+                            </span>
+                        )}
+                        <ChevronRight className="text-muted-foreground group-hover:translate-x-1 transition-transform" />
+                    </div>
+                </div>
+            </Link>
 
             {/* Main Settings Sections */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -563,7 +595,7 @@ function ReferralsManager() {
                                         onClick={handleSaveReferral}
                                         disabled={isSavingCode || !referralCode}
                                     >
-                                        {isSavingCode ? "..." : t("profile.referral_hero.set_btn")}
+                                        {isSavingCode ? <Loader2 className="animate-spin" /> : t("profile.referral_hero.set_btn")}
                                     </Button>
                                 </div>
                             )}

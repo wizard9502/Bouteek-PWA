@@ -160,12 +160,17 @@ export async function getRecentMerchants() {
     try {
         const { data, error } = await supabase
             .from('merchants')
-            .select('id, business_name, subscription_tier, is_verified, created_at, contact_email')
+            .select('*') // Changed to * to support name or business_name
             .order('created_at', { ascending: false })
             .limit(5);
 
         if (error) throw error;
-        return data || [];
+
+        // Normalize
+        return (data || []).map(m => ({
+            ...m,
+            business_name: m.business_name || m.name || 'Unknown'
+        }));
     } catch (error) {
         console.error("Recent merchants logic failure", error);
         return [];
@@ -183,25 +188,44 @@ export async function getAllMerchants(
             .from('merchants')
             .select('*', { count: 'exact' });
 
-        if (search) query = query.ilike('business_name', `%${search}%`);
+        // SEARCH FIX: Remote uses 'name', Local uses 'business_name'.
+        // We can't conditionally query columns that don't exist without RPC.
+        // For now, we will try to filter in memory IF search is applied, OR just ignore search if it errors?
+        // Let's filter in memory for safety against 500 errors.
+        // if (search) query = query.ilike('business_name', `%${search}%`); 
 
         if (statusFilter === 'verified') query = query.eq('is_verified', true);
         else if (statusFilter === 'unverified') query = query.eq('is_verified', false);
         else if (statusFilter === 'banned') query = query.eq('is_banned', true);
 
-        const from = (page - 1) * limit;
-        const to = from + limit - 1;
-
-        const { data, count, error } = await query
-            .order('created_at', { ascending: false })
-            .range(from, to);
+        // Fetch ALL (within reason) to handle schema divergence safely
+        // Real implementation should sync schema.
+        const { data, count, error } = await query.order('created_at', { ascending: false });
 
         if (error) throw error;
 
+        let result = data || [];
+
+        // Normalize & In-Memory Search
+        result = result.map(m => ({
+            ...m,
+            business_name: m.business_name || m.name || 'Unknown'
+        }));
+
+        if (search) {
+            const lowerSearch = search.toLowerCase();
+            result = result.filter((m: any) => m.business_name.toLowerCase().includes(lowerSearch));
+        }
+
+        // Manual Pagination since we fetched all
+        const from = (page - 1) * limit;
+        const to = from + limit;
+        const pageData = result.slice(from, to);
+
         // Resilient User Join
-        if (data && data.length > 0) {
+        if (pageData.length > 0) {
             try {
-                const userIds = data.map(m => m.user_id).filter(id => !!id);
+                const userIds = pageData.map((m: any) => m.user_id).filter((id: any) => !!id);
                 if (userIds.length > 0) {
                     const { data: users } = await supabase
                         .from('users')
@@ -209,7 +233,7 @@ export async function getAllMerchants(
                         .in('id', userIds);
 
                     if (users) {
-                        data.forEach(m => {
+                        pageData.forEach((m: any) => {
                             const user = users.find(u => u.id === m.user_id);
                             m.users = user ? { email: user.email } : null;
                         });
@@ -218,7 +242,7 @@ export async function getAllMerchants(
             } catch (e) { console.error("Merchant User Join failed", e); }
         }
 
-        return { data: data || [], count: count || 0 };
+        return { data: pageData, count: result.length };
     } catch (error) {
         console.error("All merchants logic failure", error);
         return { data: [], count: 0 };
@@ -341,12 +365,16 @@ export async function getAffiliatePayouts(status: string = 'pending') {
                 const referredIds = Array.from(new Set(data.map(p => p.referred_user_id).filter(id => !!id)));
 
                 const [{ data: merchants }, { data: users }] = await Promise.all([
-                    supabase.from('merchants').select('id, business_name').in('id', referrerIds),
+                    supabase.from('merchants').select('*').in('id', referrerIds), // Changed to *
                     supabase.from('users').select('id, email').in('id', referredIds)
                 ]);
 
                 data.forEach(p => {
-                    p.merchants = merchants?.find(m => m.id === p.referrer_id) || null;
+                    const merc = merchants?.find(m => m.id === p.referrer_id);
+                    if (merc) {
+                        merc.business_name = merc.business_name || merc.name || 'Unknown';
+                    }
+                    p.merchants = merc || null;
                     p.users = users?.find(u => u.id === p.referred_user_id) || null;
                 });
             } catch (e) { console.error("Payout join crashed", e); }
@@ -531,6 +559,11 @@ export async function getMerchantDetails(id: string) {
             .single();
 
         if (error) throw error;
+
+        // Normalize
+        if (data) {
+            data.business_name = data.business_name || data.name || 'Unknown';
+        }
         return data;
     } catch (error) {
         console.error("Merchant detail fetch failed", error);
@@ -552,5 +585,61 @@ export async function getMerchantOrders(merchantId: string, limit: number = 50) 
     } catch (error) {
         console.error("Merchant orders fetch failed", error);
         return [];
+    }
+}
+// ... existing code ...
+
+export async function getMerchantKYC(merchantId: string) {
+    try {
+        const { data, error } = await supabase
+            .from('kyc_submissions')
+            .select('*')
+            .eq('merchant_id', merchantId)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .single();
+
+        if (error && error.code !== 'PGRST116') throw error; // PGRST116 is no rows
+        return data;
+    } catch (error) {
+        console.error("KYC fetch failed", error);
+        return null;
+    }
+}
+
+export async function reviewMerchantKYC(submissionId: string, merchantId: string, status: 'approved' | 'rejected', notes: string, adminId: string) {
+    try {
+        // 1. Update Submission
+        const { error: subError } = await supabase
+            .from('kyc_submissions')
+            .update({
+                status,
+                admin_notes: notes,
+                reviewed_at: new Date().toISOString(),
+                reviewed_by: adminId
+            })
+            .eq('id', submissionId);
+
+        if (subError) throw subError;
+
+        // 2. Update Merchant Verification Status
+        if (status === 'approved') {
+            await supabase.from('merchants').update({ is_verified: true }).eq('id', merchantId);
+        } else {
+            await supabase.from('merchants').update({ is_verified: false }).eq('id', merchantId);
+        }
+
+        // 3. Log Audit
+        await supabase.from('admin_audit_logs').insert({
+            admin_id: adminId,
+            action: status === 'approved' ? 'KYC_APPROVE' : 'KYC_REJECT',
+            target_type: 'merchant',
+            target_id: merchantId,
+            details: { submissionId, notes }
+        });
+
+        return { success: true };
+    } catch (error: any) {
+        return { error: error.message };
     }
 }

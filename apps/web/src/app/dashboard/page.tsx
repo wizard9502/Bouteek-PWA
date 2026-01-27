@@ -254,76 +254,85 @@ function DashboardHomeContent() {
             {/* KPI Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Total Revenue */}
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bouteek-card p-6 bg-bouteek-green text-black border-none">
-                    <div className="flex justify-between items-start">
-                        <p className="text-[10px] font-black uppercase tracking-widest opacity-70">{t("dashboard.revenue_card.total_revenue")}</p>
-                        <TrendingUp size={16} className="opacity-70" />
-                    </div>
-                    <h3 className="text-3xl font-black mt-4">{stats.totalRevenue.toLocaleString()} <span className="text-sm opacity-50 font-bold">XOF</span></h3>
-                </motion.div>
+                <Link href="/dashboard/orders">
+                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bouteek-card p-6 bg-bouteek-green text-black border-none cursor-pointer h-full">
+                        <div className="flex justify-between items-start">
+                            <p className="text-[10px] font-black uppercase tracking-widest opacity-70">{t("dashboard.revenue_card.total_revenue")}</p>
+                            <TrendingUp size={16} className="opacity-70" />
+                        </div>
+                        <h3 className="text-3xl font-black mt-4">{stats.totalRevenue.toLocaleString()} <span className="text-sm opacity-50 font-bold">XOF</span></h3>
+                    </motion.div>
+                </Link>
 
                 {/* Bouteek Cash */}
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bouteek-card p-6 border-border/50">
-                    <div className="flex justify-between items-start">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Bouteek Cash</p>
-                        <Wallet size={16} className="text-bouteek-green" />
-                    </div>
-                    <h3 className="text-3xl font-black mt-4">{stats.balance.toLocaleString()} <span className="text-sm text-muted-foreground font-bold">XOF</span></h3>
-                </motion.div>
+                <Link href="/dashboard/finance">
+                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bouteek-card p-6 border-border/50 cursor-pointer h-full hover:border-bouteek-green transition-colors">
+                        <div className="flex justify-between items-start">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Bouteek Cash</p>
+                            <Wallet size={16} className="text-bouteek-green" />
+                        </div>
+                        <h3 className="text-3xl font-black mt-4">{stats.balance.toLocaleString()} <span className="text-sm text-muted-foreground font-bold">XOF</span></h3>
+                    </motion.div>
+                </Link>
 
                 {/* Subscription Plan */}
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bouteek-card p-6 border-border/50">
-                    <div className="flex justify-between items-start">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Plan: <span className="text-bouteek-green font-black">{stats.subscription.plan}</span></p>
-                    </div>
-                    <div className="mt-4 space-y-2">
-                        <div className="flex justify-between text-[10px] font-bold text-muted-foreground uppercase">
-                            <span>{stats.subscription.start_date ? new Date(stats.subscription.start_date).toLocaleDateString() : "N/A"}</span>
-                            <span>{stats.subscription.end_date ? new Date(stats.subscription.end_date).toLocaleDateString() : "N/A"}</span>
+                <Link href="/dashboard/subscription">
+                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bouteek-card p-6 border-border/50 cursor-pointer h-full hover:border-bouteek-green transition-colors">
+                        <div className="flex justify-between items-start">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Plan: <span className="text-bouteek-green font-black">{stats.subscription.plan}</span></p>
                         </div>
-                        <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
-                            <motion.div
-                                initial={{ width: 0 }}
-                                animate={{ width: `${stats.subscription.percentage}%` }}
-                                className="h-full bg-bouteek-green"
-                            />
+                        <div className="mt-4 space-y-2">
+                            <div className="flex justify-between text-[10px] font-bold text-muted-foreground uppercase">
+                                <span>{stats.subscription.start_date ? new Date(stats.subscription.start_date).toLocaleDateString() : "N/A"}</span>
+                                <span>{stats.subscription.end_date ? new Date(stats.subscription.end_date).toLocaleDateString() : "N/A"}</span>
+                            </div>
+                            <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                                <motion.div
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${stats.subscription.percentage}%` }}
+                                    className="h-full bg-bouteek-green"
+                                />
+                            </div>
                         </div>
-                    </div>
-                </motion.div>
+                    </motion.div>
+                </Link>
             </div>
 
 
             {/* Revenue Breakdown Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {statsCards.map((stat, i) => (
-                    <motion.div
-                        key={stat.label}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.1 }}
-                        className="bouteek-card p-8 group cursor-pointer"
-                    >
-                        <div className="flex justify-between items-start">
-                            <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">{stat.label}</p>
-                            <div className={cn(
-                                "flex items-center gap-1 text-xs font-black px-2 py-1 rounded-full",
-                                stat.trendingUp ? "bg-bouteek-green/10 text-bouteek-green" : "bg-red-500/10 text-red-500"
-                            )}>
-                                {stat.trendingUp ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
-                                {stat.change}
+                    <Link key={stat.label} href="/dashboard/orders">
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            transition={{ delay: i * 0.1 }}
+                            className="bouteek-card p-8 group cursor-pointer h-full hover:border-bouteek-green transition-colors"
+                        >
+                            <div className="flex justify-between items-start">
+                                <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">{stat.label}</p>
+                                <div className={cn(
+                                    "flex items-center gap-1 text-xs font-black px-2 py-1 rounded-full",
+                                    stat.trendingUp ? "bg-bouteek-green/10 text-bouteek-green" : "bg-red-500/10 text-red-500"
+                                )}>
+                                    {stat.trendingUp ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+                                    {stat.change}
+                                </div>
                             </div>
-                        </div>
-                        <p className="text-3xl font-black mt-4">
-                            {stat.value} <span className="text-sm text-muted-foreground font-medium">XOF</span>
-                        </p>
-                        <div className="mt-6 h-1 w-full bg-muted rounded-full overflow-hidden">
-                            <motion.div
-                                initial={{ width: 0 }}
-                                animate={{ width: stat.trendingUp ? "70%" : "30%" }}
-                                className={cn("h-full", stat.trendingUp ? "bg-bouteek-green" : "bg-red-500")}
-                            />
-                        </div>
-                    </motion.div>
+                            <p className="text-3xl font-black mt-4">
+                                {stat.value} <span className="text-sm text-muted-foreground font-medium">XOF</span>
+                            </p>
+                            <div className="mt-6 h-1 w-full bg-muted rounded-full overflow-hidden">
+                                <motion.div
+                                    initial={{ width: 0 }}
+                                    animate={{ width: stat.trendingUp ? "70%" : "30%" }}
+                                    className={cn("h-full", stat.trendingUp ? "bg-bouteek-green" : "bg-red-500")}
+                                />
+                            </div>
+                        </motion.div>
+                    </Link>
                 ))}
             </div>
 
@@ -336,29 +345,33 @@ function DashboardHomeContent() {
 
                     <div className="grid grid-cols-2 gap-4">
                         {orderStatuses.map((status) => (
-                            <div key={status.label} className="bouteek-card p-6 flex flex-col items-center justify-center text-center gap-3 group">
-                                <div className={cn("p-4 rounded-2xl transition-transform group-hover:scale-110", status.bg, status.color)}>
-                                    <status.icon size={24} />
-                                </div>
-                                <div>
-                                    <p className="text-2xl font-black">{status.count}</p>
-                                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{status.label}</p>
-                                </div>
-                            </div>
+                            <Link key={status.label} href="/dashboard/orders">
+                                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="bouteek-card p-6 flex flex-col items-center justify-center text-center gap-3 group h-full cursor-pointer hover:border-bouteek-green transition-colors">
+                                    <div className={cn("p-4 rounded-2xl transition-transform group-hover:scale-110", status.bg, status.color)}>
+                                        <status.icon size={24} />
+                                    </div>
+                                    <div>
+                                        <p className="text-2xl font-black">{status.count}</p>
+                                        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{status.label}</p>
+                                    </div>
+                                </motion.div>
+                            </Link>
                         ))}
                         {/* Low Stock Alert Card */}
-                        <div className={cn(
-                            "bouteek-card p-6 flex flex-col items-center justify-center text-center gap-3 group border-2",
-                            stats.lowStockCount > 0 ? "border-red-500/50 bg-red-50" : "border-border/50"
-                        )}>
-                            <div className={cn("p-4 rounded-2xl transition-transform group-hover:scale-110", stats.lowStockCount > 0 ? "bg-red-500 text-white" : "bg-muted text-muted-foreground")}>
-                                <AlertCircle size={24} />
-                            </div>
-                            <div>
-                                <p className={cn("text-2xl font-black", stats.lowStockCount > 0 ? "text-red-600" : "")}>{stats.lowStockCount}</p>
-                                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Low Stock</p>
-                            </div>
-                        </div>
+                        <Link href="/dashboard/store/inventory" className="col-span-2 md:col-span-1">
+                            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className={cn(
+                                "bouteek-card p-6 flex flex-col items-center justify-center text-center gap-3 group border-2 h-full cursor-pointer",
+                                stats.lowStockCount > 0 ? "border-red-500/50 bg-red-50" : "border-border/50 hover:border-bouteek-green"
+                            )}>
+                                <div className={cn("p-4 rounded-2xl transition-transform group-hover:scale-110", stats.lowStockCount > 0 ? "bg-red-500 text-white" : "bg-muted text-muted-foreground")}>
+                                    <AlertCircle size={24} />
+                                </div>
+                                <div>
+                                    <p className={cn("text-2xl font-black", stats.lowStockCount > 0 ? "text-red-600" : "")}>{stats.lowStockCount}</p>
+                                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Low Stock</p>
+                                </div>
+                            </motion.div>
+                        </Link>
                     </div>
                 </div>
 

@@ -215,7 +215,10 @@ export default function StorePage() {
                                     </Button>
                                     <Button
                                         className="col-span-2 rounded-2xl bg-black text-white font-bold text-xs h-11 hover:bg-bouteek-green hover:text-white transition-colors"
-                                        onClick={() => window.open(`/store/${merchantSlug}`, '_blank')}
+                                        onClick={() => {
+                                            const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "bouteek.shop";
+                                            window.open(`http://${merchantSlug}.${rootDomain}`, '_blank');
+                                        }}
                                     >
                                         {t("common.view_site")}
                                         <ExternalLink size={14} className="ml-2" />

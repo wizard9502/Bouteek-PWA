@@ -17,6 +17,7 @@ import {
     Settings,
     Heart,
     ChevronRight,
+    Home,
 } from "lucide-react";
 
 
@@ -121,7 +122,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
     };
 
     const navItems = [
-        { href: "/dashboard", label: "Analytics", icon: LayoutDashboard }, // Renamed from Dashboard
+        { href: "/dashboard", label: language === 'fr' ? "Accueil" : "Home", icon: Home }, // Renamed from Analytics
         { href: "/dashboard/store", label: t("sidebar.store"), icon: Store },
         { href: "/dashboard/orders", label: t("sidebar.orders"), icon: ShoppingCart },
         { href: "/dashboard/finance", label: t("sidebar.billing") || "Billing & Subscriptions", icon: Wallet },

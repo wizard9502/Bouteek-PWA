@@ -53,9 +53,13 @@ function StorePageContent({ params }: { params: Promise<{ domain: string }> }) {
             const storefront = merchant.storefronts?.[0];
             setStore({ ...merchant, ...storefront });
 
-            // Load layout blocks
-            if (storefront?.layout_blocks && storefront.layout_blocks.length > 0) {
-                setBlocks(storefront.layout_blocks);
+            // Load layout blocks (Prioritize layout_config)
+            const config = storefront?.layout_config || storefront?.layout_blocks;
+            if (config && Array.isArray(config) && config.length > 0) {
+                setBlocks(config);
+            } else {
+                // If empty, setBlocks check for default? Or empty.
+                setBlocks([]);
             }
 
             // Fetch listings
@@ -113,24 +117,6 @@ function StorePageContent({ params }: { params: Promise<{ domain: string }> }) {
         return (
             <div className="h-screen flex items-center justify-center">
                 <p className="text-gray-500">{t("storefront.not_found")}</p>
-            </div>
-        );
-    }
-
-    // FREEZE CHECK (New)
-    if (store?.is_frozen) {
-        return (
-            <div className="min-h-screen flex flex-col items-center justify-center p-8 text-center bg-gray-50">
-                <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center mb-6 animate-pulse">
-                    <Store size={48} className="text-gray-400" />
-                </div>
-                <h1 className="text-3xl font-black text-gray-900 mb-2">Store Temporarily Offline</h1>
-                <p className="text-gray-500 max-w-md">
-                    This store is currently unavailable. Please check back later.
-                </p>
-                <div className="mt-8 pt-8 border-t border-gray-200 w-full max-w-xs">
-                    <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">Powered by Bouteek</p>
-                </div>
             </div>
         );
     }
